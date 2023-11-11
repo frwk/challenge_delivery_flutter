@@ -1,0 +1,1 @@
+enum MessageTypeEnum { error, success }
