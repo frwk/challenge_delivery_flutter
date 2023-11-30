@@ -4,7 +4,7 @@ import 'package:challenge_delivery_flutter/widgets/layouts/client_layout.dart';
 import 'package:challenge_delivery_flutter/widgets/layouts/courier_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:challenge_delivery_flutter/views/auth/login_screen.dart';
+import 'package:challenge_delivery_flutter/views/auth/login/login_screen.dart';
 
 class CheckingLoginScreen extends StatefulWidget {
   const CheckingLoginScreen({super.key});

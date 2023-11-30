@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:challenge_delivery_flutter/views/auth/login_screen.dart';
+import 'package:challenge_delivery_flutter/views/auth/login/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:android_intent_plus/android_intent.dart';

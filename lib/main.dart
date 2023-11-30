@@ -1,5 +1,9 @@
 import 'package:challenge_delivery_flutter/bloc/user/user_bloc.dart';
-import 'package:challenge_delivery_flutter/views/auth/login_screen.dart';
+import 'package:challenge_delivery_flutter/views/auth/forgot_password_screen.dart';
+import 'package:challenge_delivery_flutter/views/auth/login/login_screen.dart';
+import 'package:challenge_delivery_flutter/views/auth/register/register_first_step.dart';
+import 'package:challenge_delivery_flutter/views/auth/register/register_screen.dart';
+import 'package:challenge_delivery_flutter/views/on_boarding/splash_view.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -56,7 +60,10 @@ class _MyAppState extends State<MyApp> {
         BlocProvider(create: (context) => UserBloc()),
       ],
       child: MaterialApp(
-        theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF16a34a))),
+        theme: ThemeData(
+            fontFamily: "Roboto",
+            colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF16a34a))
+        ),
         supportedLocales: const [
           Locale('fr'),
         ],
@@ -68,7 +75,12 @@ class _MyAppState extends State<MyApp> {
         ],
         debugShowCheckedModeBanner: false,
         title: 'Challenge Delivery',
-        home: const CheckingLoginScreen(),
+        home: const SplashView(),
+        routes: {
+          '/login': (context) => const LoginScreen(),
+          '/register': (context) => const RegisterClientScreen(),
+          '/forgot-password': (context) => const ForgotPasswordScreen(),
+        }
       ),
     );
   }

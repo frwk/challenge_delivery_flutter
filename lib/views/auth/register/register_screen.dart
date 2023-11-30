@@ -1,9 +1,10 @@
+import 'package:challenge_delivery_flutter/atoms/landing_title_atom.dart';
 import 'package:challenge_delivery_flutter/bloc/user/user_bloc.dart';
 import 'package:challenge_delivery_flutter/enums/message_type_enum.dart';
 import 'package:challenge_delivery_flutter/enums/role_enum.dart';
 import 'package:challenge_delivery_flutter/helpers/loading_state.dart';
 import 'package:challenge_delivery_flutter/helpers/show_snack_message.dart';
-import 'package:challenge_delivery_flutter/views/auth/login_screen.dart';
+import 'package:challenge_delivery_flutter/views/auth/login/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -50,96 +51,202 @@ class _RegisterClientScreenState extends State<RegisterClientScreen> {
         }
       },
       child: Scaffold(
-        appBar: AppBar(
-          leading: InkWell(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: Container(alignment: Alignment.center, child: const Text('Annuler', style: TextStyle(color: Colors.white, fontSize: 15))),
-          ),
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          elevation: 0,
-          leadingWidth: 70,
-          title: const Text('Créer un compte', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-          centerTitle: true,
-        ),
-        body: FormBuilder(
-          key: _formKey,
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: ListView(
+        body: SingleChildScrollView(
+          child: FormBuilder(
+            key: _formKey,
+            child: Column(
               children: [
-                FormBuilderTextField(
-                  name: 'firstname',
-                  initialValue: 'floflo',
-                  decoration: const InputDecoration(labelText: 'Prénom'),
-                  validator: FormBuilderValidators.compose([
-                    FormBuilderValidators.required(),
-                  ]),
-                ),
-                const SizedBox(height: 30),
-                FormBuilderTextField(
-                  name: 'lastname',
-                  initialValue: 'peper',
-                  decoration: const InputDecoration(labelText: 'Nom de famille'),
-                  validator: FormBuilderValidators.compose([
-                    FormBuilderValidators.required(),
-                  ]),
-                ),
-                const SizedBox(height: 30),
-                FormBuilderTextField(
-                  name: 'email',
-                  initialValue: 'floper@gmail.com',
-                  decoration: const InputDecoration(labelText: 'Email'),
-                  validator: FormBuilderValidators.compose([
-                    FormBuilderValidators.required(),
-                    FormBuilderValidators.email(),
-                  ]),
-                ),
-                const SizedBox(height: 30),
-                FormBuilderTextField(
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  initialValue: 'password123',
-                  name: 'password',
-                  obscureText: true,
-                  decoration: const InputDecoration(labelText: 'Mot de passe'),
-                  validator: FormBuilderValidators.compose([
-                    FormBuilderValidators.required(),
-                    FormBuilderValidators.minLength(8),
-                  ]),
-                ),
-                const SizedBox(height: 30),
-                FormBuilderTextField(
-                  name: 'confirm_password',
-                  initialValue: 'password123',
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  decoration: const InputDecoration(labelText: 'Confirmation du mot de passe'),
-                  obscureText: true,
-                  validator: (value) => _formKey.currentState?.fields['password']?.value != value ? 'Mots de passe différents' : null,
-                ),
-                const SizedBox(height: 50),
-                ElevatedButton(
-                  onPressed: () {
-                    debugPrint(_formKey.currentState?.instantValue.toString());
-                    if (_formKey.currentState!.validate()) {
-                      if (widget.role == RoleEnum.client) {
-                        userBloc.add(OnRegisterClientEvent(
-                          firstname: _formKey.currentState?.fields['firstname']?.value,
-                          lastname: _formKey.currentState?.fields['lastname']?.value,
-                          email: _formKey.currentState?.fields['email']?.value,
-                          password: _formKey.currentState?.fields['password']?.value,
-                        ));
-                      } else if (widget.role == RoleEnum.courier) {
-                        userBloc.add(OnRegisterCourierEvent(
-                          firstname: _formKey.currentState?.fields['firstname']?.value,
-                          lastname: _formKey.currentState?.fields['lastname']?.value,
-                          email: _formKey.currentState?.fields['email']?.value,
-                          password: _formKey.currentState?.fields['password']?.value,
-                        ));
-                      }
-                    }
-                  },
-                  child: const Text('S\'inscrire'),
+                Image.asset('assets/img/login/login.png'),
+                Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const LandingTitleAtom(title: 'Let\'s', titleColor: Colors.black, subtitle: 'Get Started', subtitleColor: Colors.orangeAccent),
+                        const SizedBox(height: 20.0),
+                        FormBuilderTextField(
+                          name: 'firstname',
+                          decoration: const InputDecoration(
+                              labelText: 'Prénom',
+                              labelStyle: TextStyle(
+                                color: Colors.grey,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                borderSide: BorderSide.none,
+                              ),
+                              fillColor: Colors.white,
+                              filled: true,
+                              contentPadding: EdgeInsets.all(15.0)
+                          ),
+                          validator: FormBuilderValidators.compose([
+                            FormBuilderValidators.required(),
+                          ]),
+                        ),
+                        const SizedBox(height: 20.0),
+                        FormBuilderTextField(
+                          name: 'lastname',
+                          decoration: const InputDecoration(
+                            labelText: 'Nom',
+                            labelStyle: TextStyle(
+                              color: Colors.grey,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                              borderSide: BorderSide.none,
+                            ),
+                            fillColor: Colors.white,
+                            filled: true,
+                            contentPadding: EdgeInsets.all(15.0)
+                          ),
+                          validator: FormBuilderValidators.compose([
+                            FormBuilderValidators.required(),
+                          ]),
+                        ),
+                        const SizedBox(height: 20.0),
+                        FormBuilderTextField(
+                          name: 'email',
+                          decoration: const InputDecoration(
+                            labelText: 'Email',
+                            labelStyle: TextStyle(
+                              color: Colors.grey,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                              borderSide: BorderSide.none,
+                            ),
+                            fillColor: Colors.white,
+                            filled: true,
+                            contentPadding: EdgeInsets.all(15.0)
+
+                          ),
+                          validator: FormBuilderValidators.compose([
+                            FormBuilderValidators.required(),
+                            FormBuilderValidators.email(),
+                          ]),
+                        ),
+                        const SizedBox(height: 20.0),
+                        FormBuilderTextField(
+                          name: 'password',
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          obscureText: true,
+                          decoration: const InputDecoration(
+                            labelText: 'Mot de passe',
+                            labelStyle: TextStyle(
+                              color: Colors.grey,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                              borderSide: BorderSide.none,
+                            ),
+                            fillColor: Colors.white,
+                            filled: true,
+                            contentPadding: EdgeInsets.all(15.0)
+
+                          ),
+                          validator: FormBuilderValidators.compose([
+                            FormBuilderValidators.required(),
+                            FormBuilderValidators.minLength(8),
+                          ]),
+                        ),
+                        const SizedBox(height: 20.0),
+                        FormBuilderTextField(
+                          name: 'confirm_password',
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          obscureText: true,
+                          decoration: const InputDecoration(
+                            labelText: 'Confirmation de mot de passe',
+                            labelStyle: TextStyle(
+                              color: Colors.grey,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                              borderSide: BorderSide.none,
+                            ),
+                            fillColor: Colors.white,
+                            filled: true,
+                            contentPadding: EdgeInsets.all(15.0)
+                          ),
+                          validator: (value) => _formKey.currentState?.fields['password']?.value != value ? 'Mots de passe différents' : null,
+                        ),
+                        const SizedBox(height: 20),
+                        const Padding(
+                          padding: EdgeInsets.all(5.0),
+                          child: Text('Vous êtes :', style: TextStyle(
+                            color: Colors.grey
+                          ),),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: RadioListTile<RoleEnum>(
+                                  title: const Text(
+                                      'Client',
+                                      style: TextStyle(
+                                        color: Colors.grey
+                                      )
+                                  ),
+                                  value: RoleEnum.client,
+                                  groupValue: widget.role,
+                                  onChanged: (RoleEnum? value) {
+                                    setState(() {
+                                      // widget.role = value;
+                                    });
+                                  },
+                                ),
+                              ),
+                              Expanded(
+                                child: RadioListTile<RoleEnum>(
+                                  title: const Text(
+                                      'Livreur',
+                                      style: TextStyle(
+                                        color: Colors.grey
+                                      ),
+                                  ),
+                                  value: RoleEnum.courier,
+                                  groupValue: widget.role,
+                                  onChanged: (RoleEnum? value) {
+                                    setState(() {
+                                      // widget.role = value;
+                                    });
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            debugPrint(_formKey.currentState?.instantValue.toString());
+                            if (_formKey.currentState!.validate()) {
+                              if (widget.role == RoleEnum.client) {
+                                userBloc.add(OnRegisterClientEvent(
+                                  firstname: _formKey.currentState?.fields['firstname']?.value,
+                                  lastname: _formKey.currentState?.fields['lastname']?.value,
+                                  email: _formKey.currentState?.fields['email']?.value,
+                                  password: _formKey.currentState?.fields['password']?.value,
+                                ));
+                              } else if (widget.role == RoleEnum.courier) {
+                                userBloc.add(OnRegisterCourierEvent(
+                                  firstname: _formKey.currentState?.fields['firstname']?.value,
+                                  lastname: _formKey.currentState?.fields['lastname']?.value,
+                                  email: _formKey.currentState?.fields['email']?.value,
+                                  password: _formKey.currentState?.fields['password']?.value,
+                                ));
+                              }
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.orangeAccent[200],
+                            fixedSize: const Size(400, 50),
+                          ),
+                          child: const Text('S\'inscrire'),
+                        ),
+                      ],
+                    ),
                 )
               ],
             ),
