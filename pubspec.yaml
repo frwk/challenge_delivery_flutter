@@ -108,20 +108,20 @@ flutter:
   fonts:
    - family: Roboto
      fonts:
-       - asset: assets/fonts/Roboto-Regular.ttf
-       - asset: assets/fonts/Roboto-Medium.ttf
+       - asset: assets/fonts/Poppins-Regular.ttf
+       - asset: assets/fonts/Poppins-Medium.ttf
          weight: 700
-       - asset: assets/fonts/Roboto-MediumItalic.ttf
+       - asset: assets/fonts/Poppins-MediumItalic.ttf
          style: italic
-       - asset: assets/fonts/Roboto-Light.ttf
+       - asset: assets/fonts/Poppins-Light.ttf
          weight: 300
-       - asset: assets/fonts/Roboto-LightItalic.ttf
+       - asset: assets/fonts/Poppins-LightItalic.ttf
          weight: 300
          style: italic
-       - asset: assets/fonts/Roboto-Italic.ttf
-       - asset: assets/fonts/Roboto-Bold.ttf
+       - asset: assets/fonts/Poppins-Italic.ttf
+       - asset: assets/fonts/Poppins-Bold.ttf
          weight: 700
-       - asset: assets/fonts/Roboto-Thin.ttf
+       - asset: assets/fonts/Poppins-Thin.ttf
 
 
   # For details regarding fonts from package dependencies,

@@ -1,9 +1,13 @@
 import 'package:challenge_delivery_flutter/bloc/user/user_bloc.dart';
+import 'package:challenge_delivery_flutter/common/app_colors.dart';
+import 'package:challenge_delivery_flutter/themes/light_mode.dart';
 import 'package:challenge_delivery_flutter/views/auth/forgot_password_screen.dart';
 import 'package:challenge_delivery_flutter/views/auth/login/login_screen.dart';
 import 'package:challenge_delivery_flutter/views/auth/register/register_first_step.dart';
 import 'package:challenge_delivery_flutter/views/auth/register/register_screen.dart';
+import 'package:challenge_delivery_flutter/views/client/dashboard/home_screen.dart';
 import 'package:challenge_delivery_flutter/views/on_boarding/splash_view.dart';
+import 'package:challenge_delivery_flutter/views/order/create_order_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +17,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:challenge_delivery_flutter/bloc/blocs.dart';
 import 'package:challenge_delivery_flutter/services/notification_service.dart';
-import 'package:challenge_delivery_flutter/views/auth/checking_login_screen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:developer' as developer;
 import 'firebase_options.dart';
@@ -60,10 +63,7 @@ class _MyAppState extends State<MyApp> {
         BlocProvider(create: (context) => UserBloc()),
       ],
       child: MaterialApp(
-        theme: ThemeData(
-            fontFamily: "Roboto",
-            colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF16a34a))
-        ),
+        theme: lightMode(),
         supportedLocales: const [
           Locale('fr'),
         ],
@@ -77,9 +77,11 @@ class _MyAppState extends State<MyApp> {
         title: 'Challenge Delivery',
         home: const SplashView(),
         routes: {
+          '/client/home': (context) => const ClientHomeScreen(),
           '/login': (context) => const LoginScreen(),
           '/register': (context) => const RegisterClientScreen(),
           '/forgot-password': (context) => const ForgotPasswordScreen(),
+          '/create-order': (context) => const CreateOrderScreen(),
         }
       ),
     );

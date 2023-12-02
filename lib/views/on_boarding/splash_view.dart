@@ -1,6 +1,7 @@
 
-import 'package:challenge_delivery_flutter/views/auth/checking_login_screen.dart';
+import 'package:challenge_delivery_flutter/listener/checking_login_listener.dart';
 import 'package:flutter/material.dart';
+
 
 class SplashView extends StatefulWidget {
   const SplashView({super.key});
@@ -19,7 +20,7 @@ class _SplashViewState extends State<SplashView> {
 
   void goWelcomePage() {
     Future.delayed(const Duration(seconds: 3), () {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => const CheckingLoginScreen()));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const CheckingLoginListener()));
     });
   }
 
