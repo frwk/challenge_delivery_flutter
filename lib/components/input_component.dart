@@ -11,6 +11,7 @@ class InputComponent extends StatelessWidget {
   final double? labelSize;
   final String placeholder;
   final bool password;
+  final void Function(String?)? onChanged;
   final String Function(String?)? validator;
 
 
@@ -22,6 +23,7 @@ class InputComponent extends StatelessWidget {
     this.labelColor = Colors.black,
     this.labelSize,
     this.validator,
+    this.onChanged,
   });
 
   @override
@@ -35,7 +37,7 @@ class InputComponent extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             LabelAtom(label: label, labelColor: labelColor, labelSize: labelSize),
-            TextFieldAtom(placeholder: placeholder, isPassword: password)
+            TextFieldAtom(placeholder: placeholder, isPassword: password, onChanged: onChanged)
           ],
         ),
       ),

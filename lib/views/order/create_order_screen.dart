@@ -1,10 +1,57 @@
 import 'package:challenge_delivery_flutter/atoms/button_atom.dart';
+import 'package:challenge_delivery_flutter/common/constant.dart';
 import 'package:challenge_delivery_flutter/components/input_component.dart';
-import 'package:challenge_delivery_flutter/components/my_drawer.dart';
+import 'package:challenge_delivery_flutter/components/my_location_list_tile.dart';
+import 'package:challenge_delivery_flutter/models/google_autocomplete/autocomplete_prediction.dart';
+import 'package:challenge_delivery_flutter/models/google_autocomplete/place_autocomplete_response.dart';
+import 'package:challenge_delivery_flutter/utils/network_utility.dart';
 import 'package:flutter/material.dart';
 
-class CreateOrderScreen extends StatelessWidget {
+class CreateOrderScreen extends StatefulWidget {
   const CreateOrderScreen({super.key});
+
+  @override
+  State<CreateOrderScreen> createState() => _CreateOrderScreenState();
+}
+
+class _CreateOrderScreenState extends State<CreateOrderScreen> {
+
+  List<AutocompletePrediction> departurePlacePredictions = [];
+  List<AutocompletePrediction> arrivalPlacePredictions = [];
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  Future<void> placeAutocomplete(String query, String addressType) async {
+    Uri uri = Uri.https(
+        'maps.googleapis.com',
+        'maps/api/place/autocomplete/json',
+      {
+        'input': query,
+        'key': apiKey
+      }
+    );
+    
+    String ?response = await NetworkUtility.fetchUrl(uri);
+
+    if(response != null) {
+      PlaceAutocompleteResponse result = PlaceAutocompleteResponse.parseAutocompleteResult(response);
+
+      if(result.predictions != null) {
+        if(addressType == 'departure') {
+          setState(() {
+            departurePlacePredictions = result.predictions!;
+          });
+        } else if(addressType == 'arrival') {
+          setState(() {
+            arrivalPlacePredictions = result.predictions!;
+          });
+        }
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,23 +96,35 @@ class CreateOrderScreen extends StatelessWidget {
           ),
         ),
       ),
-      body: SafeArea(
+      body:  SafeArea(
         child: Column(
           children: [
-            const SizedBox(height: 20),
+            // Adresse de départ
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 25.0),
-              child: const InputComponent(
+              child: InputComponent(
+                onChanged: (value) async { await placeAutocomplete(value!, 'departure'); },
                 label: 'Adresse de départ',
                 labelSize: 12,
                 labelColor: Colors.grey,
                 placeholder: 'Entrez votre adresse de départ',
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 20),
+            departurePlacePredictions.isNotEmpty ? Expanded(
+              child: ListView.builder(
+                  itemCount: departurePlacePredictions.length,
+                  itemBuilder: (context, index) => LocationListTile(
+                    onTap: () {},
+                    location: departurePlacePredictions[index].description!,
+                  )
+              ),
+            ) : const SizedBox(height: 0),
+            // Adresse de destination
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 25.0),
-              child: const InputComponent(
+              child: InputComponent(
+                onChanged: (value) async { await placeAutocomplete(value!, 'arrival');},
                 label: 'Adresse de destination',
                 labelSize: 12,
                 labelColor: Colors.grey,
@@ -73,6 +132,15 @@ class CreateOrderScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 30),
+            arrivalPlacePredictions.isNotEmpty ? Expanded(
+              child: ListView.builder(
+                  itemCount: arrivalPlacePredictions.length,
+                  itemBuilder: (context, index) => LocationListTile(
+                    onTap: () {},
+                    location: arrivalPlacePredictions[index].description!,
+                  )
+              ),
+            ) : const SizedBox(height: 0),
             Divider(
               color: Colors.grey.withOpacity(0.5),
               indent: 60,
@@ -80,6 +148,7 @@ class CreateOrderScreen extends StatelessWidget {
               thickness: 1,
             ),
             const SizedBox(height: 30),
+            // Type de colis
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -109,11 +178,11 @@ class CreateOrderScreen extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 30),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 25.0),
               child: ButtonAtom(data: 'Suivant'),
-            )
+            ),
           ],
         ),
       ),

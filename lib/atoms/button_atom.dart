@@ -1,20 +1,22 @@
+import 'package:challenge_delivery_flutter/common/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class ButtonAtom extends StatelessWidget {
   final String data;
   final String? redirectTo;
+  final void Function()? onTap;
 
-  const ButtonAtom({super.key, required this.data, this.redirectTo});
+  const ButtonAtom({super.key, required this.data, this.redirectTo, this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top:22.0),
+      padding: const EdgeInsets.only(top:18.0),
       child: Center(
         child: ElevatedButton(
-          onPressed: () => {},
+          onPressed: onTap,
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.orangeAccent[200],
+            backgroundColor: AppColors.primary,
             fixedSize: const Size(400, 50),
           ),
           child: Text(
