@@ -20,6 +20,7 @@ class LocationListTile extends StatelessWidget {
           margin: const EdgeInsets.only(top: 8.0),
           color: Colors.grey.withOpacity(0.1),
           child: ListTile(
+            onTap: onTap,
             leading: const Icon(Icons.location_on),
             title: Text(location, style: const TextStyle(fontSize: 12),),
           )

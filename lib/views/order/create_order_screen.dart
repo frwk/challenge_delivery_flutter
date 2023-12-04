@@ -18,6 +18,9 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
 
   List<AutocompletePrediction> departurePlacePredictions = [];
   List<AutocompletePrediction> arrivalPlacePredictions = [];
+  TextEditingController _departureAddressController = TextEditingController();
+  TextEditingController _arrivalAddressController = TextEditingController();
+  AutocompletePrediction? selectedDeparturePrediction;
 
   @override
   void initState() {
@@ -51,6 +54,28 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
         }
       }
     }
+  }
+
+  void onPlaceSelected(AutocompletePrediction place, String addressType) {
+    setState(() {
+      var selectedPlace = place;
+
+      if(addressType == 'departure') {
+        _departureAddressController.text = place.description!;
+        setState(() {
+          departurePlacePredictions = [];
+        });
+      }
+
+      if(addressType == 'arrival') {
+        _arrivalAddressController.text = place.description!;
+        setState(() {
+          arrivalPlacePredictions = [];
+        });
+      }
+    });
+
+    print("Lieu sélectionné : ${place.description}");
   }
 
   @override
@@ -103,6 +128,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 25.0),
               child: InputComponent(
+                controller: _departureAddressController,
                 onChanged: (value) async { await placeAutocomplete(value!, 'departure'); },
                 label: 'Adresse de départ',
                 labelSize: 12,
@@ -115,7 +141,9 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
               child: ListView.builder(
                   itemCount: departurePlacePredictions.length,
                   itemBuilder: (context, index) => LocationListTile(
-                    onTap: () {},
+                    onTap: () {
+                      onPlaceSelected(departurePlacePredictions[index], 'departure');
+                    },
                     location: departurePlacePredictions[index].description!,
                   )
               ),
@@ -124,6 +152,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 25.0),
               child: InputComponent(
+                controller: _arrivalAddressController,
                 onChanged: (value) async { await placeAutocomplete(value!, 'arrival');},
                 label: 'Adresse de destination',
                 labelSize: 12,
@@ -136,7 +165,9 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
               child: ListView.builder(
                   itemCount: arrivalPlacePredictions.length,
                   itemBuilder: (context, index) => LocationListTile(
-                    onTap: () {},
+                    onTap: () {
+                      onPlaceSelected(arrivalPlacePredictions[index], 'arrival');
+                    },
                     location: arrivalPlacePredictions[index].description!,
                   )
               ),

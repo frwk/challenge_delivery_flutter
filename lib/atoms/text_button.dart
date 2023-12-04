@@ -22,7 +22,7 @@ class _TextButtonAtomState extends State<TextButtonAtom> {
         widget.label,
         style:TextStyle(
           color: widget.labelColor,
-          fontSize: 16,
+          fontSize: 14,
           fontWeight: FontWeight.bold,
         ),
       ),

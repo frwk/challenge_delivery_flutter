@@ -13,6 +13,7 @@ class InputComponent extends StatelessWidget {
   final bool password;
   final void Function(String?)? onChanged;
   final String Function(String?)? validator;
+  final TextEditingController? controller;
 
 
   const InputComponent({
@@ -24,6 +25,7 @@ class InputComponent extends StatelessWidget {
     this.labelSize,
     this.validator,
     this.onChanged,
+    this.controller,
   });
 
   @override
@@ -37,7 +39,7 @@ class InputComponent extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             LabelAtom(label: label, labelColor: labelColor, labelSize: labelSize),
-            TextFieldAtom(placeholder: placeholder, isPassword: password, onChanged: onChanged)
+            TextFieldAtom(placeholder: placeholder, isPassword: password, onChanged: onChanged, controller:  controller)
           ],
         ),
       ),

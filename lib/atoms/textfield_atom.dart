@@ -7,13 +7,14 @@ class TextFieldAtom extends StatelessWidget {
   final Color? placeholderColor;
   final bool isPassword;
   final void Function(String?)? onChanged;
+  final TextEditingController? controller;
 
   const TextFieldAtom({
     super.key,
     required this.placeholder,
     this.isPassword = false,
     this.placeholderColor,
-    this.onChanged,
+    this.onChanged, required this.controller,
   });
 
   @override
@@ -31,6 +32,7 @@ class TextFieldAtom extends StatelessWidget {
         ],
       ),
       child: FormBuilderTextField(
+        controller: controller,
         onChanged: onChanged,
         autovalidateMode: AutovalidateMode.onUserInteraction,
         obscureText: isPassword,
