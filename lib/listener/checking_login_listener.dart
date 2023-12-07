@@ -31,6 +31,8 @@ class _CheckingLoginListenerState extends State<CheckingLoginListener> with Tick
           Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const LoginScreen()), (route) => false);
         } else if (state is SuccessAuthState && state.user?.role != null) {
           userBloc.add(OnGetUserEvent(state.user!));
+          print('SUCCESS AUTH STATE');
+          print(state.user?.role);
           if (state.user?.role == 'client') {
             Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const ClientLayout()), (route) => false);
           } else if (state.user?.role == 'courier') {

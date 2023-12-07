@@ -19,8 +19,11 @@ class AuthService {
       }
       await secureStorage.deleteSecureStorage();
       await secureStorage.persistCookie(cookie);
+      print('user: ${jsonDecode(response.body)}');
       return User.fromJson(jsonDecode(response.body));
     } catch (e) {
+      print('fesse');
+      print('e: $e');
       rethrow;
     }
   }

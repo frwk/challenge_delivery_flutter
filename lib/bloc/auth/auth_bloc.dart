@@ -19,9 +19,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       emit(LoadingAuthState());
       final data = await authService.login(event.email, event.password);
+      print('data: $data');
       await Future.delayed(const Duration(milliseconds: 850));
-      emit(state.copyWith(user: data));
+      // emit(state.copyWith(user: data));
+      emit(SuccessAuthState(data));
     } catch (e) {
+      print('pipi');
       emit(FailureAuthState(e.toString()));
     }
   }

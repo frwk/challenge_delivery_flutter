@@ -9,6 +9,7 @@ import 'package:challenge_delivery_flutter/views/auth/register/register_screen.d
 import 'package:challenge_delivery_flutter/views/client/dashboard/home_screen.dart';
 import 'package:challenge_delivery_flutter/views/on_boarding/splash_view.dart';
 import 'package:challenge_delivery_flutter/views/order/create_order_screen.dart';
+import 'package:challenge_delivery_flutter/services/location_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -22,21 +23,17 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:developer' as developer;
 import 'firebase_options.dart';
 
-PushNotification pushNotification = PushNotification();
-
-Future<void> _firebaseMessagingBackground(RemoteMessage message) async {
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-}
+NotificationService notificationService = NotificationService();
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   await dotenv.load(fileName: ".env");
   developer.log('API_URL: ${dotenv.env['API_URL']}', name: 'ENVIRONMENT');
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackground);
-  pushNotification.initNotification();
+  notificationService.init();
+  String? token = await notificationService.getToken();
+  print('Firebase Messaging Token: $token');
   runApp(const MyApp());
 }
 
@@ -50,7 +47,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   void initState() {
-    pushNotification.onMessagingListener();
+    // notificationService.onMessagingListener();
     super.initState();
   }
 
@@ -65,27 +62,27 @@ class _MyAppState extends State<MyApp> {
         BlocProvider(create: (context) => OrderBloc()),
       ],
       child: MaterialApp(
-        theme: lightMode(),
-        supportedLocales: const [
-          Locale('fr'),
-        ],
-        localizationsDelegates: const [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-          FormBuilderLocalizations.delegate,
-        ],
-        debugShowCheckedModeBanner: false,
-        title: 'Challenge Delivery',
-        home: const SplashView(),
-        routes: {
-          '/client/home': (context) => const ClientHomeScreen(),
-          '/login': (context) => const LoginScreen(),
-          '/register': (context) => const RegisterClientScreen(),
-          '/forgot-password': (context) => const ForgotPasswordScreen(),
-          '/create-order': (context) => const CreateOrderScreen(),
-        }
-      ),
+          theme: lightMode(),
+          navigatorKey: navigatorKey, // Ajouter cette ligne
+          supportedLocales: const [
+            Locale('fr'),
+          ],
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+            FormBuilderLocalizations.delegate,
+          ],
+          debugShowCheckedModeBanner: false,
+          title: 'Challenge Delivery',
+          home: const SplashView(),
+          routes: {
+            '/client/home': (context) => const ClientHomeScreen(),
+            '/login': (context) => const LoginScreen(),
+            '/register': (context) => const RegisterClientScreen(),
+            '/forgot-password': (context) => const ForgotPasswordScreen(),
+            '/create-order': (context) => const CreateOrderScreen(),
+          }),
     );
   }
 }
