@@ -38,7 +38,7 @@ class User {
         "email": email,
         "role": role,
         "notificationToken": notificationToken,
-        "courier": courier,
+        "courier": courier?.toJson(),
       };
 
   User copyWith({

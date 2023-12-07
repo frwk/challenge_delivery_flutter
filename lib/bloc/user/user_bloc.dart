@@ -8,7 +8,6 @@ import 'package:challenge_delivery_flutter/services/user_service.dart';
 import 'package:meta/meta.dart';
 import 'package:bloc/bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'dart:convert';
 
 part 'user_event.dart';
 part 'user_state.dart';
@@ -23,13 +22,14 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   Future<void> _onGetUser(OnGetUserEvent event, Emitter<UserState> emit) async {
     try {
       User userWithToken = event.user;
+      Courier? courierWithLocation;
       if (event.user.role == RoleEnum.courier.name) {
         final location = await LocationService.determineLocation();
-        userWithToken = event.user.copyWith(courier: event.user.courier!.copyWith(latitude: location.latitude, longitude: location.longitude));
+        courierWithLocation = event.user.courier!.copyWith(latitude: location.latitude, longitude: location.longitude);
       }
-      if ((event.user.notificationToken ?? '').isEmpty) {
-        userWithToken = event.user.copyWith(notificationToken: await NotificationService().getToken());
-      }
+      final notificationToken = (event.user.notificationToken ?? '').isEmpty ? await NotificationService().getToken() : event.user.notificationToken;
+      userWithToken = event.user.copyWith(courier: courierWithLocation, notificationToken: notificationToken);
+      await Future.delayed(const Duration(milliseconds: 2000));
       final data = await UserService().updateUser(userWithToken);
       emit(state.copyWith(user: userWithToken));
     } catch (e) {

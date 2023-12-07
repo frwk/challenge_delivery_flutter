@@ -17,7 +17,7 @@ class Courier {
         id: json["id"] ?? 0,
         status: json["status"] ?? '',
         latitude: double.tryParse(json["latitude"] ?? ''),
-        longitude: double.tryParse(json["latitude"] ?? ''),
+        longitude: double.tryParse(json["longitude"] ?? ''),
       );
 
   Map<String, dynamic> toJson() => {

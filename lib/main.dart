@@ -11,7 +11,6 @@ import 'package:challenge_delivery_flutter/views/on_boarding/splash_view.dart';
 import 'package:challenge_delivery_flutter/views/order/create_order_screen.dart';
 import 'package:challenge_delivery_flutter/services/location_service.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,7 +19,6 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:challenge_delivery_flutter/bloc/blocs.dart';
 import 'package:challenge_delivery_flutter/services/notification_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'dart:developer' as developer;
 import 'firebase_options.dart';
 
 NotificationService notificationService = NotificationService();
@@ -28,12 +26,10 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   await dotenv.load(fileName: ".env");
-  developer.log('API_URL: ${dotenv.env['API_URL']}', name: 'ENVIRONMENT');
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   notificationService.init();
   String? token = await notificationService.getToken();
-  print('Firebase Messaging Token: $token');
   runApp(const MyApp());
 }
 
