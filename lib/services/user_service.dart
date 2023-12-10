@@ -17,6 +17,7 @@ class UserService {
     try {
       final response = await http.post(Uri.parse('${dotenv.env['API_URL']}/users'),
           body: {'firstName': firstname, 'lastName': lastname, 'email': email, 'password': password});
+        print(response);
       if (response.statusCode != 201) {
         throw Exception(jsonDecode(response.body)['message']);
       }

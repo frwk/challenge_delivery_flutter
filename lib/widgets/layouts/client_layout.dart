@@ -1,4 +1,5 @@
-import 'package:challenge_delivery_flutter/views/client/home_screen.dart';
+import 'package:challenge_delivery_flutter/common/app_colors.dart';
+import 'package:challenge_delivery_flutter/views/client/dashboard/home_screen.dart';
 import 'package:challenge_delivery_flutter/views/client/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,15 +25,24 @@ class _MainScreenState extends State<ClientLayout> {
     final authBloc = BlocProvider.of<AuthBloc>(context);
 
     return Scaffold(
-      bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: Theme.of(context).colorScheme.primary,
-        onTap: (index) => setState(() => _currentIndex = index),
-        currentIndex: _currentIndex,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Accueil'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profil'),
-        ],
+      bottomNavigationBar: BottomAppBar(
+        shape: const CircularNotchedRectangle(),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            IconButton(onPressed: () {}, icon: Icon(Icons.home, color: Theme.of(context).colorScheme.secondary)),
+            IconButton(onPressed: () {}, icon: Icon(Icons.assignment, color: Theme.of(context).colorScheme.secondary)),
+            IconButton(onPressed: () {}, icon: Icon(Icons.person, color: Theme.of(context).colorScheme.secondary)),
+            IconButton(onPressed: () {}, icon: Icon(Icons.notifications, color: Theme.of(context).colorScheme.secondary)),
+          ],
+        ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => Navigator.pushNamed(context, '/create-order'),
+        backgroundColor: AppColors.primary,
+        child: const Icon(Icons.add, color: Colors.white),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       backgroundColor: Colors.white,
       body: SafeArea(
         child: _pages[_currentIndex],

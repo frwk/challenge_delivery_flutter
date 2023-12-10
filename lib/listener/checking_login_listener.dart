@@ -4,16 +4,16 @@ import 'package:challenge_delivery_flutter/widgets/layouts/client_layout.dart';
 import 'package:challenge_delivery_flutter/widgets/layouts/courier_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:challenge_delivery_flutter/views/auth/login_screen.dart';
+import 'package:challenge_delivery_flutter/views/auth/login/login_screen.dart';
 
-class CheckingLoginScreen extends StatefulWidget {
-  const CheckingLoginScreen({super.key});
+class CheckingLoginListener extends StatefulWidget {
+  const CheckingLoginListener({super.key});
 
   @override
-  _CheckingLoginScreenState createState() => _CheckingLoginScreenState();
+  _CheckingLoginListenerState createState() => _CheckingLoginListenerState();
 }
 
-class _CheckingLoginScreenState extends State<CheckingLoginScreen> with TickerProviderStateMixin {
+class _CheckingLoginListenerState extends State<CheckingLoginListener> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
@@ -26,7 +26,7 @@ class _CheckingLoginScreenState extends State<CheckingLoginScreen> with TickerPr
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) async {
         if (state is LoadingAuthState) {
-          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const CheckingLoginScreen()), (route) => false);
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const CheckingLoginListener()), (route) => false);
         } else if (state is LogOutAuthState || state is FailureAuthState) {
           Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const LoginScreen()), (route) => false);
         } else if (state is SuccessAuthState && state.user?.role != null) {

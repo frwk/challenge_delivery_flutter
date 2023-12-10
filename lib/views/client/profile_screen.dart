@@ -1,5 +1,5 @@
 import 'package:challenge_delivery_flutter/bloc/auth/auth_bloc.dart';
-import 'package:challenge_delivery_flutter/views/auth/login_screen.dart';
+import 'package:challenge_delivery_flutter/views/auth/login/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
