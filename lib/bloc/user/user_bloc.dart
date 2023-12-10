@@ -23,7 +23,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     try {
       User userWithToken = event.user;
       Courier? courierWithLocation;
-      if (event.user.role == RoleEnum.courier.name) {
+      if (event.user.role == RoleEnum.courier.name && event.user.courier != null) {
         final location = await LocationService.determineLocation();
         courierWithLocation = event.user.courier!.copyWith(latitude: location.latitude, longitude: location.longitude);
       }

@@ -1,4 +1,5 @@
 import 'package:challenge_delivery_flutter/bloc/order/order_bloc.dart';
+import 'package:challenge_delivery_flutter/bloc/request/request_bloc.dart';
 import 'package:challenge_delivery_flutter/bloc/user/user_bloc.dart';
 import 'package:challenge_delivery_flutter/common/app_colors.dart';
 import 'package:challenge_delivery_flutter/themes/light_mode.dart';
@@ -7,9 +8,11 @@ import 'package:challenge_delivery_flutter/views/auth/login/login_screen.dart';
 import 'package:challenge_delivery_flutter/views/auth/register/register_first_step.dart';
 import 'package:challenge_delivery_flutter/views/auth/register/register_screen.dart';
 import 'package:challenge_delivery_flutter/views/client/dashboard/home_screen.dart';
+import 'package:challenge_delivery_flutter/views/courier/delivery/delivery_details_screen.dart';
 import 'package:challenge_delivery_flutter/views/on_boarding/splash_view.dart';
 import 'package:challenge_delivery_flutter/views/order/create_order_screen.dart';
 import 'package:challenge_delivery_flutter/services/location_service.dart';
+import 'package:challenge_delivery_flutter/widgets/auth_listener.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -59,7 +62,7 @@ class _MyAppState extends State<MyApp> {
       ],
       child: MaterialApp(
           theme: lightMode(),
-          navigatorKey: navigatorKey, // Ajouter cette ligne
+          navigatorKey: navigatorKey,
           supportedLocales: const [
             Locale('fr'),
           ],
