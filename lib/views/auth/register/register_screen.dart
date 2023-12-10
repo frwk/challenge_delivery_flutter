@@ -56,38 +56,46 @@ class _RegisterClientScreenState extends State<RegisterClientScreen> {
             key: _formKey,
             child: Column(
               children: [
-                Image.asset('assets/img/login/login.png'),
+                ClipRect(
+                  child: AspectRatio(
+                    aspectRatio: 16 / 4,
+                    child: Image.asset(
+                      'assets/img/login/login.png',
+                      width: double.infinity,
+                      fit: BoxFit.fitWidth,
+                    ),
+                  ),
+                ),
                 Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const LandingTitleAtom(title: 'Let\'s', titleColor: Colors.black, subtitle: 'Get Started', subtitleColor: Colors.orangeAccent),
-                        const SizedBox(height: 20.0),
-                        FormBuilderTextField(
-                          name: 'firstname',
-                          decoration: const InputDecoration(
-                              labelText: 'Prénom',
-                              labelStyle: TextStyle(
-                                color: Colors.grey,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                borderSide: BorderSide.none,
-                              ),
-                              fillColor: Colors.white,
-                              filled: true,
-                              contentPadding: EdgeInsets.all(15.0)
-                          ),
-                          validator: FormBuilderValidators.compose([
-                            FormBuilderValidators.required(),
-                          ]),
-                        ),
-                        const SizedBox(height: 20.0),
-                        FormBuilderTextField(
-                          name: 'lastname',
-                          decoration: const InputDecoration(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const LandingTitleAtom(title: 'Let\'s', titleColor: Colors.black, subtitle: 'Get Started', subtitleColor: Colors.orangeAccent),
+                      const SizedBox(height: 20.0),
+                      FormBuilderTextField(
+                        name: 'firstname',
+                        decoration: const InputDecoration(
+                            labelText: 'Prénom',
+                            labelStyle: TextStyle(
+                              color: Colors.grey,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                              borderSide: BorderSide.none,
+                            ),
+                            fillColor: Colors.white,
+                            filled: true,
+                            contentPadding: EdgeInsets.all(15.0)),
+                        validator: FormBuilderValidators.compose([
+                          FormBuilderValidators.required(),
+                        ]),
+                      ),
+                      const SizedBox(height: 20.0),
+                      FormBuilderTextField(
+                        name: 'lastname',
+                        decoration: const InputDecoration(
                             labelText: 'Nom',
                             labelStyle: TextStyle(
                               color: Colors.grey,
@@ -98,16 +106,15 @@ class _RegisterClientScreenState extends State<RegisterClientScreen> {
                             ),
                             fillColor: Colors.white,
                             filled: true,
-                            contentPadding: EdgeInsets.all(15.0)
-                          ),
-                          validator: FormBuilderValidators.compose([
-                            FormBuilderValidators.required(),
-                          ]),
-                        ),
-                        const SizedBox(height: 20.0),
-                        FormBuilderTextField(
-                          name: 'email',
-                          decoration: const InputDecoration(
+                            contentPadding: EdgeInsets.all(15.0)),
+                        validator: FormBuilderValidators.compose([
+                          FormBuilderValidators.required(),
+                        ]),
+                      ),
+                      const SizedBox(height: 20.0),
+                      FormBuilderTextField(
+                        name: 'email',
+                        decoration: const InputDecoration(
                             labelText: 'Email',
                             labelStyle: TextStyle(
                               color: Colors.grey,
@@ -118,20 +125,18 @@ class _RegisterClientScreenState extends State<RegisterClientScreen> {
                             ),
                             fillColor: Colors.white,
                             filled: true,
-                            contentPadding: EdgeInsets.all(15.0)
-
-                          ),
-                          validator: FormBuilderValidators.compose([
-                            FormBuilderValidators.required(),
-                            FormBuilderValidators.email(),
-                          ]),
-                        ),
-                        const SizedBox(height: 20.0),
-                        FormBuilderTextField(
-                          name: 'password',
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                          obscureText: true,
-                          decoration: const InputDecoration(
+                            contentPadding: EdgeInsets.all(15.0)),
+                        validator: FormBuilderValidators.compose([
+                          FormBuilderValidators.required(),
+                          FormBuilderValidators.email(),
+                        ]),
+                      ),
+                      const SizedBox(height: 20.0),
+                      FormBuilderTextField(
+                        name: 'password',
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        obscureText: true,
+                        decoration: const InputDecoration(
                             labelText: 'Mot de passe',
                             labelStyle: TextStyle(
                               color: Colors.grey,
@@ -142,20 +147,18 @@ class _RegisterClientScreenState extends State<RegisterClientScreen> {
                             ),
                             fillColor: Colors.white,
                             filled: true,
-                            contentPadding: EdgeInsets.all(15.0)
-
-                          ),
-                          validator: FormBuilderValidators.compose([
-                            FormBuilderValidators.required(),
-                            FormBuilderValidators.minLength(8),
-                          ]),
-                        ),
-                        const SizedBox(height: 20.0),
-                        FormBuilderTextField(
-                          name: 'confirm_password',
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                          obscureText: true,
-                          decoration: const InputDecoration(
+                            contentPadding: EdgeInsets.all(15.0)),
+                        validator: FormBuilderValidators.compose([
+                          FormBuilderValidators.required(),
+                          FormBuilderValidators.minLength(8),
+                        ]),
+                      ),
+                      const SizedBox(height: 20.0),
+                      FormBuilderTextField(
+                        name: 'confirm_password',
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        obscureText: true,
+                        decoration: const InputDecoration(
                             labelText: 'Confirmation de mot de passe',
                             labelStyle: TextStyle(
                               color: Colors.grey,
@@ -166,87 +169,60 @@ class _RegisterClientScreenState extends State<RegisterClientScreen> {
                             ),
                             fillColor: Colors.white,
                             filled: true,
-                            contentPadding: EdgeInsets.all(15.0)
-                          ),
-                          validator: (value) => _formKey.currentState?.fields['password']?.value != value ? 'Mots de passe différents' : null,
+                            contentPadding: EdgeInsets.all(15.0)),
+                        validator: (value) => _formKey.currentState?.fields['password']?.value != value ? 'Mots de passe différents' : null,
+                      ),
+                      const SizedBox(height: 20),
+                      const Padding(
+                        padding: EdgeInsets.all(5.0),
+                        child: Text(
+                          'Vous êtes :',
+                          style: TextStyle(color: Colors.grey),
                         ),
-                        const SizedBox(height: 20),
-                        const Padding(
-                          padding: EdgeInsets.all(5.0),
-                          child: Text('Vous êtes :', style: TextStyle(
-                            color: Colors.grey
-                          ),),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(5.0),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: RadioListTile<RoleEnum>(
-                                  title: const Text(
-                                      'Client',
-                                      style: TextStyle(
-                                        color: Colors.grey
-                                      )
-                                  ),
-                                  value: RoleEnum.client,
-                                  groupValue: widget.role,
-                                  onChanged: (RoleEnum? value) {
-                                    setState(() {
-                                      // widget.role = value;
-                                    });
-                                  },
-                                ),
-                              ),
-                              Expanded(
-                                child: RadioListTile<RoleEnum>(
-                                  title: const Text(
-                                      'Livreur',
-                                      style: TextStyle(
-                                        color: Colors.grey
-                                      ),
-                                  ),
-                                  value: RoleEnum.courier,
-                                  groupValue: widget.role,
-                                  onChanged: (RoleEnum? value) {
-                                    setState(() {
-                                      // widget.role = value;
-                                    });
-                                  },
-                                ),
-                              ),
+                      ),
+                      Center(
+                        child: Container(
+                          width: 200,
+                          child: FormBuilderRadioGroup(
+                            name: 'role',
+                            orientation: OptionsOrientation.horizontal,
+                            initialValue: RoleEnum.client.name,
+                            options: [
+                              FormBuilderFieldOption(value: RoleEnum.client.name, child: const Text('Client')),
+                              FormBuilderFieldOption(value: RoleEnum.courier.name, child: const Text('Livreur')),
                             ],
                           ),
                         ),
-                        ElevatedButton(
-                          onPressed: () {
-                            debugPrint(_formKey.currentState?.instantValue.toString());
-                            if (_formKey.currentState!.validate()) {
-                              if (widget.role == RoleEnum.client) {
-                                userBloc.add(OnRegisterClientEvent(
-                                  firstname: _formKey.currentState?.fields['firstname']?.value,
-                                  lastname: _formKey.currentState?.fields['lastname']?.value,
-                                  email: _formKey.currentState?.fields['email']?.value,
-                                  password: _formKey.currentState?.fields['password']?.value,
-                                ));
-                              } else if (widget.role == RoleEnum.courier) {
-                                userBloc.add(OnRegisterCourierEvent(
-                                  firstname: _formKey.currentState?.fields['firstname']?.value,
-                                  lastname: _formKey.currentState?.fields['lastname']?.value,
-                                  email: _formKey.currentState?.fields['email']?.value,
-                                  password: _formKey.currentState?.fields['password']?.value,
-                                ));
-                              }
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          debugPrint(_formKey.currentState?.instantValue.toString());
+                          if (_formKey.currentState!.validate()) {
+                            if (_formKey.currentState?.fields['role']?.value == RoleEnum.client.name) {
+                              userBloc.add(OnRegisterClientEvent(
+                                firstname: _formKey.currentState?.fields['firstname']?.value,
+                                lastname: _formKey.currentState?.fields['lastname']?.value,
+                                email: _formKey.currentState?.fields['email']?.value,
+                                password: _formKey.currentState?.fields['password']?.value,
+                              ));
+                            } else if (_formKey.currentState?.fields['role']?.value == RoleEnum.courier.name) {
+                              userBloc.add(OnRegisterCourierEvent(
+                                firstname: _formKey.currentState?.fields['firstname']?.value,
+                                lastname: _formKey.currentState?.fields['lastname']?.value,
+                                email: _formKey.currentState?.fields['email']?.value,
+                                password: _formKey.currentState?.fields['password']?.value,
+                              ));
                             }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.orangeAccent[200],
-                            fixedSize: const Size(400, 50),
-                          ),
-                          child: const Text('S\'inscrire'),
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.orangeAccent[200],
+                          fixedSize: const Size(400, 50),
                         ),
-                      ],
-                    ),
+                        child: const Text('S\'inscrire'),
+                      ),
+                    ],
+                  ),
                 )
               ],
             ),
