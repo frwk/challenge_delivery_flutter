@@ -39,7 +39,7 @@ class TextFieldAtom extends StatelessWidget {
         name: placeholder,
         decoration: InputDecoration(
           contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
-          labelText: placeholder,
+          labelText: '',
           labelStyle: TextStyle(
             color: placeholderColor,
             fontSize: 12,

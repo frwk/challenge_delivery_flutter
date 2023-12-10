@@ -1,3 +1,4 @@
+import 'package:challenge_delivery_flutter/bloc/order/order_bloc.dart';
 import 'package:challenge_delivery_flutter/bloc/user/user_bloc.dart';
 import 'package:challenge_delivery_flutter/common/app_colors.dart';
 import 'package:challenge_delivery_flutter/themes/light_mode.dart';
@@ -61,6 +62,7 @@ class _MyAppState extends State<MyApp> {
       providers: [
         BlocProvider(create: (context) => AuthBloc()..add(CheckLoginEvent())),
         BlocProvider(create: (context) => UserBloc()),
+        BlocProvider(create: (context) => OrderBloc()),
       ],
       child: MaterialApp(
         theme: lightMode(),

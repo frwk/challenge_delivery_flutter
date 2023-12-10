@@ -151,7 +151,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       ElevatedButton(
                         onPressed: () => {
-                          print( _loginFormKey.currentState?.fields['email']?.value),
                           if (_loginFormKey.currentState!.validate()) {
                             authBloc.add(
                               LoginEvent(

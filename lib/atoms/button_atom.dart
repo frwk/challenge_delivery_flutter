@@ -16,7 +16,7 @@ class ButtonAtom extends StatelessWidget {
         child: ElevatedButton(
           onPressed: onTap,
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primary,
+            backgroundColor: Colors.orangeAccent.shade200,
             fixedSize: const Size(400, 50),
           ),
           child: Text(
