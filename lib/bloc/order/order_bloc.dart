@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:challenge_delivery_flutter/services/order/order_service.dart';
+import 'package:challenge_delivery_flutter/models/order.dart';
 import 'package:flutter/material.dart';
 
 
@@ -17,11 +17,19 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     try {
 
       emit(OrderLoadingState());
-      print(event);
-      
-      final data = await orderService.post(event.departureAddress, event.arrivalAddress, event.packageType, event.packageWeight);
+      final order = Order(
+          departureAddress: event.departureAddress,
+          arrivalAddress: event.arrivalAddress,
+          packageType: event.packageType,
+          packageWeight: event.packageWeight
+      );
+      print(order);
+
+      // final data = await orderService.post(event.departureAddress, event.arrivalAddress, event.packageType, event.packageWeight);
       await Future.delayed(const Duration(milliseconds: 850));
-      // emit(OrderSuccessState());
+      emit(OrderAddressSuccessState(order));
+      print(state);
+      // emit(state.copyWith(order: order));
     } catch (e) {
       emit(OrderFailureState(e.toString()));
     }

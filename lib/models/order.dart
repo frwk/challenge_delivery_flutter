@@ -2,11 +2,11 @@ import 'package:challenge_delivery_flutter/models/address.dart';
 import 'package:challenge_delivery_flutter/models/user.dart';
 
 class Order {
-  final int id;
+  // final int id;
   // final String reference;
   // final String status;
-  final Address departureAddress;
-  final Address arrivalAddress;
+  final String departureAddress;
+  final String arrivalAddress;
   final String packageType;
   final String packageWeight;
   // final User client;
@@ -15,7 +15,7 @@ class Order {
   // final String total;
 
   const Order({
-    required this.id,
+    // required this.id,
     // required this.reference,
     // required this.status,
     // required this.date,
@@ -29,7 +29,7 @@ class Order {
   });
 
   factory Order.fromJson(Map<String, dynamic> json) => Order(
-      id: json["id"] ?? 0,
+      // id: json["id"] ?? 0,
       departureAddress: json["departureAddress"] ?? '',
       arrivalAddress: json["arrivalAddress"] ?? '',
       packageType: json["packageType"] ?? '',

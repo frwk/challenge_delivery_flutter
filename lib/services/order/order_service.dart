@@ -9,7 +9,7 @@ import '../../models/order.dart';
 class OrderService {
   Future<Order> post(String departureAddress, String arrivalAddress, String packageType, String packageWeight) async {
     try {
-      final response = await http.post(Uri.parse('${dotenv.env['API_URL']}/orders'),
+      final response = await http.post(Uri.parse('${dotenv.env['API_URL']}/deliveries'),
           headers: {'Accept': 'application/json'},
           body: {'departureAddress': departureAddress, 'arrivalAddress': arrivalAddress, 'packageType': packageType, 'packageWeight': packageWeight});
       if (response.body.isEmpty) throw Exception('Erreur lors de la connexion');

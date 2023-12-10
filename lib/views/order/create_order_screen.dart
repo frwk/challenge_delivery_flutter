@@ -8,6 +8,7 @@ import 'package:challenge_delivery_flutter/helpers/show_snack_message.dart';
 import 'package:challenge_delivery_flutter/models/google_autocomplete/autocomplete_prediction.dart';
 import 'package:challenge_delivery_flutter/models/google_autocomplete/place_autocomplete_response.dart';
 import 'package:challenge_delivery_flutter/utils/network_utility.dart';
+import 'package:challenge_delivery_flutter/views/order/order_summary.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:challenge_delivery_flutter/bloc/blocs.dart';
@@ -111,6 +112,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
 
     return BlocListener<OrderBloc, OrderState>(
       listener: (context, state) async {
+        print('Create order screen $state');
         if (state is OrderLoadingState) {
           modalLoading(context);
         } else if (state is OrderFailureState) {
@@ -119,6 +121,13 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
         } else if (state is OrderSuccessState) {
           Navigator.of(context, rootNavigator: true).pop();
           showSnackMessage(context, 'Commande créée avec succès', MessageTypeEnum.success);
+        } else if (state is OrderAddressSuccessState) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => OrderSummaryScreen(order: state.order!),
+            ),
+          );
         }
       },
       child: Scaffold(
