@@ -9,9 +9,9 @@ import 'package:challenge_delivery_flutter/models/google_autocomplete/autocomple
 import 'package:challenge_delivery_flutter/models/google_autocomplete/place_autocomplete_response.dart';
 import 'package:challenge_delivery_flutter/utils/network_utility.dart';
 import 'package:challenge_delivery_flutter/views/order/order_summary.dart';
+import 'package:challenge_delivery_flutter/widgets/layouts/app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:challenge_delivery_flutter/bloc/blocs.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../bloc/order/order_bloc.dart';
@@ -132,7 +132,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
       },
       child: Scaffold(
         backgroundColor: Theme.of(context).colorScheme.background,
-        appBar: buildAppBar(),
+        appBar: const MyAppBar(title: 'Nouvelle commande'),
         body: SafeArea(
           child: FormBuilder(
             key: _orderFormKey,
@@ -182,6 +182,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                           labelSize: 12,
                           labelColor: Colors.grey,
                           placeholder: 'package_type',
+                          name: 'package_type',
                         ),
                       ),
                     ),
@@ -194,6 +195,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                           labelSize: 12,
                           labelColor: Colors.grey,
                           placeholder: 'package_weight',
+                          name: 'package_weight',
                         ),
                       ),
                     ),
@@ -222,41 +224,41 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
     );
   }
 
-  AppBar buildAppBar() {
-    return AppBar(
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back),
-        color: Colors.black,
-        onPressed: () => Navigator.pop(context),
-      ),
-      title: const Center(
-        child: Text(
-          'Nouvelle commande',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
-      titleSpacing: 10,
-      actions: [
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(50),
-          ),
-          child: IconButton(
-            icon: const Icon(Icons.notifications),
-            color: Colors.black,
-            onPressed: () => {},
-          ),
-        ),
-      ],
-    );
-  }
+  // AppBar buildAppBar() {
+  //   return AppBar(
+  //     backgroundColor: Colors.transparent,
+  //     elevation: 0,
+  //     leading: IconButton(
+  //       icon: const Icon(Icons.arrow_back),
+  //       color: Colors.black,
+  //       onPressed: () => Navigator.pop(context),
+  //     ),
+  //     title: const Center(
+  //       child: Text(
+  //         'Nouvelle commande',
+  //         style: TextStyle(
+  //           color: Colors.black,
+  //           fontSize: 20,
+  //           fontWeight: FontWeight.w600,
+  //         ),
+  //       ),
+  //     ),
+  //     titleSpacing: 10,
+  //     actions: [
+  //       Container(
+  //         decoration: BoxDecoration(
+  //           color: Colors.white,
+  //           borderRadius: BorderRadius.circular(50),
+  //         ),
+  //         child: IconButton(
+  //           icon: const Icon(Icons.notifications),
+  //           color: Colors.black,
+  //           onPressed: () => {},
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
   Widget buildPredictionsList(List<AutocompletePrediction> predictions, String addressType) {
     return predictions.isNotEmpty
@@ -294,6 +296,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
         labelSize: 12,
         labelColor: Colors.grey,
         placeholder: placeholder,
+        name: placeholder,
       ),
     );
   }

@@ -13,8 +13,9 @@ class MyCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 170,
-        padding: const EdgeInsets.all(35),
+        margin: const EdgeInsets.symmetric(horizontal: 10),
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         decoration: const BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(10)),
             color: Colors.white,

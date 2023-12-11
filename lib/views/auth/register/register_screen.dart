@@ -1,5 +1,6 @@
 import 'package:challenge_delivery_flutter/atoms/landing_title_atom.dart';
 import 'package:challenge_delivery_flutter/bloc/user/user_bloc.dart';
+import 'package:challenge_delivery_flutter/components/input_component.dart';
 import 'package:challenge_delivery_flutter/enums/message_type_enum.dart';
 import 'package:challenge_delivery_flutter/enums/role_enum.dart';
 import 'package:challenge_delivery_flutter/helpers/loading_state.dart';
@@ -73,105 +74,12 @@ class _RegisterClientScreenState extends State<RegisterClientScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const LandingTitleAtom(title: 'Let\'s', titleColor: Colors.black, subtitle: 'Get Started', subtitleColor: Colors.orangeAccent),
-                      const SizedBox(height: 20.0),
-                      FormBuilderTextField(
-                        name: 'firstname',
-                        decoration: const InputDecoration(
-                            labelText: 'Prénom',
-                            labelStyle: TextStyle(
-                              color: Colors.grey,
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                              borderSide: BorderSide.none,
-                            ),
-                            fillColor: Colors.white,
-                            filled: true,
-                            contentPadding: EdgeInsets.all(15.0)),
-                        validator: FormBuilderValidators.compose([
-                          FormBuilderValidators.required(),
-                        ]),
-                      ),
-                      const SizedBox(height: 20.0),
-                      FormBuilderTextField(
-                        name: 'lastname',
-                        decoration: const InputDecoration(
-                            labelText: 'Nom',
-                            labelStyle: TextStyle(
-                              color: Colors.grey,
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                              borderSide: BorderSide.none,
-                            ),
-                            fillColor: Colors.white,
-                            filled: true,
-                            contentPadding: EdgeInsets.all(15.0)),
-                        validator: FormBuilderValidators.compose([
-                          FormBuilderValidators.required(),
-                        ]),
-                      ),
-                      const SizedBox(height: 20.0),
-                      FormBuilderTextField(
-                        name: 'email',
-                        decoration: const InputDecoration(
-                            labelText: 'Email',
-                            labelStyle: TextStyle(
-                              color: Colors.grey,
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                              borderSide: BorderSide.none,
-                            ),
-                            fillColor: Colors.white,
-                            filled: true,
-                            contentPadding: EdgeInsets.all(15.0)),
-                        validator: FormBuilderValidators.compose([
-                          FormBuilderValidators.required(),
-                          FormBuilderValidators.email(),
-                        ]),
-                      ),
-                      const SizedBox(height: 20.0),
-                      FormBuilderTextField(
-                        name: 'password',
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        obscureText: true,
-                        decoration: const InputDecoration(
-                            labelText: 'Mot de passe',
-                            labelStyle: TextStyle(
-                              color: Colors.grey,
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                              borderSide: BorderSide.none,
-                            ),
-                            fillColor: Colors.white,
-                            filled: true,
-                            contentPadding: EdgeInsets.all(15.0)),
-                        validator: FormBuilderValidators.compose([
-                          FormBuilderValidators.required(),
-                          FormBuilderValidators.minLength(8),
-                        ]),
-                      ),
-                      const SizedBox(height: 20.0),
-                      FormBuilderTextField(
-                        name: 'confirm_password',
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        obscureText: true,
-                        decoration: const InputDecoration(
-                            labelText: 'Confirmation de mot de passe',
-                            labelStyle: TextStyle(
-                              color: Colors.grey,
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                              borderSide: BorderSide.none,
-                            ),
-                            fillColor: Colors.white,
-                            filled: true,
-                            contentPadding: EdgeInsets.all(15.0)),
-                        validator: (value) => _formKey.currentState?.fields['password']?.value != value ? 'Mots de passe différents' : null,
-                      ),
+                      const SizedBox(height: 10.0),
+                      InputComponent(label: 'Prénom', name: 'firstname', placeholder: 'Votre prénom', displayPlaceholder: true, validators: [FormBuilderValidators.required()]),
+                      InputComponent(label: 'Nom', name: 'lastname', placeholder: 'Votre nom', displayPlaceholder: true, validators: [FormBuilderValidators.required()]),
+                      InputComponent(label: 'Email', name:'email', placeholder: 'Votre email', displayPlaceholder: true, validators: [FormBuilderValidators.required(),  FormBuilderValidators.email()]),
+                      InputComponent(label: 'Mot de passe', name: 'password' ,placeholder: 'Votre mot de passe', displayPlaceholder: true, password: true, validators: [FormBuilderValidators.required(), FormBuilderValidators.minLength(8)]),
+                      InputComponent(label: 'Confirmation de mot de passe', name:'confirm_password', placeholder: 'Confirmer votre mot de passe', displayPlaceholder: true, password: true, validators: [FormBuilderValidators.required(), (value) => _formKey.currentState?.fields['password']?.value != value ? 'Mots de passe différents' : null]),
                       const SizedBox(height: 20),
                       const Padding(
                         padding: EdgeInsets.all(5.0),
