@@ -31,7 +31,7 @@ class _MainScreenState extends State<ClientLayout> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             IconButton(onPressed: () {}, icon: Icon(Icons.home, color: Theme.of(context).colorScheme.secondary)),
-            IconButton(onPressed: () {}, icon: Icon(Icons.assignment, color: Theme.of(context).colorScheme.secondary)),
+            IconButton(onPressed: () => Navigator.pushNamed(context, '/complaints'), icon: Icon(Icons.assignment, color: Theme.of(context).colorScheme.secondary)),
             IconButton(onPressed: () {}, icon: Icon(Icons.person, color: Theme.of(context).colorScheme.secondary)),
             IconButton(onPressed: () {}, icon: Icon(Icons.notifications, color: Theme.of(context).colorScheme.secondary)),
           ],
