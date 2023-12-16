@@ -5,7 +5,9 @@ import 'package:challenge_delivery_flutter/views/complaint/complaint_detail_scre
 import 'package:flutter/material.dart';
 
 class ComplaintDetailScreen extends StatefulWidget {
-  const ComplaintDetailScreen({super.key});
+  final Function? callback;
+
+  const ComplaintDetailScreen({super.key, this.callback});
 
   @override
   ComplaintDetailScreenState createState() => ComplaintDetailScreenState();
@@ -32,7 +34,9 @@ class ComplaintDetailScreenState extends State<ComplaintDetailScreen> {
                     ],
                 onSelected: (value) async {
                   if (value == 'close') {
-                    await complaintService.markAsResolved(complaint.id);
+                    final Complaint updatedComplaint =
+                        await complaintService.markAsResolved(complaint.id);
+                    args.callback(updatedComplaint);
                     if (context.mounted) Navigator.of(context).pop();
                   }
                 })

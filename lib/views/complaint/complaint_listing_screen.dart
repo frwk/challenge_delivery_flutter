@@ -14,18 +14,39 @@ class ComplaintListingScreen extends StatefulWidget {
 }
 
 class _ComplaintListingScreenState extends State<ComplaintListingScreen> {
+  late Future<List<Complaint>> complaints;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    setState(() {
+      complaints = getComplaints(context);
+    });
+  }
+
+  Future<void> refreshComplaints(BuildContext context) async {
+    setState(() {
+      complaints = getComplaints(context);
+    });
+  }
+
+  Future<List<Complaint>> getComplaints(BuildContext context) async {
+    final authUser = BlocProvider.of<UserBloc>(context).state.user;
+    List<Complaint> fetchedComplaints =
+        await complaintService.get(authUser!.id);
+    return fetchedComplaints;
+  }
+
+  callback(updatedComplaint) {
+    complaints.then((complaints) => setState(() {
+          complaints[complaints.indexWhere(
+                  (complaint) => complaint.id == updatedComplaint.id)] =
+              updatedComplaint;
+        }));
+  }
+
   @override
   Widget build(BuildContext context) {
-    final authUser = BlocProvider.of<UserBloc>(context).state.user;
-    final complaintService = ComplaintService();
-
-    Future<List<Complaint>> getComplaints() async {
-      List<Complaint> fetchedComplaints =
-          await complaintService.get(authUser!.id);
-      fetchedComplaints.sort((a, b) => a.status.compareTo(b.status));
-      return fetchedComplaints;
-    }
-
     return Scaffold(
         appBar: AppBar(
           title: const Text(
@@ -38,7 +59,7 @@ class _ComplaintListingScreenState extends State<ComplaintListingScreen> {
           ),
         ),
         body: FutureBuilder<List<Complaint>>(
-          future: getComplaints(),
+          future: complaints,
           builder: (context, AsyncSnapshot<List<Complaint>> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const CircularProgressIndicator();
@@ -46,14 +67,10 @@ class _ComplaintListingScreenState extends State<ComplaintListingScreen> {
               return Text('Error: ${snapshot.error}');
             } else {
               List<Complaint> fetchedComplaints = snapshot.data!;
+              fetchedComplaints.sort((a, b) => a.status.compareTo(b.status));
 
               return RefreshIndicator(
-                onRefresh: () async {
-                  List<Complaint> refreshedComplaints = await getComplaints();
-                  setState(() {
-                    fetchedComplaints = refreshedComplaints;
-                  });
-                },
+                onRefresh: () => refreshComplaints(context),
                 child: ListView.builder(
                   itemCount: fetchedComplaints.length,
                   itemBuilder: (context, index) {
@@ -63,7 +80,7 @@ class _ComplaintListingScreenState extends State<ComplaintListingScreen> {
                       onTap: () {
                         Navigator.pushNamed(context, '/complaint-detail',
                             arguments: ComplaintDetailScreenArgs(
-                                complaint: complaint));
+                                complaint: complaint, callback: callback));
                       },
                       child: Card(
                         elevation: 3,
