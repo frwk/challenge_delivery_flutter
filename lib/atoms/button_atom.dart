@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 class ButtonAtom extends StatelessWidget {
   final String data;
   final String? redirectTo;
+  final Color? color;
   final void Function()? onTap;
 
-  const ButtonAtom({super.key, required this.data, this.redirectTo, this.onTap});
+  const ButtonAtom({super.key, required this.data, this.redirectTo, this.onTap, this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +17,7 @@ class ButtonAtom extends StatelessWidget {
         child: ElevatedButton(
           onPressed: onTap,
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.orangeAccent.shade200,
+            backgroundColor: color ?? Colors.orangeAccent.shade200,
             fixedSize: const Size(400, 50),
           ),
           child: Text(

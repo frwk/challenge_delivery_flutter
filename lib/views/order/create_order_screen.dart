@@ -142,8 +142,10 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                 buildAddressInput(
                   controller: _departureAddressController,
                   onChanged: (value) async => await placeAutocomplete(value, 'departure'),
+                  name: 'departure',
                   label: 'Adresse de départ',
-                  placeholder: 'departure',
+                  placeholder: 'Entrez votre adresse de départ',
+                  displayPlaceholder: true,
                   predictions: departurePlacePredictions.map((e) => e.description!).toList(),
                   onTap: (prediction) => onPlaceSelected(prediction as AutocompletePrediction, 'departure'),
                   isOnChangedActive: isOnChangedActiveForDepartureAddress,
@@ -154,8 +156,10 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                 buildAddressInput(
                   controller: _arrivalAddressController,
                   onChanged: (value) async => await placeAutocomplete(value, 'arrival'),
-                  label: 'Adresse de départ',
-                  placeholder: 'arrival',
+                  name: 'arrival',
+                  label: 'Adresse d\'arrivée',
+                  placeholder: 'Entrez votre adresse d\'arrivée',
+                  displayPlaceholder: true,
                   predictions: arrivalPlacePredictions.map((e) => e.description!).toList(),
                   onTap: (prediction) => onPlaceSelected(prediction as AutocompletePrediction, 'arrival'),
                   isOnChangedActive: isOnChangedActiveForArrivalAddress,
@@ -223,43 +227,6 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
       ),
     );
   }
-
-  // AppBar buildAppBar() {
-  //   return AppBar(
-  //     backgroundColor: Colors.transparent,
-  //     elevation: 0,
-  //     leading: IconButton(
-  //       icon: const Icon(Icons.arrow_back),
-  //       color: Colors.black,
-  //       onPressed: () => Navigator.pop(context),
-  //     ),
-  //     title: const Center(
-  //       child: Text(
-  //         'Nouvelle commande',
-  //         style: TextStyle(
-  //           color: Colors.black,
-  //           fontSize: 20,
-  //           fontWeight: FontWeight.w600,
-  //         ),
-  //       ),
-  //     ),
-  //     titleSpacing: 10,
-  //     actions: [
-  //       Container(
-  //         decoration: BoxDecoration(
-  //           color: Colors.white,
-  //           borderRadius: BorderRadius.circular(50),
-  //         ),
-  //         child: IconButton(
-  //           icon: const Icon(Icons.notifications),
-  //           color: Colors.black,
-  //           onPressed: () => {},
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
-
   Widget buildPredictionsList(List<AutocompletePrediction> predictions, String addressType) {
     return predictions.isNotEmpty
         ? Expanded(
@@ -277,11 +244,13 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
   Widget buildAddressInput({
     required TextEditingController controller,
     required Function(String) onChanged,
+    required String name,
     required String label,
     required String placeholder,
     required List<String> predictions,
     required Function(String) onTap,
     required bool isOnChangedActive,
+    required bool displayPlaceholder,
   }) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 25.0),
@@ -296,7 +265,8 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
         labelSize: 12,
         labelColor: Colors.grey,
         placeholder: placeholder,
-        name: placeholder,
+        displayPlaceholder: displayPlaceholder,
+        name: name,
       ),
     );
   }

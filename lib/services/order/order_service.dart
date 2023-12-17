@@ -7,7 +7,13 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../../models/order.dart';
 
 class OrderService {
-  Future<Order> post(String departureAddress, String arrivalAddress, String packageType, String packageWeight) async {
+  Future<Order> post(
+      String departureAddress,
+      String arrivalAddress,
+      String packageType,
+      String packageWeight
+      ) async
+  {
     try {
       final response = await http.post(Uri.parse('${dotenv.env['API_URL']}/deliveries'),
           headers: {'Accept': 'application/json'},

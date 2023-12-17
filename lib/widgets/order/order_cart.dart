@@ -13,20 +13,23 @@ class OrderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MyCard(child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(title, style: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
-        )),
-        const SizedBox(height: 8),
-        Text(address, style: TextStyle(
-          color: Colors.grey.shade500,
-          fontSize: 12,
-          fontWeight: FontWeight.w400,
-        )),
-      ],
-    ));
+    return MyCard(
+      width: double.infinity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title, style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          )),
+          const SizedBox(height: 8),
+          Text(address, style: TextStyle(
+            color: Colors.grey.shade500,
+            fontSize: 12,
+            fontWeight: FontWeight.w400,
+          )),
+        ],
+      )
+    );
   }
 }

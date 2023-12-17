@@ -16,3 +16,9 @@ class OrderAddressEvent extends OrderEvent {
       this.packageWeight
       );
 }
+
+class OrderConfirmedEvent extends OrderEvent {
+  final Order order;
+
+  OrderConfirmedEvent(this.order);
+}

@@ -7,7 +7,7 @@ ThemeData lightMode() {
       headlineLarge: TextStyle(fontFamily: 'Poppins', fontSize: 24, fontWeight: FontWeight.w600, color: Colors.black),
     ),
     colorScheme: ColorScheme.light(
-      background: Colors.white,
+      background: Colors.grey.shade100,
       primary: Colors.white,
       secondary: Colors.grey.shade400,
       inversePrimary: Colors.grey.shade700,

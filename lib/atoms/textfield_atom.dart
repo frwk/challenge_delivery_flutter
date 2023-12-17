@@ -47,7 +47,6 @@ class TextFieldAtom extends StatelessWidget {
         name: name,
         validator: FormBuilderValidators.compose(validators ?? []),
         decoration: InputDecoration(
-          hintText: 'test',
           contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
           labelText: true == displayPlaceholder ? placeholder : null,
           labelStyle: TextStyle(
