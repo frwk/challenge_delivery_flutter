@@ -5,19 +5,26 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:challenge_delivery_flutter/bloc/auth/auth_bloc.dart';
 
 class CourierLayout extends StatefulWidget {
-  const CourierLayout({super.key});
+  final int initialIndex;
+  const CourierLayout({Key? key, this.initialIndex = 0}) : super(key: key);
 
   @override
   _MainScreenState createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<CourierLayout> {
-  int _currentIndex = 0;
+  late int _currentIndex;
 
   final _pages = [
     const CourierHomeScreen(),
     const CourierProfileScreen(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.initialIndex;
+  }
 
   @override
   Widget build(BuildContext context) {

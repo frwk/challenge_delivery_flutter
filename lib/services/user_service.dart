@@ -45,6 +45,44 @@ class UserService {
       rethrow;
     }
   }
+
+  Future<User> updateUser(User user) async {
+    try {
+      Map<String, String> headers = {HttpHeaders.contentTypeHeader: 'application/json'};
+      print('user: ${jsonEncode(user.toJson())}');
+      final response = await http.patch(
+        Uri.parse('${dotenv.env['API_URL']}/users/${user.id}'),
+        headers: headers,
+        body: jsonEncode(user.toJson()),
+      );
+      if (response.statusCode != 200) {
+        throw Exception(jsonDecode(response.body)['message']);
+      }
+      return User.fromJson(jsonDecode(response.body));
+    } catch (e) {
+      print(e);
+      rethrow;
+    }
+  }
+
+  Future<User> updateCourier(Courier courier) async {
+    try {
+      Map<String, String> headers = {HttpHeaders.contentTypeHeader: 'application/json'};
+      print('courier: ${jsonEncode(courier.toJson())}');
+      final response = await http.patch(
+        Uri.parse('${dotenv.env['API_URL']}/couriers/${courier.id}'),
+        headers: headers,
+        body: jsonEncode(courier.toJson()),
+      );
+      if (response.statusCode != 200) {
+        throw Exception(jsonDecode(response.body)['message']);
+      }
+      return User.fromJson(jsonDecode(response.body));
+    } catch (e) {
+      print(e);
+      rethrow;
+    }
+  }
 }
 
 final userService = UserService();

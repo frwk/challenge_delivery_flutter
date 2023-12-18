@@ -1,80 +1,99 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
+
+import 'package:challenge_delivery_flutter/main.dart';
+import 'package:challenge_delivery_flutter/widgets/layouts/courier_layout.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-class PushNotification {
-  late AndroidNotificationChannel channel;
-
-  late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
-
-  void initNotification() async {
-    channel = const AndroidNotificationChannel('high_importance_channel', 'High Importance Notifications', importance: Importance.high);
-
-    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-
-    await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
-        ?.createNotificationChannel(channel);
-
-    await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(alert: true, badge: true, sound: true);
+@pragma('vm:entry-point')
+void notificationTapBackground(NotificationResponse notificationResponse) {
+  if (notificationResponse.payload == null) {
+    return;
   }
-
-  void onMessagingListener() {
-    FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message) {
-      if (message != null) {
-        print('Nouvelle notification : $message');
-      }
-    });
-
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      RemoteNotification? notification = message.notification;
-
-      AndroidNotification? android = message.notification?.android;
-
-      if (notification != null && android != null) {
-        flutterLocalNotificationsPlugin.show(notification.hashCode, notification.title, notification.body,
-            NotificationDetails(android: AndroidNotificationDetails(channel.id, channel.name, icon: 'launch_background')));
-      }
-    });
-
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print('Nouvelle notification : $message');
-    });
-  }
-
-  Future<String?> getNotificationToken() async {
-    return await FirebaseMessaging.instance.getToken();
-  }
-
-  //  Authorization - YOUR Server key of Cloud Messaging
-  Future<void> sendNotification(String to, Map<String, dynamic> data, String title, String body) async {
-    Uri uri = Uri.https('fcm.googleapis.com', '/fcm/send');
-
-    await http.post(uri,
-        headers: <String, String>{'Content-Type': 'application/json', 'Authorization': 'key=HERE YOUR Server key Cloud Messaging'},
-        body: jsonEncode(<String, dynamic>{
-          'notification': {'body': body, 'title': title},
-          'priority': 'high',
-          'ttl': '4500s',
-          'data': data,
-          'to': to
-        }));
-  }
-
-  Future<void> sendNotificationMultiple(List<String> toList, Map<String, dynamic> data, String title, String body) async {
-    Uri uri = Uri.https('fcm.googleapis.com', '/fcm/send');
-
-    await http.post(uri,
-        headers: <String, String>{'Content-Type': 'application/json', 'Authorization': 'key=HERE YOUR Server key of Cloud Messaging'},
-        body: jsonEncode(<String, dynamic>{
-          'notification': {'body': body, 'title': title},
-          'priority': 'high',
-          'ttl': '4500s',
-          'data': data,
-          'registration_ids': toList
-        }));
+  Map<String, dynamic> payload = jsonDecode(notificationResponse.payload!);
+  if (payload.containsKey('click_action')) {
+    switch (payload['click_action']) {
+      case 'OPEN_DELIVERY_DETAILS':
+        navigatorKey.currentState?.pushReplacement(MaterialPageRoute(builder: (_) => const CourierLayout(initialIndex: 1)));
+        break;
+    }
   }
 }
 
-final pushNotification = PushNotification();
+class NotificationService {
+  // Instance de Firebase Messaging
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+
+  // Instance de notifications locales (pour afficher les notifications alors que l'app est en premier plan)
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+  Future<void> init() async {
+    NotificationSettings settings = await _firebaseMessaging.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      print('User granted permission');
+    } else if (settings.authorizationStatus == AuthorizationStatus.provisional) {
+      print('User granted provisional permission');
+    } else {
+      print('User declined or has not accepted permission');
+    }
+
+    // Configuration pour les notifications locales
+    await flutterLocalNotificationsPlugin.initialize(
+      const InitializationSettings(
+        android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+      ),
+      onDidReceiveNotificationResponse: notificationTapBackground,
+      onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
+    );
+
+    // Écoute des notifications entrantes
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      _handleMessage(message);
+    });
+
+    // Écoute lorsque l'app est en background mais pas terminée (user clicks on notification)
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      if (message.data.containsKey('click_action')) {
+        String clickAction = message.data['click_action'];
+        switch (clickAction) {
+          case 'OPEN_DELIVERY_DETAILS':
+            navigatorKey.currentState?.pushReplacement(MaterialPageRoute(builder: (_) => const CourierLayout(initialIndex: 1)));
+            break;
+        }
+      }
+    });
+  }
+
+  // Gérer la réception des notifications
+  void _handleMessage(RemoteMessage message) {
+    if (message.notification != null) {
+      _showNotification(message.notification!, message.data);
+    }
+  }
+
+  // Affichage des notifications alors que l'app est en premier plan
+  Future<void> _showNotification(RemoteNotification notification, Map<String, dynamic> data) async {
+    var androidDetails = const AndroidNotificationDetails(
+      'channel_id',
+      'channel_name',
+      channelDescription: 'channel_description',
+      importance: Importance.max,
+      priority: Priority.max,
+    );
+    var generalNotificationDetails = NotificationDetails(
+      android: androidDetails,
+    );
+
+    await flutterLocalNotificationsPlugin.show(0, notification.title, notification.body, generalNotificationDetails, payload: jsonEncode(data));
+  }
+
+  Future<String?> getToken() async {
+    return await _firebaseMessaging.getToken();
+  }
+}

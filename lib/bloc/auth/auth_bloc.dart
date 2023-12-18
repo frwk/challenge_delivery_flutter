@@ -20,7 +20,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(LoadingAuthState());
       final data = await authService.login(event.email, event.password);
       await Future.delayed(const Duration(milliseconds: 850));
-      emit(state.copyWith(user: data));
+      emit(SuccessAuthState(data));
     } catch (e) {
       emit(FailureAuthState(e.toString()));
     }
