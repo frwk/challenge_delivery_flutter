@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:challenge_delivery_flutter/bloc/auth/auth_bloc.dart';
 import 'package:challenge_delivery_flutter/bloc/user/user_bloc.dart';
 import 'package:challenge_delivery_flutter/init_socket.dart';
 import 'package:challenge_delivery_flutter/models/complaint.dart';
@@ -70,7 +71,7 @@ class ChatWidgetState extends State<ChatWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final authUser = BlocProvider.of<UserBloc>(context).state.user;
+    final authUser = BlocProvider.of<AuthBloc>(context).state.user;
 
     return Column(
       children: [

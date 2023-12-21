@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:challenge_delivery_flutter/bloc/auth/auth_bloc.dart';
 import 'package:challenge_delivery_flutter/bloc/user/user_bloc.dart';
 import 'package:challenge_delivery_flutter/models/complaint.dart';
 import 'package:challenge_delivery_flutter/services/complaint/complaint_service.dart';
@@ -32,7 +33,7 @@ class _ComplaintListingScreenState extends State<ComplaintListingScreen> {
   }
 
   Future<List<Complaint>> getComplaints(BuildContext context) async {
-    final authUser = BlocProvider.of<UserBloc>(context).state.user;
+    final authUser = BlocProvider.of<AuthBloc>(context).state.user;
     List<Complaint> fetchedComplaints = await complaintService.get(authUser!.id);
     return fetchedComplaints;
   }

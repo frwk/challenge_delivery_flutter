@@ -1,8 +1,5 @@
-import 'dart:convert';
 
 import 'package:challenge_delivery_flutter/models/courier.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class User {
   final int id;

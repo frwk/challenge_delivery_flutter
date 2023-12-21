@@ -27,10 +27,7 @@ void notificationTapBackground(NotificationResponse notificationResponse) {
 }
 
 class NotificationService {
-  // Instance de Firebase Messaging
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-
-  // Instance de notifications locales (pour afficher les notifications alors que l'app est en premier plan)
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   Future<void> init() async {
@@ -48,7 +45,6 @@ class NotificationService {
       print('User declined or has not accepted permission');
     }
 
-    // Configuration pour les notifications locales
     await flutterLocalNotificationsPlugin.initialize(
       const InitializationSettings(
         android: AndroidInitializationSettings('@mipmap/ic_launcher'),
@@ -57,12 +53,10 @@ class NotificationService {
       onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
     );
 
-    // Écoute des notifications entrantes
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       _handleMessage(message);
     });
 
-    // Écoute lorsque l'app est en background mais pas terminée (user clicks on notification)
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       if (message.data.containsKey('click_action')) {
         handleAction(message.data['click_action']);

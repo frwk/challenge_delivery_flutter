@@ -10,6 +10,5 @@ class Order {
   factory Order.fromJson(Map<String, dynamic> json) => Order(
       // id: json["id"] ?? 0,
       pickupAddress: json["pickupAddress"] ?? '',
-      dropoffAddress: json["dropoffAddress"] ?? ''
-  );
+      dropoffAddress: json["dropoffAddress"] ?? '');
 }

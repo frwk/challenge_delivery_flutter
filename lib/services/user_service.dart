@@ -60,7 +60,6 @@ class UserService {
       }
       return User.fromJson(jsonDecode(response.body));
     } catch (e) {
-      print(e);
       rethrow;
     }
   }

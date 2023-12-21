@@ -1,4 +1,4 @@
-import 'package:challenge_delivery_flutter/bloc/blocs.dart';
+import 'package:challenge_delivery_flutter/bloc/auth/auth_bloc.dart';
 import 'package:challenge_delivery_flutter/bloc/user/user_bloc.dart';
 import 'package:challenge_delivery_flutter/components/input_component.dart';
 import 'package:challenge_delivery_flutter/enums/message_type_enum.dart';
@@ -11,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
-import 'dart:developer' as developer;
 
 import '../../../atoms/landing_title_atom.dart';
 import '../../../atoms/text_button.dart';
@@ -34,11 +33,6 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final authBloc = BlocProvider.of<AuthBloc>(context);
-    final userBloc = BlocProvider.of<UserBloc>(context);
-
-    void redirectTo() {
-      Navigator.pushNamed(context, '/signup');
-    }
 
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) async {
@@ -49,9 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
         } else if (state is FailureAuthState) {
           Navigator.of(context, rootNavigator: true).pop();
           showSnackMessage(context, state.error, MessageTypeEnum.error);
-        } else if (state.user?.role != null) {
-          developer.log(state.toString(), name: 'ya un role');
-          userBloc.add(OnGetUserEvent(state.user!));
+        } else if (state is SuccessAuthState && state.user?.role != null) {
           if (state.user?.role == 'client') {
             Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const ClientLayout()), (route) => false);
           } else if (state.user?.role == 'courier') {
@@ -74,14 +66,25 @@ class _LoginScreenState extends State<LoginScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const LandingTitleAtom(title: 'Welcome', titleColor: Colors.black, subtitle: 'Back', subtitleColor: Colors.black),
-                        InputComponent(label: 'Email', name: 'email' ,placeholder: 'Entrez votre adresse email', displayPlaceholder: true, validators: [
-                        FormBuilderValidators.required(),
-                        FormBuilderValidators.email(),
-                      ]),
-                      InputComponent(label: 'Mot de passe', name: 'password' ,placeholder: 'Entrez votre mot de passe', displayPlaceholder: true ,password: true, validators: [
-                        FormBuilderValidators.required(),
-                        FormBuilderValidators.minLength(8),
-                        ]),
+                        InputComponent(
+                            label: 'Email',
+                            name: 'email',
+                            placeholder: 'Entrez votre adresse email',
+                            displayPlaceholder: true,
+                            validators: [
+                              FormBuilderValidators.required(),
+                              FormBuilderValidators.email(),
+                            ]),
+                        InputComponent(
+                            label: 'Mot de passe',
+                            name: 'password',
+                            placeholder: 'Entrez votre mot de passe',
+                            displayPlaceholder: true,
+                            password: true,
+                            validators: [
+                              FormBuilderValidators.required(),
+                              FormBuilderValidators.minLength(8),
+                            ]),
                         Container(
                           alignment: Alignment.bottomRight,
                           child: InkWell(
@@ -91,9 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         ElevatedButton(
                           onPressed: () => {
-                            print(_loginFormKey.currentState),
-                          print(_loginFormKey.currentState?.fields['email']?.value),
-                          if (_loginFormKey.currentState!.validate())
+                            if (_loginFormKey.currentState!.validate())
                               {
                                 authBloc.add(LoginEvent(
                                   _loginFormKey.currentState?.fields['email']?.value,
@@ -115,9 +116,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            TextButtonAtom(
-                              label: 'Vous n\'avez pas de compte ?',
-                              labelColor: Colors.grey,
+                            const Text(
+                              'Vous n\'avez pas de compte ?',
+                              style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 12),
                             ),
                             TextButtonAtom(label: 'Inscrivez-vous', labelColor: Colors.orangeAccent, redirectTo: '/register'),
                           ],

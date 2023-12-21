@@ -23,7 +23,7 @@ class LandingTitleAtom extends StatelessWidget {
         Text(title, style: TextStyle(color: titleColor ?? Colors.black, fontSize: 28, fontWeight: FontWeight.bold)),
         subtitle != null && subtitle!.isNotEmpty
             ? Text(subtitle!, style: TextStyle(color: subtitleColor ?? Colors.black, fontSize: 28, fontWeight: FontWeight.bold))
-            : SizedBox.shrink(),
+            : const SizedBox.shrink(),
       ],
     );
   }
