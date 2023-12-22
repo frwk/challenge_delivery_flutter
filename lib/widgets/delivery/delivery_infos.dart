@@ -75,7 +75,7 @@ class DeliveryInfos extends StatelessWidget {
         Text("${deliveryTrackingBloc.client.firstName} ${deliveryTrackingBloc.client.lastName}"),
         const Spacer(),
         InkWell(
-          onTap: () async => await makePhoneCall('0654215421'),
+          onTap: () async => await makePhoneCall('+33654215421'),
           child: Container(
             height: 30,
             width: 30,

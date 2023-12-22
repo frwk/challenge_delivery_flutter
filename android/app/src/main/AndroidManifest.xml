@@ -38,4 +38,10 @@
         <meta-data android:name="com.google.android.geo.API_KEY"
             android:value="${MAPS_ACCESS_TOKEN}"/>
     </application>
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="tel" />
+        </intent>
+    </queries>
 </manifest>
