@@ -8,7 +8,7 @@ ThemeData lightMode() {
     ),
     colorScheme: ColorScheme.light(
       background: Colors.grey.shade100,
-      primary: Colors.white,
+      primary: const Color(0xFFFFCC80),
       secondary: Colors.grey.shade400,
       inversePrimary: Colors.grey.shade700,
     ),

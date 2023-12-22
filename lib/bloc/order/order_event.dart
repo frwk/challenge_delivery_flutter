@@ -4,21 +4,17 @@ part of 'order_bloc.dart';
 abstract class OrderEvent {}
 
 class OrderAddressEvent extends OrderEvent {
-  final String departureAddress;
-  final String arrivalAddress;
+  final String pickupAddress;
+  final String dropoffAddress;
   final String packageType;
   final String packageWeight;
 
-  OrderAddressEvent(
-      this.departureAddress,
-      this.arrivalAddress,
-      this.packageType,
-      this.packageWeight
-      );
+  OrderAddressEvent(this.pickupAddress, this.dropoffAddress, this.packageType, this.packageWeight);
 }
 
 class OrderConfirmedEvent extends OrderEvent {
   final Order order;
+  final int clientId;
 
-  OrderConfirmedEvent(this.order);
+  OrderConfirmedEvent(this.order, this.clientId);
 }
