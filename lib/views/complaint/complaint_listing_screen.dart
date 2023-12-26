@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:challenge_delivery_flutter/bloc/user/user_bloc.dart';
 import 'package:challenge_delivery_flutter/models/complaint.dart';
 import 'package:challenge_delivery_flutter/services/complaint/complaint_service.dart';
@@ -32,16 +33,13 @@ class _ComplaintListingScreenState extends State<ComplaintListingScreen> {
 
   Future<List<Complaint>> getComplaints(BuildContext context) async {
     final authUser = BlocProvider.of<UserBloc>(context).state.user;
-    List<Complaint> fetchedComplaints =
-        await complaintService.get(authUser!.id);
+    List<Complaint> fetchedComplaints = await complaintService.get(authUser!.id);
     return fetchedComplaints;
   }
 
   callback(updatedComplaint) {
     complaints.then((complaints) => setState(() {
-          complaints[complaints.indexWhere(
-                  (complaint) => complaint.id == updatedComplaint.id)] =
-              updatedComplaint;
+          complaints[complaints.indexWhere((complaint) => complaint.id == updatedComplaint.id)] = updatedComplaint;
         }));
   }
 
@@ -79,13 +77,11 @@ class _ComplaintListingScreenState extends State<ComplaintListingScreen> {
                     return GestureDetector(
                       onTap: () {
                         Navigator.pushNamed(context, '/complaint-detail',
-                            arguments: ComplaintDetailScreenArgs(
-                                complaint: complaint, callback: callback));
+                            arguments: ComplaintDetailScreenArgs(complaint: complaint, callback: callback));
                       },
                       child: Card(
                         elevation: 3,
-                        margin: const EdgeInsets.symmetric(
-                            vertical: 8, horizontal: 16),
+                        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                         child: Padding(
                           padding: const EdgeInsets.all(16),
                           child: Row(
@@ -117,20 +113,13 @@ class _ComplaintListingScreenState extends State<ComplaintListingScreen> {
                                         ),
                                         const Spacer(),
                                         Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 10, vertical: 5),
+                                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                                           decoration: BoxDecoration(
-                                            color:
-                                                complaint.status == 'resolved'
-                                                    ? Colors.green
-                                                    : Colors.orange,
-                                            borderRadius:
-                                                BorderRadius.circular(10),
+                                            color: complaint.status == 'resolved' ? Colors.green : Colors.orange,
+                                            borderRadius: BorderRadius.circular(10),
                                           ),
                                           child: Text(
-                                            complaint.status == 'resolved'
-                                                ? 'Résolu'
-                                                : 'En cours',
+                                            complaint.status == 'resolved' ? 'Résolu' : 'En cours',
                                             style: const TextStyle(
                                               color: Colors.white,
                                               fontWeight: FontWeight.bold,
@@ -149,7 +138,7 @@ class _ComplaintListingScreenState extends State<ComplaintListingScreen> {
                                     ),
                                     const SizedBox(height: 8),
                                     Text(
-                                      'Livreur : ${complaint.delivery.courier.user.firstName} ${complaint.delivery.courier.user.lastName}',
+                                      'Livreur : ${complaint.delivery.courier?.user?.firstName} ${complaint.delivery.courier?.user?.lastName}',
                                       style: const TextStyle(fontSize: 14),
                                     ),
                                     const SizedBox(height: 8),

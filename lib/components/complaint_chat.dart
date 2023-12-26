@@ -30,8 +30,7 @@ class ChatWidget extends StatefulWidget {
 class ChatWidgetState extends State<ChatWidget> {
   final TextEditingController _messageController = TextEditingController();
   List<MessageData> _messageHistory = [];
-  final WebSocketChannel webSocketChannel =
-      InitSocket.getInstance().webSocketChannel;
+  final WebSocketChannel webSocketChannel = InitSocket.getInstance().webSocketChannel;
 
   @override
   void initState() {
@@ -44,6 +43,23 @@ class ChatWidgetState extends State<ChatWidget> {
       "type": "join",
       "data": {"complaintId": widget.complaint.id}
     }));
+  }
+
+  void _sendMessage(int userId) {
+    if (widget.complaint.status == 'resolved') return;
+    final message = _messageController.text;
+    if (message.isEmpty) return;
+    webSocketChannel.sink.add(json.encode({
+      "type": "chat",
+      "data": {
+        "userType": UserType.client.value,
+        "complaintId": widget.complaint.id,
+        "userId": userId,
+        "content": message,
+        "date": DateTime.now().toIso8601String(),
+      }
+    }));
+    _messageController.clear();
   }
 
   @override
@@ -70,9 +86,7 @@ class ChatWidgetState extends State<ChatWidget> {
                   );
 
                   if (response.type == 'join') {
-                    final messages = (response.data as List)
-                        .map((message) => MessageData.fromJson(message))
-                        .toList();
+                    final messages = (response.data as List).map((message) => MessageData.fromJson(message)).toList();
 
                     _messageHistory = messages;
                   } else if (response.type == 'chat') {
@@ -84,17 +98,14 @@ class ChatWidgetState extends State<ChatWidget> {
                     reverse: true,
                     itemCount: _messageHistory.length,
                     itemBuilder: (context, index) {
-                      final message =
-                          _messageHistory[_messageHistory.length - 1 - index];
-                      final isClient = message.userType == UserType.client ||
-                          message.userType == UserType.courier;
-                      final isSupport = message.userType == UserType.support ||
-                          message.userType == UserType.admin;
+                      final message = _messageHistory[_messageHistory.length - 1 - index];
+                      final isClient = message.userType == UserType.client || message.userType == UserType.courier;
+                      final isSupport = message.userType == UserType.support || message.userType == UserType.admin;
 
                       return Align(
-                        alignment:
-                            isClient ? Alignment.topRight : Alignment.topLeft,
+                        alignment: isClient ? Alignment.topRight : Alignment.topLeft,
                         child: Container(
+                          width: MediaQuery.of(context).size.width * 0.7,
                           decoration: BoxDecoration(
                             color: isClient
                                 ? Colors.blue
@@ -112,8 +123,7 @@ class ChatWidgetState extends State<ChatWidget> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     message.userType.value.toUpperCase(),
@@ -125,8 +135,7 @@ class ChatWidgetState extends State<ChatWidget> {
                                   Text(
                                     '${message.date.day.toString().padLeft(2, '0')}/${message.date.month.toString().padLeft(2, '0')}/${message.date.year} ${message.date.hour.toString().padLeft(2, '0')}:${message.date.minute.toString().padLeft(2, '0')}',
                                     style: TextStyle(
-                                      color: const Color(0xFFEEEEEE)
-                                          .withOpacity(0.7),
+                                      color: const Color(0xFFEEEEEE).withOpacity(0.7),
                                       fontSize: 10,
                                     ),
                                   ),
@@ -166,31 +175,15 @@ class ChatWidgetState extends State<ChatWidget> {
                       autofocus: true,
                       controller: _messageController,
                       decoration: InputDecoration(
-                        hintText: widget.complaint.status == 'resolved'
-                            ? 'Réclamation résolue...'
-                            : 'Écrivez votre message...',
+                        hintText: widget.complaint.status == 'resolved' ? 'Réclamation résolue...' : 'Écrivez votre message...',
                         border: InputBorder.none,
                       ),
+                      onSubmitted: (value) => _sendMessage(authUser!.id),
                     ),
                   ),
                   IconButton(
                     icon: const Icon(Icons.send, color: Colors.black),
-                    onPressed: () {
-                      if (widget.complaint.status == 'resolved') return;
-                      final message = _messageController.text;
-                      if (message.isEmpty) return;
-                      webSocketChannel.sink.add(json.encode({
-                        "type": "chat",
-                        "data": {
-                          "userType": UserType.client.value,
-                          "complaintId": widget.complaint.id,
-                          "userId": authUser!.id,
-                          "content": message,
-                          "date": DateTime.now().toIso8601String(),
-                        }
-                      }));
-                      _messageController.clear();
-                    },
+                    onPressed: () => _sendMessage(authUser!.id),
                   ),
                 ],
               ),
