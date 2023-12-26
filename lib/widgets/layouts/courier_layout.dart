@@ -1,40 +1,50 @@
+import 'package:challenge_delivery_flutter/state/app_state.dart';
 import 'package:challenge_delivery_flutter/views/courier/home_screen.dart';
 import 'package:challenge_delivery_flutter/views/courier/profile_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:challenge_delivery_flutter/bloc/auth/auth_bloc.dart';
 
 class CourierLayout extends StatefulWidget {
-  final int initialIndex;
-  const CourierLayout({Key? key, this.initialIndex = 0}) : super(key: key);
+  final String initialPage;
+  const CourierLayout({super.key, this.initialPage = 'home'});
 
   @override
   _MainScreenState createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<CourierLayout> {
-  late int _currentIndex;
+  late String _currentPageKey;
 
-  final _pages = [
-    const CourierHomeScreen(),
-    const CourierProfileScreen(),
-  ];
+  final Map<String, Widget> _pages = {
+    'home': const CourierHomeScreen(),
+    'profile': const CourierProfileScreen(),
+  };
 
   @override
   void initState() {
     super.initState();
-    _currentIndex = widget.initialIndex;
+    _currentPageKey = _pages.containsKey(widget.initialPage) ? widget.initialPage : 'home';
+    AppState.currentPageKey = _currentPageKey;
+  }
+
+  void _selectPage(String pageKey) {
+    if (_pages.containsKey(pageKey)) {
+      setState(() {
+        _currentPageKey = pageKey;
+        AppState.currentPageKey = pageKey;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final authBloc = BlocProvider.of<AuthBloc>(context);
-
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: Theme.of(context).colorScheme.primary,
-        onTap: (index) => setState(() => _currentIndex = index),
-        currentIndex: _currentIndex,
+        onTap: (index) {
+          String pageKey = _pages.keys.elementAt(index);
+          _selectPage(pageKey);
+        },
+        currentIndex: _pages.keys.toList().indexOf(_currentPageKey),
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Accueil'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profil'),
@@ -42,7 +52,7 @@ class _MainScreenState extends State<CourierLayout> {
       ),
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: _pages[_currentIndex],
+        child: _pages[_currentPageKey]!,
       ),
     );
   }

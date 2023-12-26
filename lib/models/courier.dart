@@ -5,12 +5,14 @@ class Courier {
   final String status;
   final double? latitude;
   final double? longitude;
+  final User? user;
 
   Courier({
     required this.id,
     required this.status,
     this.latitude,
     this.longitude,
+    this.user,
   });
 
   factory Courier.fromJson(Map<String, dynamic> json) => Courier(
@@ -18,6 +20,7 @@ class Courier {
         status: json["status"] ?? '',
         latitude: double.tryParse(json["latitude"] ?? ''),
         longitude: double.tryParse(json["longitude"] ?? ''),
+        user: json["user"] != null ? User.fromJson(json["user"]) : null,
       );
 
   Map<String, dynamic> toJson() => {
@@ -25,14 +28,16 @@ class Courier {
         "status": status,
         "latitude": latitude,
         "longitude": longitude,
+        "user": user?.toJson(),
       };
 
-  Courier copyWith({int? id, String? status, double? latitude, double? longitude}) {
+  Courier copyWith({int? id, String? status, double? latitude, double? longitude, User? user}) {
     return Courier(
       id: id ?? this.id,
       status: status ?? this.status,
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
+      user: user ?? this.user,
     );
   }
 }

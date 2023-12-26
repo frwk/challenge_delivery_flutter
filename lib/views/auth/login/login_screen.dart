@@ -62,69 +62,69 @@ class _LoginScreenState extends State<LoginScreen> {
         backgroundColor: Colors.white,
         body: SingleChildScrollView(
           child: FormBuilder(
-            key: _loginFormKey,
-            child:Column(
-              children: [
-                Image.asset('assets/img/login/login.png'),
-                Padding(
-                  padding: const EdgeInsets.only(top:42.0, left: 22.0, right: 22.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const LandingTitleAtom(title: 'Welcome', titleColor: Colors.black, subtitle: 'Back', subtitleColor: Colors.black),
-                      const SizedBox(height: 20.0),
-                      Container(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.2),
-                              spreadRadius: 1,
-                              blurRadius: 12,
-                              offset: const Offset(0, 3),
-                            )
-                          ],
-                        ),
-                        child: FormBuilderTextField(
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                          name: 'email',
-                          decoration: const InputDecoration(
-                            labelText: 'Email',
-                            labelStyle: TextStyle(
-                              color: Colors.grey,
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                              borderSide: BorderSide.none,
-                            ),
-                            fillColor: Colors.white,
-                            filled: true,
+              key: _loginFormKey,
+              child: Column(
+                children: [
+                  Image.asset('assets/img/login/login.png'),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 42.0, left: 22.0, right: 22.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const LandingTitleAtom(title: 'Welcome', titleColor: Colors.black, subtitle: 'Back', subtitleColor: Colors.black),
+                        const SizedBox(height: 20.0),
+                        Container(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.2),
+                                spreadRadius: 1,
+                                blurRadius: 12,
+                                offset: const Offset(0, 3),
+                              )
+                            ],
                           ),
-                          validator: FormBuilderValidators.compose([
-                            FormBuilderValidators.required(),
-                            FormBuilderValidators.minLength(8),
-                          ]),
+                          child: FormBuilderTextField(
+                            autovalidateMode: AutovalidateMode.onUserInteraction,
+                            name: 'email',
+                            decoration: const InputDecoration(
+                              labelText: 'Email',
+                              labelStyle: TextStyle(
+                                color: Colors.grey,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                borderSide: BorderSide.none,
+                              ),
+                              fillColor: Colors.white,
+                              filled: true,
+                            ),
+                            validator: FormBuilderValidators.compose([
+                              FormBuilderValidators.required(),
+                              FormBuilderValidators.minLength(8),
+                            ]),
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 20.0),
-                      Container(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.2),
-                              spreadRadius: 1,
-                              blurRadius: 12,
-                              offset: const Offset(0, 3),
-                            )
-                          ],
-                        ),
-                        child: FormBuilderTextField(
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                          name: 'password',
-                          obscureText: true,
-                          decoration: const InputDecoration(
+                        const SizedBox(height: 20.0),
+                        Container(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.2),
+                                spreadRadius: 1,
+                                blurRadius: 12,
+                                offset: const Offset(0, 3),
+                              )
+                            ],
+                          ),
+                          child: FormBuilderTextField(
+                            autovalidateMode: AutovalidateMode.onUserInteraction,
+                            name: 'password',
+                            obscureText: true,
+                            decoration: const InputDecoration(
                               labelText: 'Mot de passe',
                               labelStyle: TextStyle(
                                 color: Colors.grey,
@@ -135,57 +135,56 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                               fillColor: Colors.white,
                               filled: true,
+                            ),
+                            validator: FormBuilderValidators.compose([
+                              FormBuilderValidators.required(),
+                              FormBuilderValidators.minLength(8),
+                            ]),
                           ),
-                          validator: FormBuilderValidators.compose([
-                            FormBuilderValidators.required(),
-                            FormBuilderValidators.minLength(8),
-                          ]),
                         ),
-                      ),
-                      Container(
+                        Container(
                           alignment: Alignment.bottomRight,
                           child: InkWell(
                             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ForgotPasswordScreen())),
-                            child: TextButtonAtom(label:'Mot de passe oublié?', labelColor: Colors.grey, redirectTo: '/forgot-password'),
+                            child: TextButtonAtom(label: 'Mot de passe oublié?', labelColor: Colors.grey, redirectTo: '/forgot-password'),
+                          ),
                         ),
-                      ),
-                      ElevatedButton(
-                        onPressed: () => {
-                          if (_loginFormKey.currentState!.validate()) {
-                            authBloc.add(
-                              LoginEvent(
-                                _loginFormKey.currentState?.fields['email']?.value,
-                                _loginFormKey.currentState?.fields['password']?.value,
-                              )
-                            )
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.orangeAccent[200],
-                          fixedSize: const Size(400, 50),
+                        ElevatedButton(
+                          onPressed: () => {
+                            if (_loginFormKey.currentState!.validate())
+                              {
+                                authBloc.add(LoginEvent(
+                                  _loginFormKey.currentState?.fields['email']?.value,
+                                  _loginFormKey.currentState?.fields['password']?.value,
+                                ))
+                              }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.orangeAccent[200],
+                            fixedSize: const Size(400, 50),
+                          ),
+                          child: const Text('Se connecter',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              )),
                         ),
-                        child: const Text(
-                            'Se connecter',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            )
-                        ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          TextButtonAtom(label: 'Vous n\'avez pas de compte ?', labelColor: Colors.grey,),
-                          TextButtonAtom(label: 'Inscrivez-vous', labelColor: Colors.orangeAccent, redirectTo: '/register'),
-                        ],
-                      )
-                    ],
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            TextButtonAtom(
+                              label: 'Vous n\'avez pas de compte ?',
+                              labelColor: Colors.grey,
+                            ),
+                            TextButtonAtom(label: 'Inscrivez-vous', labelColor: Colors.orangeAccent, redirectTo: '/register'),
+                          ],
+                        )
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            )
-          ),
+                ],
+              )),
         ),
       ),
     );

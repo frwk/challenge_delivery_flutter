@@ -1,51 +1,62 @@
-import 'package:challenge_delivery_flutter/common/app_colors.dart';
+import 'package:challenge_delivery_flutter/state/app_state.dart';
 import 'package:challenge_delivery_flutter/views/client/dashboard/home_screen.dart';
-import 'package:challenge_delivery_flutter/views/client/profile_screen.dart';
+import 'package:challenge_delivery_flutter/views/complaint/complaint_listing_screen.dart';
+import 'package:challenge_delivery_flutter/views/courier/profile_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:challenge_delivery_flutter/bloc/auth/auth_bloc.dart';
 
 class ClientLayout extends StatefulWidget {
-  const ClientLayout({super.key});
+  final String initialPage;
+  const ClientLayout({super.key, this.initialPage = 'home'});
 
   @override
   _MainScreenState createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<ClientLayout> {
-  int _currentIndex = 0;
+  late String _currentPageKey;
 
-  final _pages = [
-    const ClientHomeScreen(),
-    const ClientProfileScreen(),
-  ];
+  final Map<String, Widget> _pages = {
+    'home': const ClientHomeScreen(),
+    'complaints': const ComplaintListingScreen(),
+    'profile': const CourierProfileScreen(),
+  };
+
+  @override
+  void initState() {
+    super.initState();
+    _currentPageKey = _pages.containsKey(widget.initialPage) ? widget.initialPage : 'home';
+    AppState.currentPageKey = _currentPageKey;
+  }
+
+  void _selectPage(String pageKey) {
+    if (_pages.containsKey(pageKey)) {
+      setState(() {
+        _currentPageKey = pageKey;
+        AppState.currentPageKey = pageKey;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final authBloc = BlocProvider.of<AuthBloc>(context);
-
     return Scaffold(
-      bottomNavigationBar: BottomAppBar(
-        shape: const CircularNotchedRectangle(),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            IconButton(onPressed: () {}, icon: Icon(Icons.home, color: Theme.of(context).colorScheme.secondary)),
-            IconButton(onPressed: () {}, icon: Icon(Icons.assignment, color: Theme.of(context).colorScheme.secondary)),
-            IconButton(onPressed: () {}, icon: Icon(Icons.person, color: Theme.of(context).colorScheme.secondary)),
-            IconButton(onPressed: () {}, icon: Icon(Icons.notifications, color: Theme.of(context).colorScheme.secondary)),
-          ],
-        ),
+      bottomNavigationBar: BottomNavigationBar(
+        unselectedItemColor: Colors.grey,
+        selectedItemColor: Theme.of(context).colorScheme.primary,
+        onTap: (index) {
+          String pageKey = _pages.keys.elementAt(index);
+          _selectPage(pageKey);
+        },
+        currentIndex: _pages.keys.toList().indexOf(_currentPageKey),
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Accueil'),
+          BottomNavigationBarItem(icon: Icon(Icons.assignment), label: 'Plaintes'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profil'),
+        ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.pushNamed(context, '/create-order'),
-        backgroundColor: AppColors.primary,
-        child: const Icon(Icons.add, color: Colors.white),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: _pages[_currentIndex],
+        child: _pages[_currentPageKey]!,
       ),
     );
   }

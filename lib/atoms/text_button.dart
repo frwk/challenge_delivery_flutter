@@ -20,9 +20,9 @@ class _TextButtonAtomState extends State<TextButtonAtom> {
       },
       child: Text(
         widget.label,
-        style:TextStyle(
+        style: TextStyle(
           color: widget.labelColor,
-          fontSize: 14,
+          fontSize: 12,
           fontWeight: FontWeight.bold,
         ),
       ),

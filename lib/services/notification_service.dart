@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:challenge_delivery_flutter/main.dart';
+import 'package:challenge_delivery_flutter/state/app_state.dart';
+import 'package:challenge_delivery_flutter/widgets/layouts/client_layout.dart';
 import 'package:challenge_delivery_flutter/widgets/layouts/courier_layout.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +17,10 @@ void notificationTapBackground(NotificationResponse notificationResponse) {
   if (payload.containsKey('click_action')) {
     switch (payload['click_action']) {
       case 'OPEN_DELIVERY_DETAILS':
-        navigatorKey.currentState?.pushReplacement(MaterialPageRoute(builder: (_) => const CourierLayout(initialIndex: 1)));
+        navigatorKey.currentState?.pushReplacement(MaterialPageRoute(builder: (_) => const CourierLayout(initialPage: 'deliveries')));
+        break;
+      case 'OPEN_COMPLAINT_DETAILS':
+        navigatorKey.currentState?.pushReplacement(MaterialPageRoute(builder: (_) => const ClientLayout(initialPage: 'complaints')));
         break;
     }
   }
@@ -60,20 +65,39 @@ class NotificationService {
     // Écoute lorsque l'app est en background mais pas terminée (user clicks on notification)
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       if (message.data.containsKey('click_action')) {
-        String clickAction = message.data['click_action'];
-        switch (clickAction) {
-          case 'OPEN_DELIVERY_DETAILS':
-            navigatorKey.currentState?.pushReplacement(MaterialPageRoute(builder: (_) => const CourierLayout(initialIndex: 1)));
-            break;
-        }
+        handleAction(message.data['click_action']);
       }
     });
+  }
+
+  void handleAction(String? action) {
+    switch (action) {
+      case 'OPEN_DELIVERY_DETAILS':
+        navigatorKey.currentState?.pushReplacement(MaterialPageRoute(builder: (_) => const CourierLayout(initialPage: 'home')));
+        break;
+      case 'OPEN_COMPLAINT_DETAILS':
+        navigatorKey.currentState?.pushReplacement(MaterialPageRoute(builder: (_) => const ClientLayout(initialPage: 'complaints')));
+        break;
+    }
   }
 
   // Gérer la réception des notifications
   void _handleMessage(RemoteMessage message) {
     if (message.notification != null) {
+      String targetAction = message.data['click_action'] ?? '';
+      if (!_shouldDisplayNotification(targetAction, message.data)) {
+        return;
+      }
       _showNotification(message.notification!, message.data);
+    }
+  }
+
+  bool _shouldDisplayNotification(String targetAction, Map<String, dynamic> data) {
+    switch (targetAction) {
+      case 'OPEN_COMPLAINT_DETAILS':
+        return AppState.currentPageKey != 'complaint-detail-${data['complaintId']}';
+      default:
+        return true;
     }
   }
 
