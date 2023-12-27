@@ -48,7 +48,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
 
       String? response;
 
-      if (query.isNotEmpty) {
+      if (query.isNotEmpty && query.length > 8) {
         response = await NetworkUtility.fetchUrl(uri);
       }
 

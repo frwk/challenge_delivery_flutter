@@ -12,6 +12,8 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'dart:developer' as developer;
 
+import '../../../atoms/text_button.dart';
+
 class RegisterClientScreen extends StatefulWidget {
   final RoleEnum? role;
 
@@ -80,13 +82,10 @@ class _RegisterClientScreenState extends State<RegisterClientScreen> {
                       InputComponent(label: 'Email', name:'email', placeholder: 'Votre email', displayPlaceholder: true, validators: [FormBuilderValidators.required(),  FormBuilderValidators.email()]),
                       InputComponent(label: 'Mot de passe', name: 'password' ,placeholder: 'Votre mot de passe', displayPlaceholder: true, password: true, validators: [FormBuilderValidators.required(), FormBuilderValidators.minLength(8)]),
                       InputComponent(label: 'Confirmation de mot de passe', name:'confirm_password', placeholder: 'Confirmer votre mot de passe', displayPlaceholder: true, password: true, validators: [FormBuilderValidators.required(), (value) => _formKey.currentState?.fields['password']?.value != value ? 'Mots de passe différents' : null]),
-                      const SizedBox(height: 20),
-                      const Padding(
-                        padding: EdgeInsets.all(5.0),
-                        child: Text(
-                          'Vous êtes :',
-                          style: TextStyle(color: Colors.grey),
-                        ),
+                      const SizedBox(height: 5),
+                      const Text(
+                        'Vous êtes :',
+                        style: TextStyle(color: Colors.grey),
                       ),
                       Center(
                         child: Container(
@@ -101,6 +100,13 @@ class _RegisterClientScreenState extends State<RegisterClientScreen> {
                             ],
                           ),
                         ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          TextButtonAtom(label: 'Déjà inscrit ?', labelColor: Colors.grey,),
+                          TextButtonAtom(label: 'Connectez-vous', labelColor: Colors.orangeAccent, redirectTo: '/login'),
+                        ],
                       ),
                       ElevatedButton(
                         onPressed: () {

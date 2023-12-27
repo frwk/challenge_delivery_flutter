@@ -22,6 +22,8 @@ class _CheckingLoginListenerState extends State<CheckingLoginListener> with Tick
   @override
   Widget build(BuildContext context) {
     final userBloc = BlocProvider.of<UserBloc>(context);
+    var media = MediaQuery.of(context).size;
+
 
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) async {
@@ -38,15 +40,20 @@ class _CheckingLoginListenerState extends State<CheckingLoginListener> with Tick
           }
         }
       },
-      child: const Scaffold(
-        backgroundColor: Colors.white,
+      child: Scaffold(
+        backgroundColor: Colors.orangeAccent,
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Align(
               alignment: Alignment.center,
-              child: SizedBox(height: 200, width: 200, child: Image(image: AssetImage('assets/logo.png'))),
+              child: SizedBox(height: 200, width: 200, child: Image.asset(
+                'assets/img/splash/splash_view_2.png',
+                  width: media.width,
+                  height: media.height,
+                  fit: BoxFit.contain
+              )),
             )
           ],
         ),

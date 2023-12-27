@@ -13,7 +13,7 @@ class OrderInitial extends OrderState {}
 class OrderLoadingState extends OrderState {}
 class OrderSuccessState extends OrderState {}
 class OrderAddressSuccessState extends OrderState {
-const OrderAddressSuccessState(Order? order) : super(order: order);
+  const OrderAddressSuccessState(Order? order) : super(order: order);
 }
 class OrderConfirmedState extends OrderState {}
 class OrderFailureState extends OrderState {

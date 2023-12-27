@@ -26,7 +26,6 @@ class TextFieldAtom extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('l.27 $displayPlaceholder, $placeholder, $placeholderColor');
     return Container(
       padding: const EdgeInsets.only(top: 8.0),
       decoration: BoxDecoration(

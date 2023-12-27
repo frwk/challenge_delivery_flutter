@@ -25,7 +25,6 @@ class _OrderListenerState extends State<OrderListener> {
 
     return BlocListener<OrderBloc, OrderState>(
         listener: (context, state) async {
-          print(state);
           if (state is OrderLoadingState) {
             modalLoading(context);
           } else if (state is OrderAddressSuccessState && state.order != null) {

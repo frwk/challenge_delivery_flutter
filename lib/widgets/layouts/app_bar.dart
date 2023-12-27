@@ -7,19 +7,17 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          color: Colors.black,
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text(title, style: const TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w600)),
-        titleSpacing: 10,
-        centerTitle: true,
+    return AppBar(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back),
+        color: Colors.black,
+        onPressed: () => Navigator.pop(context),
       ),
+      title: Text(title, style: const TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w600)),
+      titleSpacing: 10,
+      centerTitle: true,
     );
   }
 

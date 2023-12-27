@@ -45,7 +45,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
           Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const ClientLayout()), (route) => false);
           showSnackMessage(context, 'Commande confirmée', MessageTypeEnum.success);
         } else if (state is OrderFailureState) {
-          Navigator.of(context, rootNavigator: true).pop();
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const ClientLayout()), (route) => false);
           showSnackMessage(context, state.error, MessageTypeEnum.error);
         } else if (state is OrderSuccessState) {
           Navigator.of(context, rootNavigator: true).pop();
@@ -82,7 +82,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
             child: Row(
               children: [
-                const Expanded(child: ButtonAtom(data: 'Annuler', color: Colors.green)),
+                Expanded(child: ButtonAtom(data: 'Annuler', color: Colors.green, onTap: () => {orderBloc.add(OrderCanceledEvent())},)),
                 Expanded(
                     child: Padding(
                   padding: const EdgeInsets.all(8.0),

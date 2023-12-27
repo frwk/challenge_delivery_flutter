@@ -18,3 +18,5 @@ class OrderConfirmedEvent extends OrderEvent {
 
   OrderConfirmedEvent(this.order, this.clientId);
 }
+
+class OrderCanceledEvent extends OrderEvent {}
