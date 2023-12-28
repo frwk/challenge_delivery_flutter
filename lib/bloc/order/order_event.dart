@@ -6,10 +6,8 @@ abstract class OrderEvent {}
 class OrderAddressEvent extends OrderEvent {
   final String pickupAddress;
   final String dropoffAddress;
-  final String packageType;
-  final String packageWeight;
 
-  OrderAddressEvent(this.pickupAddress, this.dropoffAddress, this.packageType, this.packageWeight);
+  OrderAddressEvent(this.pickupAddress, this.dropoffAddress);
 }
 
 class OrderConfirmedEvent extends OrderEvent {

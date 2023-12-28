@@ -21,8 +21,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
       final order = Order(
           pickupAddress: event.pickupAddress,
           dropoffAddress: event.dropoffAddress,
-          packageType: event.packageType,
-          packageWeight: event.packageWeight);
+      );
 
       await Future.delayed(const Duration(milliseconds: 850));
       emit(OrderAddressSuccessState(order));
@@ -35,7 +34,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     try {
       emit(OrderLoadingState());
       final order = await orderService.post(
-          event.order.pickupAddress, event.order.dropoffAddress, event.order.packageType, event.order.packageWeight, event.clientId);
+          event.order.pickupAddress, event.order.dropoffAddress, event.clientId);
       emit(OrderConfirmedState());
     } catch (e) {
       emit(OrderFailureState(e.toString()));

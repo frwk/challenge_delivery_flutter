@@ -61,23 +61,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
           const ArrowConnector(),
           const SizedBox(height: 5),
           OrderCard(title: 'Addresse d\'arrivée', address: order.dropoffAddress),
-          const SizedBox(height: 55),
-          const Text('Details du produit',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              )),
           const SizedBox(height: 25),
-          MyCard(
-              width: double.infinity,
-              child: Column(
-                children: [
-                  Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-                    Text('Nom : ${order.packageType}'),
-                    Text('Poids : ${order.packageWeight}'),
-                  ])
-                ],
-              )),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
             child: Row(

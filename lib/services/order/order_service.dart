@@ -9,7 +9,7 @@ import 'dart:developer' as developer;
 import '../../models/order.dart';
 
 class OrderService {
-  Future<Order> post(String pickupAddress, String dropoffAddress, String packageType, String packageWeight, int clientId) async {
+  Future<Order> post(String pickupAddress, String dropoffAddress, int clientId) async {
     try {
       final cookie = await secureStorage.readCookie();
       developer.log('COOKIE: $cookie', name: 'COOKIE');
@@ -19,8 +19,6 @@ class OrderService {
         body: jsonEncode({
           'pickupAddress': pickupAddress,
           'dropoffAddress': dropoffAddress,
-          'packageType': packageType,
-          'packageWeight': packageWeight,
           'clientId': clientId,
         }),
       );

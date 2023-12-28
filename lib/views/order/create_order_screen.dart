@@ -141,6 +141,9 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                   predictions: departurePlacePredictions.map((e) => e.description!).toList(),
                   onTap: (prediction) => onPlaceSelected(prediction as AutocompletePrediction, 'departure'),
                   isOnChangedActive: isOnChangedActiveForPickupAddress,
+                  validators: [
+                    FormBuilderValidators.required(),
+                  ]
                 ),
                 const SizedBox(height: 20),
                 buildPredictionsList(departurePlacePredictions.cast<AutocompletePrediction>(), 'departure'),
@@ -155,6 +158,9 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                   predictions: arrivalPlacePredictions.map((e) => e.description!).toList(),
                   onTap: (prediction) => onPlaceSelected(prediction as AutocompletePrediction, 'arrival'),
                   isOnChangedActive: isOnChangedActiveForDropoffAddress,
+                  validators: [
+                    FormBuilderValidators.required(),
+                  ]
                 ),
                 const SizedBox(height: 30),
                 buildPredictionsList(arrivalPlacePredictions.cast<AutocompletePrediction>(), 'arrival'),
@@ -165,45 +171,6 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                   thickness: 1,
                 ),
                 const SizedBox(height: 30),
-                // Type de colis
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child: Container(
-                        margin: const EdgeInsets.only(left: 25.0, right: 2),
-                        child: InputComponent(
-                          label: 'Type de colis',
-                          labelSize: 12,
-                          labelColor: Colors.grey,
-                          placeholder: 'package_type',
-                          name: 'package_type',
-                          validators: [
-                            FormBuilderValidators.required(),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Container(
-                        margin: const EdgeInsets.only(right: 25.0),
-                        child: InputComponent(
-                          label: 'Poids - (En kg)',
-                          labelSize: 12,
-                          labelColor: Colors.grey,
-                          placeholder: 'package_weight',
-                          name: 'package_weight',
-                          validators: [
-                            FormBuilderValidators.required(),
-                            FormBuilderValidators.integer(),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
                 const SizedBox(height: 30),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
@@ -215,8 +182,6 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                                 orderBloc.add(OrderAddressEvent(
                                   _orderFormKey.currentState!.fields['departure']?.value,
                                   _orderFormKey.currentState!.fields['arrival']?.value,
-                                  _orderFormKey.currentState!.fields['package_type']?.value,
-                                  _orderFormKey.currentState!.fields['package_weight']?.value,
                                 ))
                               }
                           }),
@@ -253,6 +218,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
     required Function(String) onTap,
     required bool isOnChangedActive,
     required bool displayPlaceholder,
+    required List<FormFieldValidator<String>>? validators,
   }) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 25.0),
@@ -269,6 +235,9 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
         placeholder: placeholder,
         displayPlaceholder: displayPlaceholder,
         name: name,
+        validators: [
+          ...?validators
+        ],
       ),
     );
   }
