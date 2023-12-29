@@ -1,11 +1,9 @@
-
 import 'package:flutter/material.dart';
 
 import '../atoms/label_atom.dart';
 import '../atoms/textfield_atom.dart';
 
 class InputComponent extends StatelessWidget {
-
   final String label;
   final String name;
   final Color? labelColor;
@@ -16,7 +14,11 @@ class InputComponent extends StatelessWidget {
   final void Function(String?)? onChanged;
   final TextEditingController? controller;
   final List<FormFieldValidator<String>>? validators;
-
+  final bool isEnabled;
+  final InputDecoration? decoration;
+  final Widget? suffixIcon;
+  final Widget? prefixIcon;
+  final String? initialValue;
 
   const InputComponent({
     super.key,
@@ -30,12 +32,17 @@ class InputComponent extends StatelessWidget {
     this.onChanged,
     this.controller,
     this.validators,
+    this.isEnabled = true,
+    this.decoration,
+    this.suffixIcon,
+    this.prefixIcon,
+    this.initialValue,
   });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top:16.0),
+      padding: const EdgeInsets.only(top: 16.0),
       child: Container(
         margin: const EdgeInsets.only(right: 8.0),
         child: Column(
@@ -43,7 +50,19 @@ class InputComponent extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             LabelAtom(label: label, labelColor: labelColor, labelSize: labelSize),
-            TextFieldAtom(name: name, placeholder: placeholder, displayPlaceholder: displayPlaceholder ,isPassword: password, onChanged: onChanged, controller:  controller, validators: validators)
+            TextFieldAtom(
+                name: name,
+                placeholder: placeholder,
+                displayPlaceholder: displayPlaceholder,
+                isPassword: password,
+                onChanged: onChanged,
+                controller: controller,
+                validators: validators,
+                isEnabled: isEnabled,
+                decoration: decoration,
+                suffixIcon: suffixIcon,
+                prefixIcon: prefixIcon,
+                initialValue: initialValue)
           ],
         ),
       ),

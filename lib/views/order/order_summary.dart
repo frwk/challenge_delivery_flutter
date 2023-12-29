@@ -9,7 +9,6 @@ import 'package:challenge_delivery_flutter/widgets/order/arrow_connector.dart';
 import 'package:challenge_delivery_flutter/widgets/order/order_cart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../enums/message_type_enum.dart';
 import '../../helpers/loading_state.dart';
 import '../../helpers/show_snack_message.dart';
@@ -50,10 +49,17 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
         } else if (state is OrderSuccessState) {
           Navigator.of(context, rootNavigator: true).pop();
           showSnackMessage(context, 'Commande effectuée', MessageTypeEnum.success);
+        } else if (state is OrderInitial) {
+          Navigator.of(context).pop();
         }
       },
       child: Scaffold(
-        appBar: const MyAppBar(title: 'Résumé de ma commande'),
+        appBar: MyAppBar(
+          title: 'Résumé de ma commande',
+          onBackArrowClicked: () {
+            orderBloc.add(OrderInitialEvent(orderBloc.state.order));
+          },
+        ),
         body: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
           const SizedBox(height: 16),
           OrderCard(title: 'Addresse de départ', address: order!.pickupAddress),
@@ -66,7 +72,12 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
             child: Row(
               children: [
-                Expanded(child: ButtonAtom(data: 'Annuler', color: Colors.green, onTap: () => {orderBloc.add(OrderCanceledEvent())},)),
+                Expanded(
+                    child: ButtonAtom(
+                  data: 'Annuler',
+                  color: Colors.green,
+                  onTap: () => {orderBloc.add(OrderCanceledEvent())},
+                )),
                 Expanded(
                     child: Padding(
                   padding: const EdgeInsets.all(8.0),

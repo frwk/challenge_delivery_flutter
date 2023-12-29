@@ -47,10 +47,11 @@ class UserService {
 
   Future<User> updateUser(User user) async {
     try {
-      Map<String, String> headers = {HttpHeaders.contentTypeHeader: 'application/json'};
+      final cookie = await secureStorage.readCookie();
+      Map<String, String> headers = {HttpHeaders.contentTypeHeader: 'application/json', HttpHeaders.cookieHeader: cookie!};
       print('user: ${jsonEncode(user.toJson())}');
       final response = await http.patch(
-        Uri.parse('${dotenv.env['API_URL']}/users/${user.id}'),
+        Uri.parse('${dotenv.env['API_URL']}/me'),
         headers: headers,
         body: jsonEncode(user.toJson()),
       );

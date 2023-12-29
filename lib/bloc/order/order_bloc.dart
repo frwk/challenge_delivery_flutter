@@ -4,23 +4,31 @@ import 'package:bloc/bloc.dart';
 import 'package:challenge_delivery_flutter/models/order.dart';
 import 'package:challenge_delivery_flutter/services/order/order_service.dart';
 import 'package:flutter/material.dart';
-
 part 'order_event.dart';
 part 'order_state.dart';
 
 class OrderBloc extends Bloc<OrderEvent, OrderState> {
   OrderBloc() : super(OrderInitial()) {
+    on<OrderInitialEvent>(_onOrderInitialEvent);
     on<OrderAddressEvent>(_onOrderAddressEvent);
     on<OrderConfirmedEvent>(_onOrderConfirmedEvent);
     on<OrderCanceledEvent>(_onOrderCanceledEvent);
+  }
+
+  void _onOrderInitialEvent(OrderInitialEvent event, Emitter<OrderState> emit) async {
+    try {
+      emit(OrderInitial());
+    } catch (e) {
+      emit(OrderFailureState(e.toString()));
+    }
   }
 
   Future<void> _onOrderAddressEvent(OrderAddressEvent event, Emitter<OrderState> emit) async {
     try {
       emit(OrderLoadingState());
       final order = Order(
-          pickupAddress: event.pickupAddress,
-          dropoffAddress: event.dropoffAddress,
+        pickupAddress: event.pickupAddress,
+        dropoffAddress: event.dropoffAddress,
       );
 
       await Future.delayed(const Duration(milliseconds: 850));
@@ -33,8 +41,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
   Future<void> _onOrderConfirmedEvent(OrderConfirmedEvent event, Emitter<OrderState> emit) async {
     try {
       emit(OrderLoadingState());
-      final order = await orderService.post(
-          event.order.pickupAddress, event.order.dropoffAddress, event.clientId);
+      await orderService.post(event.order.pickupAddress, event.order.dropoffAddress, event.clientId);
       emit(OrderConfirmedState());
     } catch (e) {
       emit(OrderFailureState(e.toString()));

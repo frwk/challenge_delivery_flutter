@@ -11,6 +11,11 @@ class TextFieldAtom extends StatelessWidget {
   final void Function(String?)? onChanged;
   final TextEditingController? controller;
   final List<FormFieldValidator<String>>? validators;
+  final bool? isEnabled;
+  final InputDecoration? decoration;
+  final Widget? suffixIcon;
+  final Widget? prefixIcon;
+  final String? initialValue;
 
   const TextFieldAtom({
     super.key,
@@ -22,6 +27,11 @@ class TextFieldAtom extends StatelessWidget {
     this.onChanged,
     required this.controller,
     this.validators,
+    this.isEnabled = true,
+    this.decoration,
+    this.suffixIcon,
+    this.prefixIcon,
+    this.initialValue,
   });
 
   @override
@@ -39,26 +49,32 @@ class TextFieldAtom extends StatelessWidget {
         ],
       ),
       child: FormBuilderTextField(
+        initialValue: initialValue,
+        readOnly: isEnabled != null ? !isEnabled! : false,
         controller: controller,
         onChanged: onChanged,
         autovalidateMode: AutovalidateMode.onUserInteraction,
         obscureText: isPassword,
         name: name,
         validator: FormBuilderValidators.compose(validators ?? []),
-        decoration: InputDecoration(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
-          labelText: true == displayPlaceholder ? placeholder : null,
-          labelStyle: TextStyle(
-            color: placeholderColor,
-            fontSize: 12,
-          ),
-          border: const OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(8.0)),
-            borderSide: BorderSide.none,
-          ),
-          fillColor: Colors.white,
-          filled: true,
-        ),
+        style: isEnabled! ? null : const TextStyle(color: Colors.grey, fontSize: 12),
+        decoration: decoration ??
+            InputDecoration(
+              prefixIcon: prefixIcon,
+              suffixIcon: suffixIcon,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+              labelText: true == displayPlaceholder ? placeholder : null,
+              labelStyle: TextStyle(
+                color: placeholderColor,
+                fontSize: 12,
+              ),
+              border: const OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                borderSide: BorderSide.none,
+              ),
+              fillColor: Colors.white,
+              filled: true,
+            ),
       ),
     );
   }

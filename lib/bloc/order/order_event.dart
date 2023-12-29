@@ -3,6 +3,11 @@ part of 'order_bloc.dart';
 @immutable
 abstract class OrderEvent {}
 
+class OrderInitialEvent extends OrderEvent {
+  final Order? order;
+  OrderInitialEvent(this.order);
+}
+
 class OrderAddressEvent extends OrderEvent {
   final String pickupAddress;
   final String dropoffAddress;
