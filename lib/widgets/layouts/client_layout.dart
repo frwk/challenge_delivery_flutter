@@ -1,3 +1,4 @@
+import 'package:challenge_delivery_flutter/common/app_colors.dart';
 import 'package:challenge_delivery_flutter/state/app_state.dart';
 import 'package:challenge_delivery_flutter/views/client/dashboard/home_screen.dart';
 import 'package:challenge_delivery_flutter/views/complaint/complaint_listing_screen.dart';
@@ -54,6 +55,12 @@ class _MainScreenState extends State<ClientLayout> {
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profil'),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => Navigator.pushNamed(context, '/create-order'),
+        backgroundColor: AppColors.primary,
+        child: const Icon(Icons.add, color: Colors.white),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterFloat,
       backgroundColor: Colors.white,
       body: SafeArea(
         child: _pages[_currentPageKey]!,

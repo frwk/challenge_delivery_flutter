@@ -1,5 +1,4 @@
 import 'package:challenge_delivery_flutter/atoms/button_atom.dart';
-import 'package:challenge_delivery_flutter/common/constant.dart';
 import 'package:challenge_delivery_flutter/components/input_component.dart';
 import 'package:challenge_delivery_flutter/components/my_location_list_tile.dart';
 import 'package:challenge_delivery_flutter/enums/message_type_enum.dart';
@@ -8,11 +7,14 @@ import 'package:challenge_delivery_flutter/helpers/show_snack_message.dart';
 import 'package:challenge_delivery_flutter/models/google_autocomplete/autocomplete_prediction.dart';
 import 'package:challenge_delivery_flutter/models/google_autocomplete/place_autocomplete_response.dart';
 import 'package:challenge_delivery_flutter/utils/network_utility.dart';
+import 'package:challenge_delivery_flutter/views/order/order_summary.dart';
+import 'package:challenge_delivery_flutter/widgets/layouts/app_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:challenge_delivery_flutter/bloc/blocs.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'package:form_builder_validators/form_builder_validators.dart';
+import 'dart:async';
 import '../../bloc/order/order_bloc.dart';
 
 class CreateOrderScreen extends StatefulWidget {
@@ -27,12 +29,15 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
 
   List<AutocompletePrediction> departurePlacePredictions = [];
   List<AutocompletePrediction> arrivalPlacePredictions = [];
-  final TextEditingController _departureAddressController = TextEditingController();
-  final TextEditingController _arrivalAddressController = TextEditingController();
-  AutocompletePrediction? selectedDeparturePrediction;
-  bool isOnChangedActiveForArrivalAddress = true;
-  bool isOnChangedActiveForDepartureAddress = true;
+  final TextEditingController _pickupAddressController = TextEditingController();
+  final TextEditingController _dropoffAddressController = TextEditingController();
+  bool departureSelected = false;
+  bool arrivalSelected = false;
+  Timer? _debounce;
 
+  AutocompletePrediction? selectedDeparturePrediction;
+  bool isOnChangedActiveForDropoffAddress = true;
+  bool isOnChangedActiveForPickupAddress = true;
 
   Future<void> placeAutocomplete(String query, String addressType) async {
     if (query.isEmpty) {
@@ -40,36 +45,30 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
     }
 
     try {
-      Uri uri = Uri.https(
-          'maps.googleapis.com',
-          'maps/api/place/autocomplete/json',
-          {
-            'input': query,
-            'key': apiKey
-          }
-      );
+      Uri uri = Uri.https('maps.googleapis.com', 'maps/api/place/autocomplete/json', {
+        'input': query,
+        'key': dotenv.env['GOOGLE_API_KEY']!,
+        'components': 'country:fr',
+      });
 
-      String ?response;
+      String? response;
 
-      if(query.isNotEmpty) {
+      if (query.isNotEmpty && query.length > 3) {
         response = await NetworkUtility.fetchUrl(uri);
       }
 
-      if(response != null ) {
+      if (response != null) {
         PlaceAutocompleteResponse result = PlaceAutocompleteResponse.parseAutocompleteResult(response);
-
-        if(result.predictions != null ) {
-          if(addressType == 'departure' && isOnChangedActiveForDepartureAddress) {
+        if (result.predictions != null) {
+          if (addressType == 'departure') {
             setState(() {
               departurePlacePredictions = result.predictions!;
-              isOnChangedActiveForDepartureAddress = false;
             });
           }
 
-          if(addressType == 'arrival' && isOnChangedActiveForArrivalAddress) {
+          if (addressType == 'arrival') {
             setState(() {
               arrivalPlacePredictions = result.predictions!;
-              isOnChangedActiveForArrivalAddress = false;
             });
           }
         }
@@ -80,76 +79,111 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
   }
 
   void onPlaceSelected(AutocompletePrediction place, String addressType) {
-
-      if(addressType == 'departure' && !isOnChangedActiveForDepartureAddress) {
-
-        setState(() {
-          _departureAddressController.text = place.description!;
-          departurePlacePredictions.clear();
-        });
-      }
-
-      if(addressType == 'arrival' && !isOnChangedActiveForArrivalAddress) {
-
-        setState(() {
-          _arrivalAddressController.text = place.description!;
-          arrivalPlacePredictions = [];
-        });
-      }
+    if (addressType == 'departure') {
+      setState(() {
+        departureSelected = true;
+        departurePlacePredictions.clear();
+        _pickupAddressController.text = place.description!;
+      });
+    } else if (addressType == 'arrival') {
+      setState(() {
+        arrivalSelected = true;
+        arrivalPlacePredictions.clear();
+        _dropoffAddressController.text = place.description!;
+      });
+    }
   }
 
-  void dispose () {
-    _departureAddressController.dispose();
-    _arrivalAddressController.dispose();
+  Future<void> onSearchChanged(String value, String addressType) async {
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    final selected = addressType == 'departure' ? departureSelected : arrivalSelected;
+    if (!selected) {
+      _debounce = Timer(const Duration(milliseconds: 1000), () async {
+        await placeAutocomplete(value, addressType);
+      });
+    }
+  }
+
+  void dispose() {
+    _debounce?.cancel();
+    _pickupAddressController.dispose();
+    _dropoffAddressController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-
     final orderBloc = BlocProvider.of<OrderBloc>(context);
 
     return BlocListener<OrderBloc, OrderState>(
       listener: (context, state) async {
         if (state is OrderLoadingState) {
           modalLoading(context);
-        } else if (state is OrderFailureState) {
-          Navigator.of(context, rootNavigator: true).pop();
-          showSnackMessage(context, state.error, MessageTypeEnum.error);
         } else if (state is OrderSuccessState) {
           Navigator.of(context, rootNavigator: true).pop();
           showSnackMessage(context, 'Commande créée avec succès', MessageTypeEnum.success);
+        } else if (state is OrderAddressSuccessState) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => OrderSummaryScreen(order: state.order!),
+            ),
+          );
+        } else if (state is OrderInitial) {
+          Navigator.of(context, rootNavigator: true).pop();
         }
       },
       child: Scaffold(
         backgroundColor: Theme.of(context).colorScheme.background,
-        appBar: buildAppBar(),
+        appBar: const MyAppBar(title: 'Nouvelle commande'),
         body: SafeArea(
           child: FormBuilder(
             key: _orderFormKey,
             child: Column(
               children: [
-                // Adresse de départ
                 buildAddressInput(
-                  controller: _departureAddressController,
-                  onChanged: (value) async => await placeAutocomplete(value, 'departure'),
+                  controller: _pickupAddressController,
+                  addressType: 'departure',
+                  name: 'departure',
                   label: 'Adresse de départ',
-                  placeholder: 'departure',
+                  placeholder: 'Entrez votre adresse de départ',
+                  displayPlaceholder: true,
+                  isEnabled: departureSelected ? false : true,
                   predictions: departurePlacePredictions.map((e) => e.description!).toList(),
                   onTap: (prediction) => onPlaceSelected(prediction as AutocompletePrediction, 'departure'),
-                  isOnChangedActive: isOnChangedActiveForDepartureAddress,
+                  validators: [
+                    FormBuilderValidators.required(),
+                  ],
+                  prefixIcon: const Icon(Icons.home),
+                  resetCallback: () {
+                    _pickupAddressController.clear();
+                    setState(() {
+                      departureSelected = false;
+                    });
+                  },
                 ),
                 const SizedBox(height: 20),
                 buildPredictionsList(departurePlacePredictions.cast<AutocompletePrediction>(), 'departure'),
-                // Adresse de destination
                 buildAddressInput(
-                  controller: _arrivalAddressController,
-                  onChanged: (value) async => await placeAutocomplete(value, 'arrival'),
-                  label: 'Adresse de départ',
-                  placeholder: 'arrival',
+                  controller: _dropoffAddressController,
+                  addressType: 'arrival',
+                  name: 'arrival',
+                  label: 'Adresse d\'arrivée',
+                  placeholder: 'Entrez votre adresse d\'arrivée',
+                  displayPlaceholder: true,
+                  isEnabled: arrivalSelected ? false : true,
                   predictions: arrivalPlacePredictions.map((e) => e.description!).toList(),
                   onTap: (prediction) => onPlaceSelected(prediction as AutocompletePrediction, 'arrival'),
-                  isOnChangedActive: isOnChangedActiveForArrivalAddress,
+                  validators: [
+                    FormBuilderValidators.required(),
+                  ],
+                  prefixIcon: const Icon(Icons.pin_drop),
+                  resetCallback: () {
+                    _dropoffAddressController.clear();
+                    setState(() {
+                      arrivalSelected = false;
+                    });
+                  },
                 ),
                 const SizedBox(height: 30),
                 buildPredictionsList(arrivalPlacePredictions.cast<AutocompletePrediction>(), 'arrival'),
@@ -160,50 +194,20 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                   thickness: 1,
                 ),
                 const SizedBox(height: 30),
-                // Type de colis
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child: Container(
-                        margin: const EdgeInsets.only(left: 25.0, right: 2),
-                        child: const InputComponent(
-                          label: 'Type de colis',
-                          labelSize: 12,
-                          labelColor: Colors.grey,
-                          placeholder: 'package_type',
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Container(
-                        margin: const EdgeInsets.only(right: 25.0),
-                        child: const InputComponent(
-                          label: 'Poids - (En kg)',
-                          labelSize: 12,
-                          labelColor: Colors.grey,
-                          placeholder: 'package_weight',
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
                 const SizedBox(height: 30),
-                 Padding(
+                Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                  child: ButtonAtom(data: 'Suivant', onTap: () => {
-                    if(_orderFormKey.currentState!.saveAndValidate()) {
-
-                      orderBloc.add(OrderAddressEvent(
-                      _orderFormKey.currentState!.fields['departure']?.value,
-                      _orderFormKey.currentState!.fields['arrival']?.value,
-                      _orderFormKey.currentState!.fields['package_type']?.value,
-                      _orderFormKey.currentState!.fields['package_weight']?.value,
-                      ))
-                    }
-                  }),
+                  child: ButtonAtom(
+                      data: 'Suivant',
+                      onTap: () => {
+                            if (_orderFormKey.currentState!.saveAndValidate())
+                              {
+                                orderBloc.add(OrderAddressEvent(
+                                  _orderFormKey.currentState!.fields['departure']?.value,
+                                  _orderFormKey.currentState!.fields['arrival']?.value,
+                                ))
+                              }
+                          }),
                 ),
               ],
             ),
@@ -213,78 +217,56 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
     );
   }
 
-  AppBar buildAppBar() {
-    return AppBar(
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back),
-        color: Colors.black,
-        onPressed: () => Navigator.pop(context),
-      ),
-      title: const Center(
-        child: Text(
-          'Nouvelle commande',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
-      titleSpacing: 10,
-      actions: [
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(50),
-          ),
-          child: IconButton(
-            icon: const Icon(Icons.notifications),
-            color: Colors.black,
-            onPressed: () => {},
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget buildPredictionsList(List<AutocompletePrediction> predictions, String addressType) {
     return predictions.isNotEmpty
         ? Expanded(
-      child: ListView.builder(
-        itemCount: predictions.length,
-        itemBuilder: (context, index) => LocationListTile(
-          onTap: () => onPlaceSelected(predictions[index], addressType),
-          location: predictions[index].description!,
-        ),
-      ),
-    )
+            child: ListView.builder(
+              itemCount: predictions.length,
+              itemBuilder: (context, index) => LocationListTile(
+                onTap: () => onPlaceSelected(predictions[index], addressType),
+                location: predictions[index].description!,
+              ),
+            ),
+          )
         : const SizedBox(height: 0);
   }
 
   Widget buildAddressInput({
     required TextEditingController controller,
-    required Function(String) onChanged,
+    required String name,
+    required String addressType,
     required String label,
+    required bool isEnabled,
     required String placeholder,
     required List<String> predictions,
     required Function(String) onTap,
-    required bool isOnChangedActive,
+    required bool displayPlaceholder,
+    required List<FormFieldValidator<String>>? validators,
+    required Icon prefixIcon,
+    required Function() resetCallback,
+    String? initialValue,
   }) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 25.0),
       child: InputComponent(
         controller: controller,
-        onChanged: (value) async {
-          if (isOnChangedActive) {
-            await onChanged(value!);
-          }
-        },
+        onChanged: (value) async => await onSearchChanged(value!, addressType),
         label: label,
         labelSize: 12,
         labelColor: Colors.grey,
         placeholder: placeholder,
+        displayPlaceholder: displayPlaceholder,
+        name: name,
+        validators: [...?validators],
+        isEnabled: isEnabled,
+        prefixIcon: prefixIcon,
+        suffixIcon: isEnabled
+            ? null
+            : IconButton(
+                icon: const Icon(Icons.clear),
+                onPressed: () => resetCallback(),
+              ),
+        initialValue: initialValue,
       ),
     );
   }

@@ -1,27 +1,34 @@
 import 'dart:convert';
+import 'package:challenge_delivery_flutter/exceptions/unauthorized_exception.dart';
 import 'package:challenge_delivery_flutter/helpers/secure_storage.dart';
 import 'package:challenge_delivery_flutter/models/delivery.dart';
 import 'package:challenge_delivery_flutter/models/user.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'dart:developer' as developer;
 import '../../models/order.dart';
 
 class OrderService {
-  Future<Order> post(String departureAddress, String arrivalAddress, String packageType, String packageWeight) async {
+  Future<Order> post(String pickupAddress, String dropoffAddress, int clientId) async {
     try {
-      final response = await http.post(Uri.parse('${dotenv.env['API_URL']}/orders'),
-          headers: {'Accept': 'application/json'},
-          body: {'departureAddress': departureAddress, 'arrivalAddress': arrivalAddress, 'packageType': packageType, 'packageWeight': packageWeight});
+      final cookie = await secureStorage.readCookie();
+      developer.log('COOKIE: $cookie', name: 'COOKIE');
+      final response = await http.post(
+        Uri.parse('${dotenv.env['API_URL']}/users/deliveries/new'),
+        headers: {'Accept': 'application/json', 'Content-Type': 'application/json', 'Cookie': cookie!},
+        body: jsonEncode({
+          'pickupAddress': pickupAddress,
+          'dropoffAddress': dropoffAddress,
+          'clientId': clientId,
+        }),
+      );
       if (response.body.isEmpty) throw Exception('Erreur lors de la connexion');
-      if (response.statusCode != 200) {
+      if (response.statusCode != 201) {
+        if (response.statusCode == 403) {
+          throw UnauthorizedException('Vous n\'êtes pas autorisé à effectuer cette action');
+        }
         throw Exception(jsonDecode(response.body)['message']);
       }
-      String? cookie = response.headers['set-cookie'];
-      if (cookie == null) {
-        throw Exception('Erreur lors de la connexion');
-      }
-      await secureStorage.deleteSecureStorage();
-      await secureStorage.persistCookie(cookie);
       return Order.fromJson(jsonDecode(response.body));
     } catch (e) {
       rethrow;

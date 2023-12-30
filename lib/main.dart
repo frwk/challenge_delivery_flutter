@@ -5,13 +5,14 @@ import 'package:challenge_delivery_flutter/init_socket.dart';
 import 'package:challenge_delivery_flutter/themes/light_mode.dart';
 import 'package:challenge_delivery_flutter/views/auth/forgot_password_screen.dart';
 import 'package:challenge_delivery_flutter/views/auth/login/login_screen.dart';
-import 'package:challenge_delivery_flutter/views/auth/register/register_first_step.dart';
 import 'package:challenge_delivery_flutter/views/auth/register/register_screen.dart';
 import 'package:challenge_delivery_flutter/views/client/dashboard/home_screen.dart';
+import 'package:challenge_delivery_flutter/views/on_boarding/splash_view.dart';
 import 'package:challenge_delivery_flutter/views/complaint/complaint_detail_screen.dart';
 import 'package:challenge_delivery_flutter/views/complaint/complaint_listing_screen.dart';
 import 'package:challenge_delivery_flutter/views/on_boarding/splash_view.dart';
 import 'package:challenge_delivery_flutter/views/order/create_order_screen.dart';
+import 'package:challenge_delivery_flutter/views/order/order_summary.dart';
 import 'package:challenge_delivery_flutter/services/location_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -81,6 +82,7 @@ class _MyAppState extends State<MyApp> {
             '/register': (context) => const RegisterClientScreen(),
             '/forgot-password': (context) => const ForgotPasswordScreen(),
             '/create-order': (context) => const CreateOrderScreen(),
+            '/order-summary': (context) => const OrderSummaryScreen(),
             '/complaints': (context) => const ComplaintListingScreen(),
             '/complaint-detail': (context) => const ComplaintDetailScreen(),
           }),

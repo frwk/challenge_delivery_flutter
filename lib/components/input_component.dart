@@ -1,37 +1,48 @@
-
 import 'package:flutter/material.dart';
 
 import '../atoms/label_atom.dart';
 import '../atoms/textfield_atom.dart';
 
 class InputComponent extends StatelessWidget {
-
   final String label;
+  final String name;
   final Color? labelColor;
   final double? labelSize;
   final String placeholder;
+  final bool? displayPlaceholder;
   final bool password;
   final void Function(String?)? onChanged;
-  final String Function(String?)? validator;
   final TextEditingController? controller;
-
+  final List<FormFieldValidator<String>>? validators;
+  final bool isEnabled;
+  final InputDecoration? decoration;
+  final Widget? suffixIcon;
+  final Widget? prefixIcon;
+  final String? initialValue;
 
   const InputComponent({
     super.key,
     required this.label,
+    required this.name,
     required this.placeholder,
+    this.displayPlaceholder = false,
     this.password = false,
     this.labelColor = Colors.black,
     this.labelSize,
-    this.validator,
     this.onChanged,
     this.controller,
+    this.validators,
+    this.isEnabled = true,
+    this.decoration,
+    this.suffixIcon,
+    this.prefixIcon,
+    this.initialValue,
   });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top:16.0),
+      padding: const EdgeInsets.only(top: 16.0),
       child: Container(
         margin: const EdgeInsets.only(right: 8.0),
         child: Column(
@@ -39,7 +50,19 @@ class InputComponent extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             LabelAtom(label: label, labelColor: labelColor, labelSize: labelSize),
-            TextFieldAtom(placeholder: placeholder, isPassword: password, onChanged: onChanged, controller:  controller)
+            TextFieldAtom(
+                name: name,
+                placeholder: placeholder,
+                displayPlaceholder: displayPlaceholder,
+                isPassword: password,
+                onChanged: onChanged,
+                controller: controller,
+                validators: validators,
+                isEnabled: isEnabled,
+                decoration: decoration,
+                suffixIcon: suffixIcon,
+                prefixIcon: prefixIcon,
+                initialValue: initialValue)
           ],
         ),
       ),

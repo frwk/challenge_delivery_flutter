@@ -1,5 +1,8 @@
+import 'package:challenge_delivery_flutter/atoms/button_atom.dart';
+import 'package:challenge_delivery_flutter/components/input_component.dart';
 import 'package:challenge_delivery_flutter/views/auth/check_email_screen.dart';
 import 'package:challenge_delivery_flutter/views/auth/login/login_screen.dart';
+import 'package:challenge_delivery_flutter/widgets/layouts/app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
@@ -13,7 +16,7 @@ class ForgotPasswordScreen extends StatefulWidget {
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   late TextEditingController _emailController;
-  final _formKey = GlobalKey<FormState>();
+  final _forgotPasswordFormKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -31,41 +34,15 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: const Text('Réinitialiser le mot de passe',
-            style: TextStyle(fontSize: 21, fontWeight: FontWeight.w500)),
-        centerTitle: true,
-        leadingWidth: 80,
-        leading: InkWell(
-          onTap: () => Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (_) => const LoginScreen())),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.arrow_back_ios_new_rounded,
-                  size: 18, color: Theme.of(context).colorScheme.primary),
-              Text('Back',
-                  style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontSize: 16))
-            ],
-          ),
-        ),
-        actions: const [
-          Icon(Icons.help_outline_outlined, color: Colors.black),
-          SizedBox(width: 15.0),
-        ],
-      ),
+      backgroundColor: Colors.grey.shade100,
+      appBar: const MyAppBar(title: 'Mot de passe oublié'),
       body: SafeArea(
         child: Form(
-          key: _formKey,
+          key: _forgotPasswordFormKey,
           child: ListView(
             padding:
                 const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-            children: [
+            children:  [
               const Text(
                 'Entrez l\'email associé à votre compte et nous vous enverrons un email avec des instructions pour réinitialiser votre mot de passe.',
                 maxLines: 4,
@@ -73,22 +50,17 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 30.0),
-              FormBuilderTextField(
-                name: 'email',
-                decoration: const InputDecoration(labelText: 'Email'),
-                validator: FormBuilderValidators.compose([
-                  FormBuilderValidators.required(),
-                  FormBuilderValidators.email(),
-                ]),
-              ),
+              InputComponent(label: 'Email', name:'email', placeholder: 'Entrez votre adresse email', displayPlaceholder: true ,validators: [
+                FormBuilderValidators.required(),
+                FormBuilderValidators.email(),
+              ]),
               const SizedBox(height: 30.0),
-              ElevatedButton(
-                onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => const CheckEmailScreen())),
-                child: const Text('Envoyer'),
-              ),
+              ButtonAtom(data: 'Envoyer', onTap: () => {
+                  if (_forgotPasswordFormKey.currentState!.validate()) {
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => const CheckEmailScreen()))
+                  }
+              }
+              )
             ],
           ),
         ),

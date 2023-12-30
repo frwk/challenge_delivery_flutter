@@ -1,5 +1,6 @@
 import 'package:challenge_delivery_flutter/bloc/blocs.dart';
 import 'package:challenge_delivery_flutter/bloc/user/user_bloc.dart';
+import 'package:challenge_delivery_flutter/components/input_component.dart';
 import 'package:challenge_delivery_flutter/enums/message_type_enum.dart';
 import 'package:challenge_delivery_flutter/helpers/loading_state.dart';
 import 'package:challenge_delivery_flutter/helpers/show_snack_message.dart';
@@ -59,7 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
         }
       },
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.grey.shade100,
         body: SingleChildScrollView(
           child: FormBuilder(
               key: _loginFormKey,
@@ -73,75 +74,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const LandingTitleAtom(title: 'Welcome', titleColor: Colors.black, subtitle: 'Back', subtitleColor: Colors.black),
-                        const SizedBox(height: 20.0),
-                        Container(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          decoration: BoxDecoration(
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.2),
-                                spreadRadius: 1,
-                                blurRadius: 12,
-                                offset: const Offset(0, 3),
-                              )
-                            ],
-                          ),
-                          child: FormBuilderTextField(
-                            autovalidateMode: AutovalidateMode.onUserInteraction,
-                            name: 'email',
-                            decoration: const InputDecoration(
-                              labelText: 'Email',
-                              labelStyle: TextStyle(
-                                color: Colors.grey,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                borderSide: BorderSide.none,
-                              ),
-                              fillColor: Colors.white,
-                              filled: true,
-                            ),
-                            validator: FormBuilderValidators.compose([
-                              FormBuilderValidators.required(),
-                              FormBuilderValidators.minLength(8),
-                            ]),
-                          ),
-                        ),
-                        const SizedBox(height: 20.0),
-                        Container(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          decoration: BoxDecoration(
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.2),
-                                spreadRadius: 1,
-                                blurRadius: 12,
-                                offset: const Offset(0, 3),
-                              )
-                            ],
-                          ),
-                          child: FormBuilderTextField(
-                            autovalidateMode: AutovalidateMode.onUserInteraction,
-                            name: 'password',
-                            obscureText: true,
-                            decoration: const InputDecoration(
-                              labelText: 'Mot de passe',
-                              labelStyle: TextStyle(
-                                color: Colors.grey,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                borderSide: BorderSide.none,
-                              ),
-                              fillColor: Colors.white,
-                              filled: true,
-                            ),
-                            validator: FormBuilderValidators.compose([
-                              FormBuilderValidators.required(),
-                              FormBuilderValidators.minLength(8),
-                            ]),
-                          ),
-                        ),
+                        InputComponent(label: 'Email', name: 'email' ,placeholder: 'Entrez votre adresse email', displayPlaceholder: true, validators: [
+                        FormBuilderValidators.required(),
+                        FormBuilderValidators.email(),
+                      ]),
+                      InputComponent(label: 'Mot de passe', name: 'password' ,placeholder: 'Entrez votre mot de passe', displayPlaceholder: true ,password: true, validators: [
+                        FormBuilderValidators.required(),
+                        FormBuilderValidators.minLength(8),
+                        ]),
                         Container(
                           alignment: Alignment.bottomRight,
                           child: InkWell(
@@ -151,7 +91,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         ElevatedButton(
                           onPressed: () => {
-                            if (_loginFormKey.currentState!.validate())
+                            print(_loginFormKey.currentState),
+                          print(_loginFormKey.currentState?.fields['email']?.value),
+                          if (_loginFormKey.currentState!.validate())
                               {
                                 authBloc.add(LoginEvent(
                                   _loginFormKey.currentState?.fields['email']?.value,
