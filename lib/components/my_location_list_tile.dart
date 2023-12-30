@@ -1,4 +1,3 @@
-import 'package:challenge_delivery_flutter/common/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class LocationListTile extends StatelessWidget {

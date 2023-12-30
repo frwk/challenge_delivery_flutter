@@ -12,16 +12,7 @@ void modalLoading(BuildContext context) {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Text('Chargement...'),
-              ],
-            ),
-            Divider(),
-            SizedBox(height: 10.0),
-            Row(
-              children: [CircularProgressIndicator(), SizedBox(width: 15.0), Text('Loading...')],
-            ),
+            Text('Connexion en cours...'),
           ],
         ),
       ),

@@ -1,6 +1,8 @@
 import 'package:challenge_delivery_flutter/state/app_state.dart';
-import 'package:challenge_delivery_flutter/views/courier/home_screen.dart';
+import 'package:challenge_delivery_flutter/views/courier/dashboard_screen.dart';
+import 'package:challenge_delivery_flutter/views/courier/delivery/map_delivery_screen.dart';
 import 'package:challenge_delivery_flutter/views/courier/profile_screen.dart';
+import 'package:challenge_delivery_flutter/views/courier/requests_screen.dart';
 import 'package:flutter/material.dart';
 
 class CourierLayout extends StatefulWidget {
@@ -15,8 +17,10 @@ class _MainScreenState extends State<CourierLayout> {
   late String _currentPageKey;
 
   final Map<String, Widget> _pages = {
-    'home': const CourierHomeScreen(),
+    'home': const CourierDashboardScreen(),
+    'requests': const CourierRequestsScreen(),
     'profile': const CourierProfileScreen(),
+    'map': const MapDeliveryScreen(),
   };
 
   @override
@@ -39,6 +43,7 @@ class _MainScreenState extends State<CourierLayout> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
+        unselectedItemColor: Colors.grey,
         selectedItemColor: Theme.of(context).colorScheme.primary,
         onTap: (index) {
           String pageKey = _pages.keys.elementAt(index);
@@ -47,6 +52,8 @@ class _MainScreenState extends State<CourierLayout> {
         currentIndex: _pages.keys.toList().indexOf(_currentPageKey),
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Accueil'),
+          BottomNavigationBarItem(icon: Icon(Icons.local_shipping), label: 'Demandes'),
+          BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Suivi'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profil'),
         ],
       ),

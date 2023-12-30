@@ -1,10 +1,14 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
+import 'package:challenge_delivery_flutter/enums/role_enum.dart';
 import 'package:challenge_delivery_flutter/helpers/secure_storage.dart';
+import 'package:challenge_delivery_flutter/models/courier.dart';
 import 'package:challenge_delivery_flutter/models/user.dart';
 import 'package:challenge_delivery_flutter/services/auth_service.dart';
+import 'package:challenge_delivery_flutter/services/location_service.dart';
+import 'package:challenge_delivery_flutter/services/notification_service.dart';
+import 'package:challenge_delivery_flutter/services/user_service.dart';
 import 'package:flutter/material.dart';
-
 part 'auth_event.dart';
 part 'auth_state.dart';
 
@@ -18,9 +22,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> _onLogin(LoginEvent event, Emitter<AuthState> emit) async {
     try {
       emit(LoadingAuthState());
-      final data = await authService.login(event.email, event.password);
+      final user = await authService.login(event.email, event.password);
       await Future.delayed(const Duration(milliseconds: 850));
-      emit(SuccessAuthState(data));
+      User userWithToken = user;
+      Courier? courierWithLocation;
+      if (user.role == RoleEnum.courier.name && user.courier != null) {
+        final location = await LocationService.determineLocation();
+        courierWithLocation = user.courier!.copyWith(latitude: location.latitude, longitude: location.longitude);
+      }
+      final notificationToken = (user.notificationToken ?? '').isEmpty ? await NotificationService().getToken() : user.notificationToken;
+      userWithToken = user.copyWith(courier: courierWithLocation, notificationToken: notificationToken);
+      await Future.delayed(const Duration(milliseconds: 2000));
+      await UserService().updateUser(userWithToken);
+      emit(SuccessAuthState(userWithToken));
     } catch (e) {
       emit(FailureAuthState(e.toString()));
     }

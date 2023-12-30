@@ -10,14 +10,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
-import 'dart:developer' as developer;
 
 import '../../../atoms/text_button.dart';
 
 class RegisterClientScreen extends StatefulWidget {
   final RoleEnum? role;
 
-  const RegisterClientScreen({Key? key, this.role}) : super(key: key);
+  const RegisterClientScreen({super.key, this.role});
 
   @override
   _RegisterClientScreenState createState() => _RegisterClientScreenState();
@@ -42,7 +41,6 @@ class _RegisterClientScreenState extends State<RegisterClientScreen> {
 
     return BlocListener<UserBloc, UserState>(
       listener: (context, state) {
-        developer.log(state.toString(), name: 'AUTHSTATE IN REGISTER');
         if (state is LoadingUserState) {
           modalLoading(context);
         } else if (state is SuccessUserState) {
@@ -88,7 +86,7 @@ class _RegisterClientScreenState extends State<RegisterClientScreen> {
                         style: TextStyle(color: Colors.grey),
                       ),
                       Center(
-                        child: Container(
+                        child: SizedBox(
                           width: 200,
                           child: FormBuilderRadioGroup(
                             name: 'role',
