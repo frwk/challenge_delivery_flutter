@@ -1,6 +1,12 @@
-import 'package:challenge_delivery_flutter/bloc/delivery%20copy/delivery_tracking_bloc.dart';
-import 'package:challenge_delivery_flutter/bloc/delivery%20copy/delivery_tracking_state.dart';
+import 'package:challenge_delivery_flutter/bloc/auth/auth_bloc.dart';
+import 'package:challenge_delivery_flutter/bloc/delivery/delivery_tracking_bloc.dart';
+import 'package:challenge_delivery_flutter/bloc/delivery/delivery_tracking_state.dart';
 import 'package:challenge_delivery_flutter/enums/delivery_status_enum.dart';
+import 'package:challenge_delivery_flutter/exceptions/not_found_exception.dart';
+import 'package:challenge_delivery_flutter/models/complaint.dart';
+import 'package:challenge_delivery_flutter/models/user.dart';
+import 'package:challenge_delivery_flutter/services/complaint/complaint_service.dart';
+import 'package:challenge_delivery_flutter/views/complaint/complaint_detail_screen_args.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:challenge_delivery_flutter/atoms/button_atom.dart';
@@ -29,7 +35,7 @@ class _DeliverySummaryScreenState extends State<DeliverySummaryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final deliveryBloc = BlocProvider.of<DeliveryTrackingBloc>(context);
+    final authUser = BlocProvider.of<AuthBloc>(context).state.user;
 
     return BlocBuilder<DeliveryTrackingBloc, DeliveryTrackingState>(
       builder: (context, state) {
@@ -57,19 +63,11 @@ class _DeliverySummaryScreenState extends State<DeliverySummaryScreen> {
                     ),
                     const Divider(height: 30, thickness: 2),
                     InfoRow('Adresse de prise en charge:', state.delivery?.pickupAddress ?? 'Chargement...'),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 20),
                     InfoRow('Adresse de livraison:', state.delivery?.dropoffAddress ?? 'Chargement...'),
                     if (state.delivery?.status == DeliveryStatusEnum.delivered.name) ...[
                       const Divider(height: 30, thickness: 2),
                       InfoRow('Durée de la livraison:', '${widget.delivery.dropoffDate!.difference(widget.delivery.pickupDate!).inMinutes} minutes'),
-                      InfoRow(
-                          'Distance parcourue:',
-                          '${Geolocator.distanceBetween(
-                            widget.delivery.pickupLatitude!,
-                            widget.delivery.pickupLongitude!,
-                            widget.delivery.dropoffLatitude!,
-                            widget.delivery.dropoffLongitude!,
-                          ).roundToDouble().toInt()} m'),
                     ],
                     const Divider(height: 30, thickness: 2),
                     ButtonAtom(
@@ -79,10 +77,11 @@ class _DeliverySummaryScreenState extends State<DeliverySummaryScreen> {
                       buttonSize: ButtonSize.small,
                     ),
                     if (state.delivery?.status == DeliveryStatusEnum.delivered.name) ...[
-                      const SizedBox(height: 10),
-                      const ButtonAtom(
+                      const SizedBox(height: 20),
+                      ButtonAtom(
                         data: "Contacter le support",
                         buttonSize: ButtonSize.small,
+                        onTap: () => _contactSupportAction(context, state.delivery!, authUser!),
                       ),
                     ],
                   ],
@@ -101,10 +100,32 @@ class _DeliverySummaryScreenState extends State<DeliverySummaryScreen> {
         Expanded(
           child: Text(label, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
         ),
+        const SizedBox(width: 20.0),
         Expanded(
           child: Text(value, style: const TextStyle(fontSize: 16)),
         ),
       ],
     );
+  }
+
+  Future<void> _contactSupportAction(BuildContext context, Delivery delivery, User user) async {
+    try {
+      List<Complaint> complaints = await ComplaintService().findByUserAndDeliveryId(user.id, delivery.id!);
+      if (complaints.any((complaint) => complaint.status == 'pending')) {
+        Navigator.pushNamed(context, '/complaint-detail',
+            arguments: ComplaintDetailScreenArgs(complaint: complaints.firstWhere((complaint) => complaint.status == 'pending')));
+      } else {
+        throw NotFoundException('Complaint already resolved');
+      }
+    } catch (e) {
+      if (e is NotFoundException) {
+        Complaint complaint = await ComplaintService().create(Complaint(
+          deliveryId: delivery.id,
+          userId: user.id,
+        ));
+        Navigator.pushNamed(context, '/complaint-detail', arguments: ComplaintDetailScreenArgs(complaint: complaint));
+      }
+      print(e);
+    }
   }
 }

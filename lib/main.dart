@@ -1,5 +1,5 @@
 import 'package:challenge_delivery_flutter/bloc/auth/auth_bloc.dart';
-import 'package:challenge_delivery_flutter/bloc/delivery%20copy/delivery_tracking_bloc.dart';
+import 'package:challenge_delivery_flutter/bloc/delivery/delivery_tracking_bloc.dart';
 import 'package:challenge_delivery_flutter/bloc/order/order_bloc.dart';
 import 'package:challenge_delivery_flutter/bloc/user/user_bloc.dart';
 import 'package:challenge_delivery_flutter/common/app_colors.dart';
@@ -9,12 +9,12 @@ import 'package:challenge_delivery_flutter/themes/light_mode.dart';
 import 'package:challenge_delivery_flutter/views/auth/forgot_password_screen.dart';
 import 'package:challenge_delivery_flutter/views/auth/login/login_screen.dart';
 import 'package:challenge_delivery_flutter/views/auth/register/register_screen.dart';
-import 'package:challenge_delivery_flutter/views/client/dashboard/home_screen.dart';
 import 'package:challenge_delivery_flutter/views/complaint/complaint_detail_screen.dart';
 import 'package:challenge_delivery_flutter/views/complaint/complaint_listing_screen.dart';
 import 'package:challenge_delivery_flutter/views/courier/change_password_screen.dart';
 import 'package:challenge_delivery_flutter/views/courier/deliveries_history_screen.dart';
 import 'package:challenge_delivery_flutter/views/courier/edit_profile_screen.dart';
+import 'package:challenge_delivery_flutter/views/home_screen.dart';
 import 'package:challenge_delivery_flutter/views/order/create_order_screen.dart';
 import 'package:challenge_delivery_flutter/views/order/order_summary.dart';
 import 'package:challenge_delivery_flutter/services/location_service.dart';
@@ -84,7 +84,6 @@ class _MyAppState extends State<MyApp> {
           title: 'Challenge Delivery',
           home: const CheckingLoginListener(),
           routes: {
-            '/client/home': (context) => const ClientHomeScreen(),
             '/login': (context) => const LoginScreen(),
             '/register': (context) => const RegisterClientScreen(),
             '/forgot-password': (context) => const ForgotPasswordScreen(),

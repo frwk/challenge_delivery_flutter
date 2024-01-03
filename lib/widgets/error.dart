@@ -7,33 +7,29 @@ enum ErrorMessageTypeEnum {
 
 class ErrorMessage extends StatelessWidget {
   final String message;
-  final ErrorMessageTypeEnum? type;
+  final List<Widget>? actions;
+  final IconData? icon;
 
-  ErrorMessage({required this.message, this.type = ErrorMessageTypeEnum.generic});
+  ErrorMessage({required this.message, this.actions, this.icon});
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Container(
-        padding: EdgeInsets.all(20),
-        margin: EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.redAccent,
-          borderRadius: BorderRadius.circular(15),
-        ),
+    return Container(
+      width: double.infinity,
+      child: Center(
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.error_outline,
-              color: Colors.white,
-              size: 50,
-            ),
+            if (icon != null)
+              Icon(
+                icon!,
+                color: Theme.of(context).colorScheme.primary,
+                size: 50,
+              ),
             SizedBox(height: 10),
             Text(
-              'Oups! Une erreur est survenue.',
+              'Oups!',
               style: TextStyle(
-                color: Colors.white,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -42,11 +38,24 @@ class ErrorMessage extends StatelessWidget {
             Text(
               message,
               style: TextStyle(
-                color: Colors.white70,
                 fontSize: 14,
               ),
               textAlign: TextAlign.center,
             ),
+            SizedBox(height: 10),
+            if (actions != null && actions!.isNotEmpty) ...[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ...actions!
+                      .map((action) => Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                            child: action,
+                          ))
+                      .toList(),
+                ],
+              ),
+            ],
           ],
         ),
       ),

@@ -5,6 +5,8 @@ import 'package:challenge_delivery_flutter/helpers/format_string.dart';
 import 'package:challenge_delivery_flutter/helpers/secure_storage.dart';
 import 'dart:io';
 import 'package:challenge_delivery_flutter/exceptions/not_found_exception.dart';
+import 'package:challenge_delivery_flutter/helpers/secure_storage.dart';
+import 'package:challenge_delivery_flutter/interfaces/client_stats.dart';
 import 'package:challenge_delivery_flutter/interfaces/courier_stats.dart';
 import 'package:challenge_delivery_flutter/interfaces/user_stats.dart';
 import 'package:challenge_delivery_flutter/models/courier.dart';
@@ -137,7 +139,7 @@ class OrderService {
     }
   }
 
-  Future<UserStats> getUserStats(User user) async {
+  Future<ClientStats> getUserStats(User user) async {
     try {
       final cookie = await secureStorage.readCookie();
       final response =
@@ -146,7 +148,7 @@ class OrderService {
       if (response.statusCode != 200) {
         throw Exception(jsonDecode(response.body)['message']);
       }
-      return UserStats.fromJson(jsonDecode(response.body));
+      return ClientStats.fromJson(jsonDecode(response.body));
     } catch (e) {
       developer.log(e.toString(), name: 'GET USER STATS');
       rethrow;

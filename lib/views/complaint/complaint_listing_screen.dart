@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:challenge_delivery_flutter/atoms/button_atom.dart';
 import 'package:challenge_delivery_flutter/bloc/auth/auth_bloc.dart';
 import 'package:challenge_delivery_flutter/bloc/user/user_bloc.dart';
 import 'package:challenge_delivery_flutter/components/my_card.dart';
@@ -64,12 +65,18 @@ class _ComplaintListingScreenState extends State<ComplaintListingScreen> {
             } else {
               List<Complaint> fetchedComplaints = snapshot.data!;
               if (fetchedComplaints.isEmpty) {
-                return Container(
-                  width: double.infinity,
-                  child: ErrorMessage(
-                    type: ErrorMessageTypeEnum.noResult,
-                    message: 'Aucune réclamation en cours',
-                  ),
+                return ErrorMessage(
+                  icon: Icons.search_off,
+                  message: 'Aucune réclamation en cours',
+                  actions: [
+                    ButtonAtom(
+                      data: 'Rafraîchir',
+                      color: Theme.of(context).colorScheme.secondary,
+                      onTap: () => refreshComplaints(context),
+                    ),
+                    ButtonAtom(
+                        data: 'Commandes', color: Theme.of(context).colorScheme.primary, onTap: () => Navigator.of(context).pushNamed('/history')),
+                  ],
                 );
               }
               fetchedComplaints.sort((a, b) => a.status!.compareTo(b.status!));

@@ -1,7 +1,7 @@
 import 'package:challenge_delivery_flutter/interfaces/user_stats.dart';
 
-class CourierStats extends UserStats {
-  CourierStats({
+class ClientStats extends UserStats {
+  ClientStats({
     int? totalDeliveries,
     double? totalDistance,
     double? averageRating,
@@ -13,7 +13,7 @@ class CourierStats extends UserStats {
           totalDuration: totalDuration,
         );
 
-  factory CourierStats.fromJson(Map<String, dynamic> json) {
+  factory ClientStats.fromJson(Map<String, dynamic> json) {
     int? tryParseInt(dynamic value) {
       if (value is String) {
         return int.tryParse(value);
@@ -32,7 +32,7 @@ class CourierStats extends UserStats {
       return null;
     }
 
-    return CourierStats(
+    return ClientStats(
       totalDeliveries: tryParseInt(json['totalDeliveries']),
       totalDistance: tryParseDouble(json['totalDistance']),
       averageRating: tryParseDouble(json['averageRating']),

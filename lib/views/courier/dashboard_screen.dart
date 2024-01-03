@@ -4,6 +4,7 @@ import 'package:challenge_delivery_flutter/bloc/auth/auth_bloc.dart';
 import 'package:challenge_delivery_flutter/enums/role_enum.dart';
 import 'package:challenge_delivery_flutter/interfaces/courier_stats.dart';
 import 'package:challenge_delivery_flutter/services/order/order_service.dart';
+import 'package:challenge_delivery_flutter/widgets/error.dart';
 import 'package:challenge_delivery_flutter/widgets/layouts/courier_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -37,58 +38,17 @@ class CourierDashboardScreen extends StatelessWidget {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
                     } else if (snapshot.hasError) {
-                      return Center(
-                        child: Container(
-                          padding: const EdgeInsets.all(20),
-                          margin: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            color: Colors.orangeAccent[100],
-                            borderRadius: BorderRadius.circular(15),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
-                                blurRadius: 10,
-                                offset: const Offset(0, 5),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.grid_off_rounded,
-                                color: Colors.orangeAccent[700],
-                                size: 50,
-                              ),
-                              const SizedBox(height: 20),
-                              const Text(
-                                'Aucune commande effectuée pour le moment!',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              Text(
-                                "Livrez dés à présent votre premier colis pour afficher des statistiques sur votre activité.",
-                                style: TextStyle(
-                                  color: Colors.grey[700],
-                                  fontSize: 14,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                              const SizedBox(height: 20),
-                              ButtonAtom(
-                                data: 'Voir les demandes',
-                                onTap: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => CourierLayout(initialPage: 'requests')),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
+                      return ErrorMessage(
+                        icon: Icons.grid_off_rounded,
+                        message: 'Aucune statistique à afficher pour le moment',
+                        actions: [
+                          ButtonAtom(
+                            data: 'Voir les demandes',
+                            color: Theme.of(context).colorScheme.primary,
+                            icon: Icons.local_shipping,
+                            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => CourierLayout(initialPage: 'requests'))),
+                          )
+                        ],
                       );
                     } else if (snapshot.hasData) {
                       return Padding(

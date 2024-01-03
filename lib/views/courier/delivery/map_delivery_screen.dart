@@ -1,11 +1,12 @@
 import 'package:challenge_delivery_flutter/atoms/button_atom.dart';
 import 'package:challenge_delivery_flutter/bloc/auth/auth_bloc.dart';
-import 'package:challenge_delivery_flutter/bloc/delivery%20copy/delivery_tracking_bloc.dart';
-import 'package:challenge_delivery_flutter/bloc/delivery%20copy/delivery_tracking_event.dart';
-import 'package:challenge_delivery_flutter/bloc/delivery%20copy/delivery_tracking_state.dart';
+import 'package:challenge_delivery_flutter/bloc/delivery/delivery_tracking_bloc.dart';
+import 'package:challenge_delivery_flutter/bloc/delivery/delivery_tracking_event.dart';
+import 'package:challenge_delivery_flutter/bloc/delivery/delivery_tracking_state.dart';
 import 'package:challenge_delivery_flutter/views/courier/delivery/delivery_summary_screen.dart';
 import 'package:challenge_delivery_flutter/widgets/delivery/delivery_infos.dart';
 import 'package:challenge_delivery_flutter/widgets/delivery/delivery_map.dart';
+import 'package:challenge_delivery_flutter/widgets/error.dart';
 import 'package:challenge_delivery_flutter/widgets/layouts/courier_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -65,17 +66,30 @@ class _MapDeliveryScreenState extends State<MapDeliveryScreen> with WidgetsBindi
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 if (state.errorType.isNotFound) ...[
-                  const Text('Aucune livraison en cours'),
-                  ButtonAtom(
-                    onTap: () => Navigator.pushAndRemoveUntil(
-                        context, MaterialPageRoute(builder: (context) => const CourierLayout(initialPage: 'requests')), (route) => false),
-                    data: 'Voir les demandes',
+                  ErrorMessage(
+                    icon: Icons.search_off,
+                    message: 'Aucune livraison en cours',
+                    actions: [
+                      ButtonAtom(
+                        data: 'Voir les demandes',
+                        color: Theme.of(context).colorScheme.primary,
+                        icon: Icons.local_shipping,
+                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => CourierLayout(initialPage: 'requests'))),
+                      )
+                    ],
                   ),
                 ] else ...[
-                  const Text('Erreur lors du chargement de la livraison'),
-                  ButtonAtom(
-                    onTap: () => deliveryTrackingBloc.add(StartDeliveryTracking(BlocProvider.of<AuthBloc>(context).state.user!.courier!)),
-                    data: 'Réessayer',
+                  ErrorMessage(
+                    icon: Icons.error,
+                    message: 'Erreur lors du chargement de la livraison',
+                    actions: [
+                      ButtonAtom(
+                        data: 'Rafraîchir',
+                        color: Theme.of(context).colorScheme.primary,
+                        icon: Icons.refresh,
+                        onTap: () => deliveryTrackingBloc.add(StartDeliveryTracking(BlocProvider.of<AuthBloc>(context).state.user!.courier!)),
+                      )
+                    ],
                   ),
                 ],
               ],

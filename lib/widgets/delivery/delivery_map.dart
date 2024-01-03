@@ -1,5 +1,5 @@
-import 'package:challenge_delivery_flutter/bloc/delivery%20copy/delivery_tracking_bloc.dart';
-import 'package:challenge_delivery_flutter/bloc/delivery%20copy/delivery_tracking_state.dart';
+import 'package:challenge_delivery_flutter/bloc/delivery/delivery_tracking_bloc.dart';
+import 'package:challenge_delivery_flutter/bloc/delivery/delivery_tracking_state.dart';
 import 'package:challenge_delivery_flutter/models/delivery.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

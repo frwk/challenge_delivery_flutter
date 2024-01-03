@@ -17,7 +17,9 @@ import 'package:challenge_delivery_flutter/services/order/order_service.dart';
 import 'package:challenge_delivery_flutter/views/complaint/complaint_detail_screen_args.dart';
 import 'package:challenge_delivery_flutter/views/courier/delivery/delivery_details_screen.dart';
 import 'package:challenge_delivery_flutter/widgets/deliveries_list.dart';
+import 'package:challenge_delivery_flutter/widgets/error.dart';
 import 'package:challenge_delivery_flutter/widgets/layouts/app_bar.dart';
+import 'package:challenge_delivery_flutter/widgets/layouts/courier_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -61,34 +63,57 @@ class _DeliveriesHistoryScreenState extends State<DeliveriesHistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final authBloc = BlocProvider.of<AuthBloc>(context);
+    final user = BlocProvider.of<AuthBloc>(context).state.user;
 
     return Scaffold(
         appBar: const MyAppBar(
           title: 'Historique des livraisons',
         ),
         body: FutureBuilder<List<Delivery>>(
-          future: _getDeliveriesBasedOnRole(authBloc),
+          future: _getDeliveriesBasedOnRole(user!),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
-              return Center(child: Text('Erreur: ${snapshot.error}'));
+              return ErrorMessage(
+                icon: Icons.grid_off_rounded,
+                message: 'Aucune statistique à afficher pour le moment',
+                actions: [
+                  ButtonAtom(
+                    data: 'Voir les demandes',
+                    color: Theme.of(context).colorScheme.primary,
+                    icon: Icons.local_shipping,
+                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => CourierLayout(initialPage: 'requests'))),
+                  )
+                ],
+              );
             } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-              return _buildDeliveryList(snapshot.data!, authBloc.state.user!);
+              return _buildDeliveryList(snapshot.data!, user!);
             } else {
-              return const Center(child: Text('Aucune livraison effectuée'));
+              return ErrorMessage(
+                icon: Icons.search_off,
+                message: 'Aucune livraison effectuée',
+                actions: [
+                  ButtonAtom(data: 'Rafraîchir', color: Theme.of(context).colorScheme.primary, icon: Icons.refresh, onTap: () => setState(() {})),
+                  ButtonAtom(
+                    data: 'Demandes',
+                    color: Theme.of(context).colorScheme.primary,
+                    icon: Icons.local_shipping,
+                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => CourierLayout(initialPage: 'requests'))),
+                  )
+                ],
+              );
             }
           },
         ));
   }
 
-  Future<List<Delivery>> _getDeliveriesBasedOnRole(AuthBloc authBloc) async {
+  Future<List<Delivery>> _getDeliveriesBasedOnRole(User user) async {
     try {
-      if (authBloc.state.user?.role == RoleEnum.client.name) {
-        return await OrderService().getUserDeliveries(authBloc.state.user!);
+      if (user.role == RoleEnum.client.name) {
+        return await OrderService().getUserDeliveries(user);
       } else {
-        return await OrderService().getCourierDeliveries(authBloc.state.user!.courier!);
+        return await OrderService().getCourierDeliveries(user.courier!);
       }
     } catch (e) {
       return Future<List<Delivery>>.error(e.toString());
