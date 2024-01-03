@@ -21,6 +21,7 @@ import 'package:challenge_delivery_flutter/widgets/error.dart';
 import 'package:challenge_delivery_flutter/widgets/layouts/app_bar.dart';
 import 'package:challenge_delivery_flutter/widgets/layouts/courier_layout.dart';
 import 'package:challenge_delivery_flutter/widgets/layouts/app_bar.dart';
+import 'package:challenge_delivery_flutter/widgets/layouts/courier_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
