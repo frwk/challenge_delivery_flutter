@@ -15,3 +15,18 @@ class LoginEvent extends AuthEvent {
 class CheckLoginEvent extends AuthEvent {}
 
 class LogOutEvent extends AuthEvent {}
+
+class UpdateProfileEvent extends AuthEvent {
+  final String? firstName;
+  final String? lastName;
+  final String? email;
+  final String? password;
+
+  UpdateProfileEvent({this.firstName, this.lastName, this.email, this.password});
+}
+
+class UpdatePasswordEvent extends AuthEvent {
+  final String? password;
+
+  UpdatePasswordEvent({this.password});
+}

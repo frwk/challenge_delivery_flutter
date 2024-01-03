@@ -64,6 +64,24 @@ class UserService {
     }
   }
 
+  Future<User> updatePassword(int id, String password) async {
+    try {
+      final cookie = await secureStorage.readCookie();
+      Map<String, String> headers = {HttpHeaders.contentTypeHeader: 'application/json', HttpHeaders.cookieHeader: cookie!};
+      final response = await http.patch(
+        Uri.parse('${dotenv.env['API_URL']}/me'),
+        headers: headers,
+        body: jsonEncode({'password': password}),
+      );
+      if (response.statusCode != 200) {
+        throw Exception(jsonDecode(response.body)['message']);
+      }
+      return User.fromJson(jsonDecode(response.body));
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<User> updateCourier(Courier courier) async {
     try {
       Map<String, String> headers = {HttpHeaders.contentTypeHeader: 'application/json'};
@@ -79,6 +97,25 @@ class UserService {
       return User.fromJson(jsonDecode(response.body));
     } catch (e) {
       print(e);
+      rethrow;
+    }
+  }
+
+  Future<bool> verifyPassword(int id, String password) async {
+    try {
+      final response = await http.post(
+        Uri.parse('${dotenv.env['API_URL']}/users/$id/verify-password'),
+        headers: {'Accept': 'application/json'},
+        body: {'password': password},
+      );
+      if (response.statusCode == 200) {
+        return true;
+      } else if (response.statusCode == 400) {
+        return false;
+      } else {
+        throw Exception(jsonDecode(response.body)['message']);
+      }
+    } catch (e) {
       rethrow;
     }
   }

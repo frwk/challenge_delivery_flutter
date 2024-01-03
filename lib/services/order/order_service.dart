@@ -6,6 +6,7 @@ import 'package:challenge_delivery_flutter/helpers/secure_storage.dart';
 import 'dart:io';
 import 'package:challenge_delivery_flutter/exceptions/not_found_exception.dart';
 import 'package:challenge_delivery_flutter/interfaces/courier_stats.dart';
+import 'package:challenge_delivery_flutter/interfaces/user_stats.dart';
 import 'package:challenge_delivery_flutter/models/courier.dart';
 import 'package:challenge_delivery_flutter/models/delivery.dart';
 import 'package:challenge_delivery_flutter/models/user.dart';
@@ -131,7 +132,23 @@ class OrderService {
       }
       return CourierStats.fromJson(jsonDecode(response.body));
     } catch (e) {
-      developer.log(e.toString());
+      developer.log(e.toString(), name: 'GET COURIER STATS');
+      rethrow;
+    }
+  }
+
+  Future<UserStats> getUserStats(User user) async {
+    try {
+      final cookie = await secureStorage.readCookie();
+      final response =
+          await http.get(Uri.parse('${dotenv.env['API_URL']}/users/${user.id}/stats'), headers: {'Accept': 'application/json', 'Cookie': cookie!});
+      developer.log('response: ${response.body}', name: 'GET USER STATS');
+      if (response.statusCode != 200) {
+        throw Exception(jsonDecode(response.body)['message']);
+      }
+      return UserStats.fromJson(jsonDecode(response.body));
+    } catch (e) {
+      developer.log(e.toString(), name: 'GET USER STATS');
       rethrow;
     }
   }

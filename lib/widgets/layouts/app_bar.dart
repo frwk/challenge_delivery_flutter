@@ -3,26 +3,31 @@ import 'package:flutter/material.dart';
 class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final Function()? onBackArrowClicked;
+  final bool hasBackArrow;
+  final List<Widget>? actions;
 
-  const MyAppBar({super.key, required this.title, this.onBackArrowClicked});
+  const MyAppBar({super.key, required this.title, this.onBackArrowClicked, this.hasBackArrow = true, this.actions});
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back),
-        color: Colors.black,
-        onPressed: () => onBackArrowClicked != null ? onBackArrowClicked!() : Navigator.pop(context),
-      ),
-      title: Text(title, style: const TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w600)),
+      backgroundColor: Theme.of(context).colorScheme.primary,
+      elevation: 2,
+      leading: hasBackArrow
+          ? IconButton(
+              icon: const Icon(Icons.arrow_back),
+              color: Colors.white,
+              onPressed: () => onBackArrowClicked != null ? onBackArrowClicked!() : Navigator.pop(context),
+            )
+          : null,
+      title: Text(title, style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w600)),
       titleSpacing: 10,
       centerTitle: true,
+      automaticallyImplyLeading: hasBackArrow,
+      actions: actions,
     );
   }
 
   @override
-  // TODO: implement preferredSize
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }

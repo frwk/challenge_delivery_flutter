@@ -80,7 +80,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             name: 'password',
                             placeholder: 'Entrez votre mot de passe',
                             displayPlaceholder: true,
-                            password: true,
+                            obscureText: true,
                             validators: [
                               FormBuilderValidators.required(),
                               FormBuilderValidators.minLength(8),

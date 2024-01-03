@@ -17,6 +17,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<LoginEvent>(_onLogin);
     on<CheckLoginEvent>(_onCheckLogin);
     on<LogOutEvent>(_onLogOut);
+    on<UpdateProfileEvent>(_onUpdateProfile);
+    on<UpdatePasswordEvent>(_onUpdatePassword);
   }
 
   Future<void> _onLogin(LoginEvent event, Emitter<AuthState> emit) async {
@@ -31,7 +33,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         courierWithLocation = user.courier!.copyWith(latitude: location.latitude, longitude: location.longitude);
       }
       final notificationToken = (user.notificationToken ?? '').isEmpty ? await NotificationService().getToken() : user.notificationToken;
-      userWithToken = user.copyWith(courier: courierWithLocation, notificationToken: notificationToken);
+      userWithToken = user.copyWith(courier: () => courierWithLocation, notificationToken: notificationToken);
       await Future.delayed(const Duration(milliseconds: 2000));
       await UserService().updateUser(userWithToken);
       emit(SuccessAuthState(userWithToken));
@@ -59,5 +61,38 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     await secureStorage.deleteSecureStorage();
     emit(LogOutAuthState());
     return emit(state.copyWith(user: null));
+  }
+
+  Future<void> _onUpdateProfile(UpdateProfileEvent event, Emitter<AuthState> emit) async {
+    try {
+      await Future.delayed(const Duration(milliseconds: 850));
+
+      if (state.user == null) {
+        throw Exception('User not found');
+      }
+      final user = state.user!.copyWith(
+        firstName: event.firstName,
+        lastName: event.lastName,
+        email: event.email,
+      );
+      final updatedUser = await UserService().updateUser(user);
+      emit(SuccessAuthState(updatedUser));
+    } catch (e) {
+      emit(FailureAuthState(e.toString()));
+    }
+  }
+
+  Future<void> _onUpdatePassword(UpdatePasswordEvent event, Emitter<AuthState> emit) async {
+    try {
+      emit(LoadingAuthState());
+      await Future.delayed(const Duration(milliseconds: 850));
+      if (state.user == null) {
+        throw Exception('User not found');
+      }
+      final updatedUser = await UserService().updatePassword(state.user!.id, event.password!);
+      emit(SuccessAuthState(updatedUser));
+    } catch (e) {
+      emit(FailureAuthState(e.toString()));
+    }
   }
 }

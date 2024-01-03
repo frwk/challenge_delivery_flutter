@@ -56,9 +56,9 @@ class _DeliverySummaryScreenState extends State<DeliverySummaryScreen> {
                       style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.deepOrange),
                     ),
                     const Divider(height: 30, thickness: 2),
-                    InfoRow('Adresse de prise en charge:', deliveryBloc.pickupAddress ?? 'Chargement...'),
+                    InfoRow('Adresse de prise en charge:', state.delivery?.pickupAddress ?? 'Chargement...'),
                     const SizedBox(height: 10),
-                    InfoRow('Adresse de livraison:', deliveryBloc.dropoffAddress ?? 'Chargement...'),
+                    InfoRow('Adresse de livraison:', state.delivery?.dropoffAddress ?? 'Chargement...'),
                     if (state.delivery?.status == DeliveryStatusEnum.delivered.name) ...[
                       const Divider(height: 30, thickness: 2),
                       InfoRow('Durée de la livraison:', '${widget.delivery.dropoffDate!.difference(widget.delivery.pickupDate!).inMinutes} minutes'),

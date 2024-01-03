@@ -4,13 +4,13 @@ import '../atoms/label_atom.dart';
 import '../atoms/textfield_atom.dart';
 
 class InputComponent extends StatelessWidget {
-  final String label;
+  final String? label;
   final String name;
   final Color? labelColor;
   final double? labelSize;
   final String placeholder;
   final bool? displayPlaceholder;
-  final bool password;
+  final bool obscureText;
   final void Function(String?)? onChanged;
   final TextEditingController? controller;
   final List<FormFieldValidator<String>>? validators;
@@ -19,14 +19,15 @@ class InputComponent extends StatelessWidget {
   final Widget? suffixIcon;
   final Widget? prefixIcon;
   final String? initialValue;
+  final String? errorText;
 
   const InputComponent({
     super.key,
-    required this.label,
+    this.label,
     required this.name,
     required this.placeholder,
     this.displayPlaceholder = false,
-    this.password = false,
+    this.obscureText = false,
     this.labelColor = Colors.black,
     this.labelSize,
     this.onChanged,
@@ -37,6 +38,7 @@ class InputComponent extends StatelessWidget {
     this.suffixIcon,
     this.prefixIcon,
     this.initialValue,
+    this.errorText,
   });
 
   @override
@@ -49,12 +51,12 @@ class InputComponent extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            LabelAtom(label: label, labelColor: labelColor, labelSize: labelSize),
+            if (label != null) LabelAtom(label: label!, labelColor: labelColor, labelSize: labelSize),
             TextFieldAtom(
                 name: name,
                 placeholder: placeholder,
                 displayPlaceholder: displayPlaceholder,
-                isPassword: password,
+                obscureText: obscureText,
                 onChanged: onChanged,
                 controller: controller,
                 validators: validators,
@@ -62,7 +64,8 @@ class InputComponent extends StatelessWidget {
                 decoration: decoration,
                 suffixIcon: suffixIcon,
                 prefixIcon: prefixIcon,
-                initialValue: initialValue)
+                initialValue: initialValue,
+                errorText: errorText)
           ],
         ),
       ),

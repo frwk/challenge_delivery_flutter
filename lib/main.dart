@@ -12,6 +12,9 @@ import 'package:challenge_delivery_flutter/views/auth/register/register_screen.d
 import 'package:challenge_delivery_flutter/views/client/dashboard/home_screen.dart';
 import 'package:challenge_delivery_flutter/views/complaint/complaint_detail_screen.dart';
 import 'package:challenge_delivery_flutter/views/complaint/complaint_listing_screen.dart';
+import 'package:challenge_delivery_flutter/views/courier/change_password_screen.dart';
+import 'package:challenge_delivery_flutter/views/courier/deliveries_history_screen.dart';
+import 'package:challenge_delivery_flutter/views/courier/edit_profile_screen.dart';
 import 'package:challenge_delivery_flutter/views/order/create_order_screen.dart';
 import 'package:challenge_delivery_flutter/views/order/order_summary.dart';
 import 'package:challenge_delivery_flutter/services/location_service.dart';
@@ -90,6 +93,9 @@ class _MyAppState extends State<MyApp> {
             '/payment-success': (context) => const PaymentSuccessScreen(),
             '/complaints': (context) => const ComplaintListingScreen(),
             '/complaint-detail': (context) => const ComplaintDetailScreen(),
+            '/edit-profile': (context) => const EditProfileScreen(),
+            '/change-password': (context) => const ChangePasswordScreen(),
+            '/history': (context) => const DeliveriesHistoryScreen(),
           }),
     );
   }

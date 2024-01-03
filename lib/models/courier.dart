@@ -31,13 +31,13 @@ class Courier {
         "user": user?.toJson(),
       };
 
-  Courier copyWith({int? id, String? status, double? latitude, double? longitude, User? user}) {
+  Courier copyWith({int? id, String? status, double? latitude, double? longitude, Function? user}) {
     return Courier(
       id: id ?? this.id,
       status: status ?? this.status,
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
-      user: user ?? this.user,
+      user: user != null ? user() : this.user,
     );
   }
 }

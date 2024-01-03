@@ -49,8 +49,7 @@ class ComplaintDetailScreenState extends State<ComplaintDetailScreen> {
                     ],
                 onSelected: (value) async {
                   if (value == 'close') {
-                    final Complaint updatedComplaint = await complaintService.markAsResolved(complaint.id);
-                    args.callback(updatedComplaint);
+                    await complaintService.markAsResolved(complaint.id!);
                     if (context.mounted) Navigator.of(context).pop();
                   }
                 })

@@ -1,20 +1,28 @@
-import 'package:challenge_delivery_flutter/atoms/button_atom.dart';
 import 'package:challenge_delivery_flutter/bloc/auth/auth_bloc.dart';
+import 'package:challenge_delivery_flutter/components/my_card.dart';
 import 'package:challenge_delivery_flutter/enums/delivery_status_enum.dart';
+import 'package:challenge_delivery_flutter/enums/role_enum.dart';
 import 'package:challenge_delivery_flutter/helpers/secure_storage.dart';
-import 'package:challenge_delivery_flutter/services/location_service.dart';
-import 'package:challenge_delivery_flutter/services/order/order_service.dart';
-import 'package:challenge_delivery_flutter/widgets/layouts/courier_layout.dart';
+import 'package:challenge_delivery_flutter/widgets/layouts/app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:challenge_delivery_flutter/models/delivery.dart';
 
+class MenuAction {
+  final String title;
+  final VoidCallback action;
+
+  MenuAction({required this.title, required this.action});
+}
+
 class DeliveryDetailsScreen extends StatefulWidget {
   final Delivery delivery;
-  final Future<void> Function(String) onDeliveryRefused;
+  final Future<void> Function(String)? onDeliveryRefused;
+  final List<Widget>? actionsButtons;
+  final List<MenuAction>? menuActions;
 
-  const DeliveryDetailsScreen({super.key, required this.delivery, required this.onDeliveryRefused});
+  const DeliveryDetailsScreen({super.key, required this.delivery, this.onDeliveryRefused, this.actionsButtons, this.menuActions});
 
   @override
   State<DeliveryDetailsScreen> createState() => _DeliveryDetailsScreenState();
@@ -26,130 +34,108 @@ class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
   String? pickupAddress;
   String? dropoffAddress;
 
-  Future<void> loadAddresses() async {
-    try {
-      String fetchedPickupAddress = await locationService.getAddress(widget.delivery.pickupLatitude!, widget.delivery.pickupLongitude!);
-      String fetchedDropoffAddress = await locationService.getAddress(widget.delivery.dropoffLatitude!, widget.delivery.dropoffLongitude!);
-
-      setState(() {
-        pickupAddress = fetchedPickupAddress;
-        dropoffAddress = fetchedDropoffAddress;
-        isLoading = false;
-      });
-    } catch (error) {
-      if (mounted) {
-        setState(() {
-          isLoading = false;
-        });
-      }
-    }
-  }
-
   @override
   void initState() {
     super.initState();
-    loadAddresses();
   }
 
   @override
   Widget build(BuildContext context) {
-    final authBloc = BlocProvider.of<AuthBloc>(context);
+    final authUser = BlocProvider.of<AuthBloc>(context).state.user;
 
     return Scaffold(
-      appBar: AppBar(
-          title: Text(
-            'Détails de la Livraison #${widget.delivery.id}',
-            style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          centerTitle: true,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          )),
-      body: Padding(
+      appBar: MyAppBar(
+        title: 'Détails de la Livraison #${widget.delivery.id}',
+        actions: widget.menuActions != null
+            ? <Widget>[
+                PopupMenuButton<MenuAction>(
+                  iconColor: Colors.white,
+                  onSelected: (MenuAction action) => action.action(),
+                  itemBuilder: (BuildContext context) {
+                    return widget.menuActions!.map((MenuAction action) {
+                      return PopupMenuItem<MenuAction>(
+                        value: action,
+                        child: Text(action.title),
+                      );
+                    }).toList();
+                  },
+                ),
+              ]
+            : null,
+      ),
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            authUser?.role == RoleEnum.client.name ? _buildSectionHeader('Informations du Livreur') : _buildSectionHeader('Informations du Client'),
+            authUser?.role == RoleEnum.client.name
+                ? _buildCard(
+                    Icons.person,
+                    'Nom complet',
+                    widget.delivery.courier != null
+                        ? '${widget.delivery.courier?.user?.firstName} ${widget.delivery.courier?.user?.lastName}'
+                        : 'Aucun livreur affecté')
+                : _buildCard(Icons.person, 'Nom complet', '${widget.delivery.client?.firstName} ${widget.delivery.client?.lastName}'),
+            _buildSectionHeader('Détails de la Livraison'),
             _buildCard(
-              Icons.person,
-              'Client',
-              '${widget.delivery.client?.firstName} ${widget.delivery.client?.lastName}',
+              Icons.info_outline,
+              'Statut actuel',
+              _getStatusText(widget.delivery.status),
             ),
-            _buildCard(
-              Icons.location_on,
-              'Adresse de départ',
-              pickupAddress ?? '${widget.delivery.pickupLatitude.toString()}, ${widget.delivery.pickupLongitude.toString()}',
-            ),
-            _buildCard(
-              Icons.home,
-              'Adresse de livraison',
-              dropoffAddress ?? '${widget.delivery.dropoffLatitude.toString()}, ${widget.delivery.dropoffLongitude.toString()}',
-            ),
-            _buildCard(
-              Icons.calendar_today,
-              'Date de la demande',
-              DateFormat('dd/MM/yyyy à HH\'h\'mm').format(widget.delivery.pickupDate?.toLocal() ?? DateTime.now()),
-            ),
-            _buildCard(
-              Icons.map,
-              'Distance à parcourir',
-              '${widget.delivery.distance} mètres',
-            ),
-            _buildCard(
-              Icons.directions_walk,
-              'Distance du point de départ',
-              '${widget.delivery.distanceToPickup} mètres',
-            ),
+            _buildCard(Icons.location_on, 'Adresse de départ', widget.delivery.pickupAddress ?? 'Inconnue'),
+            _buildCard(Icons.home, 'Adresse de livraison', widget.delivery.dropoffAddress ?? 'Inconnue'),
+            _buildCard(Icons.calendar_today, 'Date de la demande',
+                DateFormat('dd/MM/yyyy à HH\'h\'mm').format(widget.delivery.pickupDate?.toLocal() ?? DateTime.now())),
+            if (authUser?.role == RoleEnum.courier.name) ...[
+              _buildCard(Icons.map, 'Distance à parcourir', '${widget.delivery.distance} mètres'),
+              _buildCard(Icons.directions_walk, 'Distance du point de départ', '${widget.delivery.distanceToPickup} mètres'),
+            ],
             const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ButtonAtom(
-                  data: "Refuser",
-                  color: Colors.red,
-                  icon: Icons.close,
-                  onTap: () async {
-                    storage.refuseDelivery(widget.delivery.id.toString());
-                    await widget.onDeliveryRefused(widget.delivery.id.toString());
-                    Navigator.pop(context);
-                  },
-                ),
-                ButtonAtom(
-                  data: "Accepter",
-                  icon: Icons.check,
-                  color: Colors.green,
-                  onTap: () async {
-                    await orderService.updateDelivery(
-                        widget.delivery.copyWith(status: DeliveryStatusEnum.accepted.name, courierId: () => authBloc.state.user!.courier!.id));
-                    Navigator.pushAndRemoveUntil(
-                        context, MaterialPageRoute(builder: (context) => const CourierLayout(initialPage: 'map')), (route) => false);
-                  },
-                ),
-              ],
-            ),
+            if (widget.actionsButtons != null) _buildActionsRow(widget.actionsButtons!),
           ],
         ),
       ),
     );
   }
 
+  String _getStatusText(String? status) {
+    if (status == DeliveryStatusEnum.pending.name) return 'Recherche d\'un livreur';
+    if (status == DeliveryStatusEnum.accepted.name) return 'Colis en cours de récupération';
+    if (status == DeliveryStatusEnum.picked_up.name) return 'Colis récupéré';
+    if (status == DeliveryStatusEnum.delivered.name) return 'Livré';
+    if (status == DeliveryStatusEnum.cancelled.name) return 'Annulé';
+    return 'Inconnu';
+  }
+
+  Widget _buildSectionHeader(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
+      child: Text(
+        title,
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.secondary),
+      ),
+    );
+  }
+
   Widget _buildCard(IconData icon, String title, String subtitle) {
-    return Card(
-      elevation: 4.0,
-      shadowColor: Colors.grey.withOpacity(0.5),
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
+    return MyCard(
+      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
       child: ListTile(
-        leading: Icon(
-          icon,
-          color: Theme.of(context).colorScheme.primary,
+        leading: CircleAvatar(
+          backgroundColor: Theme.of(context).colorScheme.secondary,
+          child: Icon(icon, color: Colors.white),
         ),
         title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Text(subtitle),
       ),
+    );
+  }
+
+  Widget _buildActionsRow(List<Widget> actions) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: actions.map((action) => Expanded(child: action)).toList(),
     );
   }
 }

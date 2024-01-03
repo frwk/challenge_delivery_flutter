@@ -1,7 +1,13 @@
+import 'package:challenge_delivery_flutter/atoms/button_atom.dart';
+import 'package:challenge_delivery_flutter/bloc/auth/auth_bloc.dart';
+import 'package:challenge_delivery_flutter/enums/delivery_status_enum.dart';
 import 'package:challenge_delivery_flutter/models/delivery.dart';
+import 'package:challenge_delivery_flutter/services/order/order_service.dart';
+import 'package:challenge_delivery_flutter/views/complaint/complaint_detail_screen_args.dart';
 import 'package:challenge_delivery_flutter/views/courier/delivery/delivery_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:challenge_delivery_flutter/helpers/secure_storage.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class DeliveriesList extends StatefulWidget {
   final List<Delivery> deliveries;
@@ -63,6 +69,7 @@ class _DeliveriesListState extends State<DeliveriesList> {
 
   @override
   Widget build(BuildContext context) {
+    final authBloc = BlocProvider.of<AuthBloc>(context);
     if (widget.deliveries.isEmpty) {
       return const Center(
         child: Text('Aucune livraison à effectuer autour de vous'),
@@ -111,7 +118,27 @@ class _DeliveriesListState extends State<DeliveriesList> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => DeliveryDetailsScreen(delivery: delivery, onDeliveryRefused: onDeliveryRefused),
+                        builder: (context) => DeliveryDetailsScreen(delivery: delivery, onDeliveryRefused: onDeliveryRefused, actionsButtons: [
+                          ButtonAtom(
+                            data: "Refuser",
+                            color: Colors.red,
+                            icon: Icons.close,
+                            onTap: () async {
+                              storage.refuseDelivery(delivery.id.toString());
+                              await onDeliveryRefused(delivery.id.toString());
+                              Navigator.pop(context);
+                            },
+                          ),
+                          ButtonAtom(
+                            data: "Accepter",
+                            icon: Icons.check,
+                            color: Colors.green,
+                            onTap: () async {
+                              await orderService.updateDelivery(
+                                  delivery.copyWith(status: DeliveryStatusEnum.accepted.name, courierId: () => authBloc.state.user!.courier!.id));
+                            },
+                          ),
+                        ]),
                       ),
                     );
                   },

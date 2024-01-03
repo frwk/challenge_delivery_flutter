@@ -19,6 +19,7 @@ class Delivery {
   final int? courierId;
   final int? distance;
   final int? distanceToPickup;
+  final DateTime? createdAt;
 
   Delivery({
     this.id,
@@ -38,6 +39,7 @@ class Delivery {
     this.courierId,
     this.distance,
     this.distanceToPickup,
+    this.createdAt,
   });
 
   factory Delivery.fromJson(Map<String, dynamic> json) => Delivery(
@@ -48,16 +50,17 @@ class Delivery {
       dropoffLatitude: double.tryParse(json["dropoffLatitude"] ?? ''),
       dropoffLongitude: double.tryParse(json["dropoffLongitude"] ?? ''),
       pickupAddress: json["pickupAddress"] ?? '',
-      dropoffAddress: json["pickupAddress"] ?? '',
+      dropoffAddress: json["dropoffAddress"] ?? '',
       pickupDate: DateTime.tryParse(json["pickupDate"] ?? ''),
       dropoffDate: DateTime.tryParse(json["dropoffDate"] ?? ''),
-      confirmationCode: json["confirmationCode"] ?? '',
+      confirmationCode: json["confirmationCode"],
       notation: json["notation"] ?? 0,
       client: json["client"] != null ? User.fromJson(json["client"]) : null,
       courier: json["courier"] != null ? Courier.fromJson(json["courier"]) : null,
       courierId: json["courierId"],
       distance: json["distance"],
-      distanceToPickup: json["distanceToPickup"]);
+      distanceToPickup: json["distanceToPickup"],
+      createdAt: DateTime.tryParse(json["createdAt"] ?? ''));
 
   Map<String, dynamic> toJson() => {
         "id": id,
@@ -75,6 +78,7 @@ class Delivery {
         "courierId": courierId,
         "client": client?.toJson(),
         "courier": courier?.toJson(),
+        "distance": distance,
       };
 
   Delivery copyWith(
@@ -94,7 +98,8 @@ class Delivery {
       Courier? courier,
       int? Function()? courierId,
       int? distance,
-      int? distanceToPickup}) {
+      int? distanceToPickup,
+      DateTime? createdAt}) {
     return Delivery(
       id: id ?? this.id,
       status: status ?? this.status,
@@ -113,6 +118,7 @@ class Delivery {
       courierId: courierId != null ? courierId() : this.courierId,
       distance: distance ?? this.distance,
       distanceToPickup: distanceToPickup ?? this.distanceToPickup,
+      createdAt: createdAt ?? this.createdAt,
     );
   }
 }

@@ -23,8 +23,6 @@ class DeliveryTrackingBloc extends Bloc<DeliveryTrackingEvent, DeliveryTrackingS
   late GoogleMapController _mapController;
   late StreamSubscription<Position> _positionSubscription;
   late IO.Socket _socket;
-  late String pickupAddress;
-  late String dropoffAddress;
   late User client;
 
   DeliveryTrackingBloc() : super(DeliveryTrackingState()) {
@@ -40,8 +38,6 @@ class DeliveryTrackingBloc extends Bloc<DeliveryTrackingEvent, DeliveryTrackingS
       Position currentPosition = await Geolocator.getCurrentPosition();
       Delivery delivery = await orderService.getCurrentCourierDelivery(event.courier);
 
-      pickupAddress = await locationService.getAddress(delivery.pickupLatitude!, delivery.pickupLongitude!);
-      dropoffAddress = await locationService.getAddress(delivery.dropoffLatitude!, delivery.dropoffLongitude!);
       client = delivery.client!;
 
       initialLocation();

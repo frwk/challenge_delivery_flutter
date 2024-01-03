@@ -75,11 +75,41 @@ class _RegisterClientScreenState extends State<RegisterClientScreen> {
                     children: [
                       const LandingTitleAtom(title: 'Let\'s', titleColor: Colors.black, subtitle: 'Get Started', subtitleColor: Colors.orangeAccent),
                       const SizedBox(height: 10.0),
-                      InputComponent(label: 'Prénom', name: 'firstname', placeholder: 'Votre prénom', displayPlaceholder: true, validators: [FormBuilderValidators.required()]),
-                      InputComponent(label: 'Nom', name: 'lastname', placeholder: 'Votre nom', displayPlaceholder: true, validators: [FormBuilderValidators.required()]),
-                      InputComponent(label: 'Email', name:'email', placeholder: 'Votre email', displayPlaceholder: true, validators: [FormBuilderValidators.required(),  FormBuilderValidators.email()]),
-                      InputComponent(label: 'Mot de passe', name: 'password' ,placeholder: 'Votre mot de passe', displayPlaceholder: true, password: true, validators: [FormBuilderValidators.required(), FormBuilderValidators.minLength(8)]),
-                      InputComponent(label: 'Confirmation de mot de passe', name:'confirm_password', placeholder: 'Confirmer votre mot de passe', displayPlaceholder: true, password: true, validators: [FormBuilderValidators.required(), (value) => _formKey.currentState?.fields['password']?.value != value ? 'Mots de passe différents' : null]),
+                      InputComponent(
+                          label: 'Prénom',
+                          name: 'firstname',
+                          placeholder: 'Votre prénom',
+                          displayPlaceholder: true,
+                          validators: [FormBuilderValidators.required()]),
+                      InputComponent(
+                          label: 'Nom',
+                          name: 'lastname',
+                          placeholder: 'Votre nom',
+                          displayPlaceholder: true,
+                          validators: [FormBuilderValidators.required()]),
+                      InputComponent(
+                          label: 'Email',
+                          name: 'email',
+                          placeholder: 'Votre email',
+                          displayPlaceholder: true,
+                          validators: [FormBuilderValidators.required(), FormBuilderValidators.email()]),
+                      InputComponent(
+                          label: 'Mot de passe',
+                          name: 'password',
+                          placeholder: 'Votre mot de passe',
+                          displayPlaceholder: true,
+                          obscureText: true,
+                          validators: [FormBuilderValidators.required(), FormBuilderValidators.minLength(8)]),
+                      InputComponent(
+                          label: 'Confirmation de mot de passe',
+                          name: 'confirm_password',
+                          placeholder: 'Confirmer votre mot de passe',
+                          displayPlaceholder: true,
+                          obscureText: true,
+                          validators: [
+                            FormBuilderValidators.required(),
+                            (value) => _formKey.currentState?.fields['password']?.value != value ? 'Mots de passe différents' : null
+                          ]),
                       const SizedBox(height: 5),
                       const Text(
                         'Vous êtes :',
@@ -102,7 +132,10 @@ class _RegisterClientScreenState extends State<RegisterClientScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          TextButtonAtom(label: 'Déjà inscrit ?', labelColor: Colors.grey,),
+                          TextButtonAtom(
+                            label: 'Déjà inscrit ?',
+                            labelColor: Colors.grey,
+                          ),
                           TextButtonAtom(label: 'Connectez-vous', labelColor: Colors.orangeAccent, redirectTo: '/login'),
                         ],
                       ),

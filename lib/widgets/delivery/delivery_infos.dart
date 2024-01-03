@@ -3,6 +3,7 @@ import 'package:challenge_delivery_flutter/bloc/delivery%20copy/delivery_trackin
 import 'package:challenge_delivery_flutter/bloc/delivery%20copy/delivery_tracking_event.dart';
 import 'package:challenge_delivery_flutter/bloc/delivery%20copy/delivery_tracking_state.dart';
 import 'package:challenge_delivery_flutter/enums/delivery_status_enum.dart';
+import 'package:challenge_delivery_flutter/helpers/url_launcher.dart';
 import 'package:challenge_delivery_flutter/models/delivery.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -63,7 +64,7 @@ class DeliveryInfos extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text('Adresse', style: TextStyle(fontWeight: FontWeight.w500)),
-            Text(delivery.status == DeliveryStatusEnum.picked_up.name ? deliveryTrackingBloc.dropoffAddress : deliveryTrackingBloc.pickupAddress,
+            Text(delivery.status == DeliveryStatusEnum.picked_up.name ? delivery.dropoffAddress! : delivery.pickupAddress!,
                 style: const TextStyle(fontWeight: FontWeight.w500)),
           ],
         )
