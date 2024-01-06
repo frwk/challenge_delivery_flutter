@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:challenge_delivery_flutter/bloc/payment/payment_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
@@ -8,9 +9,9 @@ import 'package:flutter_stripe/flutter_stripe.dart';
 class StripePaymentService {
   Map<String, dynamic>? paymentIntent;
 
-  Future<void> stripeMakePayment() async {
+  Future<void> stripeMakePayment(int amount, String currency) async {
     try {
-      paymentIntent = await createPaymentIntent(100, 'EUR');
+      paymentIntent = await createPaymentIntent(amount, currency);
       var gpay = const PaymentSheetGooglePay(
           merchantCountryCode: "EUR",
           currencyCode: "EUR",
@@ -24,7 +25,6 @@ class StripePaymentService {
         googlePay: gpay,
       ));
 
-      //STEP 3: Display Payment sheet
       displayPaymentSheet();
     } catch (e) {
       print(e.toString());
@@ -33,7 +33,6 @@ class StripePaymentService {
   }
 
   displayPaymentSheet() async {
-    print('payment sheet');
     try {
       await Stripe.instance.presentPaymentSheet();
       print('Done');
@@ -52,7 +51,6 @@ class StripePaymentService {
 //create Payment
   createPaymentIntent(int amount, String currency) async {
     try {
-      //Request body
       Map<String, dynamic> body = {
         'amount': calculateAmount(amount),
         'currency': currency,
@@ -73,7 +71,6 @@ class StripePaymentService {
     }
   }
 
-//calculate Amount
   calculateAmount(int amount) {
     final calculatedAmount = amount * 100;
     return calculatedAmount.toString();

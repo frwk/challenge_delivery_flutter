@@ -16,7 +16,7 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
   Future<void> _onPaymentIntentEvent(PaymentIntentEvent event, Emitter<PaymentState> emit) async {
     try {
       emit(PaymentLoadingState());
-      await paymentService.stripeMakePayment();
+      await paymentService.stripeMakePayment(event.amount, event.currency);
       // var amount = paymentService.calculateAmount(event.amount);
       // print('l20');
       // print(amount);
