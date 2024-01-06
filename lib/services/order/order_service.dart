@@ -32,16 +32,17 @@ class OrderService {
         })
       );
 
-      // if (response.body.isEmpty) throw Exception('Erreur lors de la connexion');
-      // if (response.statusCode != 201 || response.statusCode != 200) {
-      //   if (response.statusCode == 403) {
-      //     throw UnauthorizedException('Vous n\'êtes pas autorisé à effectuer cette action');
-      //   } else {
-      //     throw Exception(jsonDecode(response.body)['message']);
-      //   }
-      // }
+      if (response.body.isEmpty) throw Exception('Erreur lors de la connexion');
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        return Order.fromJson(jsonDecode(response.body));
+      }
 
-      return Order.fromJson(jsonDecode(response.body));
+      if (response.statusCode == 403) {
+        throw UnauthorizedException('Vous n\'êtes pas autorisé à effectuer cette action');
+      } else {
+        throw Exception(jsonDecode(response.body)['message']);
+      }
+
     } catch (e) {
       rethrow;
     }

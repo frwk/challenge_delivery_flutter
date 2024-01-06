@@ -41,8 +41,6 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
         total: orderWithTotal.total,
       );
 
-      print(order);
-
       await Future.delayed(const Duration(milliseconds: 850));
       emit(OrderAddressSuccessState(order));
     } catch (e) {
@@ -72,11 +70,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
 
   Future<void> _onOrderGetDeliveryTotal(OrderGetDeliveryTotal event, Emitter<OrderState> emit) async {
     try {
-      print('Je suis dans order delivery total event');
-      print(event);
-      // emit(OrderLoadingState());
       await Future.delayed(const Duration(milliseconds: 850));
-      // emit(OrderGetDeliveryTotalState());
     } catch (e) {
       emit(OrderFailureState(e.toString()));
     }
