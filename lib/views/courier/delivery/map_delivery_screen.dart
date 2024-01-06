@@ -55,7 +55,6 @@ class _MapDeliveryScreenState extends State<MapDeliveryScreen> with WidgetsBindi
         userService.updateCourier(user!.courier!.copyWith(latitude: position.latitude, longitude: position.longitude));
       });
     }
-    deliveryTrackingBloc.add(StopDeliveryTracking());
     super.dispose();
   }
 

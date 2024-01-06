@@ -150,11 +150,18 @@ class DeliveryTrackingBloc extends Bloc<DeliveryTrackingEvent, DeliveryTrackingS
       if ([DeliveryStatusEnum.delivered.name, DeliveryStatusEnum.pending.name, DeliveryStatusEnum.cancelled.name].contains(updatedDelivery.status)) {
         emit(state.copyWith(delivery: updatedDelivery, status: DeliveryTrackingStatus.success));
       } else {
+        LatLng currentPosition;
+        if (authUser.role == RoleEnum.client.name) {
+          var getPosition = await Geolocator.getCurrentPosition();
+          currentPosition = LatLng(getPosition!.latitude!, getPosition!.longitude!);
+        } else {
+          currentPosition = LatLng(updatedDelivery.courier!.latitude!, updatedDelivery.courier!.longitude!);
+        }
         emit(state.copyWith(
           delivery: updatedDelivery,
           status: DeliveryTrackingStatus.started,
           markers: await _getMarkersForDelivery(updatedDelivery),
-          polyline: await _getPolylineForDelivery(updatedDelivery, state.location!),
+          polyline: await _getPolylineForDelivery(updatedDelivery, currentPosition),
         ));
       }
     } catch (e) {

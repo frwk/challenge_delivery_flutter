@@ -28,19 +28,22 @@ class CourierRequestsScreen extends StatelessWidget {
         builder: (context, state) {
           if (state.user?.role == RoleEnum.courier.name && state.user?.courier != null) {
             if (state.user?.courier?.status == CourierStatusEnum.unavailable.name) {
-              return ErrorMessage(
-                icon: Icons.do_not_disturb,
-                message: 'Veuillez vous marquer comme disponible pour voir et recevoir des demandes de livraison',
-                actions: [
-                  ButtonAtom(
-                    data: 'Je suis disponible',
-                    color: Colors.green,
-                    icon: Icons.where_to_vote,
-                    onTap: () async {
-                      BlocProvider.of<AuthBloc>(context).add(UpdateCourierStatusEvent(status: CourierStatusEnum.available));
-                    },
-                  )
-                ],
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ErrorMessage(
+                  icon: Icons.do_not_disturb,
+                  message: 'Veuillez vous marquer comme disponible pour voir et recevoir des demandes de livraison',
+                  actions: [
+                    ButtonAtom(
+                      data: 'Je suis disponible',
+                      color: Colors.green,
+                      icon: Icons.where_to_vote,
+                      onTap: () async {
+                        BlocProvider.of<AuthBloc>(context).add(UpdateCourierStatusEvent(status: CourierStatusEnum.available));
+                      },
+                    )
+                  ],
+                ),
               );
             }
             return FutureBuilder<Delivery?>(

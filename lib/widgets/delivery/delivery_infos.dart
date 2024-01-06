@@ -3,6 +3,7 @@ import 'package:challenge_delivery_flutter/bloc/auth/auth_bloc.dart';
 import 'package:challenge_delivery_flutter/bloc/delivery/delivery_tracking_bloc.dart';
 import 'package:challenge_delivery_flutter/bloc/delivery/delivery_tracking_event.dart';
 import 'package:challenge_delivery_flutter/bloc/delivery/delivery_tracking_state.dart';
+import 'package:challenge_delivery_flutter/components/pin_input.dart';
 import 'package:challenge_delivery_flutter/enums/delivery_status_enum.dart';
 import 'package:challenge_delivery_flutter/enums/role_enum.dart';
 import 'package:challenge_delivery_flutter/exceptions/not_found_exception.dart';
@@ -15,6 +16,8 @@ import 'package:challenge_delivery_flutter/views/complaint/complaint_detail_scre
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:pinput/pinput.dart';
+import 'dart:developer' as developer;
 
 import '../../helpers/url_launcher.dart';
 
@@ -168,7 +171,7 @@ class DeliveryInfos extends StatelessWidget {
         ],
         if (remainingDistance != null) ...[
           if (state.delivery!.status == DeliveryStatusEnum.accepted.name) _buildPickedUpButton(deliveryTrackingBloc, remainingDistance),
-          if (state.delivery!.status == DeliveryStatusEnum.picked_up.name) _buildDeliveredButton(deliveryTrackingBloc, remainingDistance),
+          if (state.delivery!.status == DeliveryStatusEnum.picked_up.name) _buildDeliveredButton(deliveryTrackingBloc, remainingDistance, context),
           const SizedBox(width: 10),
         ],
         _buildSupportButton(deliveryTrackingBloc, user, context),
@@ -184,10 +187,10 @@ class DeliveryInfos extends StatelessWidget {
     );
   }
 
-  Widget _buildDeliveredButton(DeliveryTrackingBloc deliveryTrackingBloc, double remainingDistance) {
+  Widget _buildDeliveredButton(DeliveryTrackingBloc deliveryTrackingBloc, double remainingDistance, BuildContext context) {
     return ButtonAtom(
       buttonSize: ButtonSize.small,
-      onTap: remainingDistance < 150 ? () => deliveryTrackingBloc.add(UpdateDeliveryStatusEvent(DeliveryStatusEnum.delivered)) : null,
+      onTap: remainingDistance < 150 ? () => _showConfirmationDialog(context) : null,
       data: 'Colis livré',
     );
   }
@@ -219,5 +222,37 @@ class DeliveryInfos extends StatelessWidget {
       }
       print(e);
     }
+  }
+
+  Future<void> _showConfirmationDialog(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierColor: null,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          elevation: 0,
+          title: const Text('Confirmation de livraison'),
+          backgroundColor: Colors.white,
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                const Text('Veuillez entrer le code de confirmation:'),
+                const SizedBox(height: 20),
+                PinInput(
+                  pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
+                  validator: (pin) {
+                    if (pin == delivery.confirmationCode) {
+                      BlocProvider.of<DeliveryTrackingBloc>(context).add(UpdateDeliveryStatusEvent(DeliveryStatusEnum.delivered));
+                      Navigator.pop(context);
+                    }
+                    return 'Code invalide';
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 }
