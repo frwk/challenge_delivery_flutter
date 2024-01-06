@@ -1,6 +1,7 @@
 import 'package:challenge_delivery_flutter/bloc/auth/auth_bloc.dart';
 import 'package:challenge_delivery_flutter/bloc/delivery%20copy/delivery_tracking_bloc.dart';
 import 'package:challenge_delivery_flutter/bloc/order/order_bloc.dart';
+import 'package:challenge_delivery_flutter/bloc/payment/payment_bloc.dart';
 import 'package:challenge_delivery_flutter/bloc/user/user_bloc.dart';
 import 'package:challenge_delivery_flutter/common/app_colors.dart';
 import 'package:challenge_delivery_flutter/init_socket.dart';
@@ -21,6 +22,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:challenge_delivery_flutter/services/notification_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -32,6 +34,7 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   await dotenv.load(fileName: ".env");
   WidgetsFlutterBinding.ensureInitialized();
+  Stripe.publishableKey = "pk_test_51OUxtlAnhXlPAgUCByMDs22yNMcqgIVOzxc6cFhCIraj277uVjwebcFBEARWtgeBE5qmm2wbq6Q8YovVR5t9lUGi00GifYfd48";
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   notificationService.init();
   String? token = await notificationService.getToken();
@@ -61,6 +64,7 @@ class _MyAppState extends State<MyApp> {
         BlocProvider(create: (context) => UserBloc()),
         BlocProvider(create: (context) => OrderBloc()),
         BlocProvider(create: (context) => DeliveryTrackingBloc()),
+        BlocProvider(create: (context) => PaymentBloc()),
       ],
       child: MaterialApp(
           theme: lightMode(),

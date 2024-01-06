@@ -1,9 +1,10 @@
 import 'dart:convert';
+import 'package:bloc/bloc.dart';
 import 'package:challenge_delivery_flutter/exceptions/unauthorized_exception.dart';
+import 'package:challenge_delivery_flutter/helpers/format_string.dart';
 import 'package:challenge_delivery_flutter/helpers/secure_storage.dart';
 import 'dart:io';
 import 'package:challenge_delivery_flutter/exceptions/not_found_exception.dart';
-import 'package:challenge_delivery_flutter/helpers/secure_storage.dart';
 import 'package:challenge_delivery_flutter/interfaces/courier_stats.dart';
 import 'package:challenge_delivery_flutter/models/courier.dart';
 import 'package:challenge_delivery_flutter/models/delivery.dart';
@@ -11,10 +12,42 @@ import 'package:challenge_delivery_flutter/models/user.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:developer' as developer;
+import '../../bloc/order/order_bloc.dart';
 import '../../models/order.dart';
 
 class OrderService {
-  Future<Order> post(String pickupAddress, String dropoffAddress, int clientId) async {
+  late Emitter<OrderState> emit;
+
+  Future<Order> calculateDeliveryTotal(String vehicle, String urgency) async
+  {
+    try {
+      final cookie = await secureStorage.readCookie();
+      developer.log('COOKIE: $cookie', name: 'COOKIE');
+      final response = await http.post(
+        Uri.parse('${dotenv.env['API_URL']}/users/deliveries/total'),
+        headers: {'Accept': 'application/json', 'Content-Type': 'application/json', 'Cookie': cookie!},
+        body: jsonEncode({
+          'vehicle': FormatString.capitalize(vehicle),
+          'urgency': FormatString.capitalize(urgency),
+        })
+      );
+
+      // if (response.body.isEmpty) throw Exception('Erreur lors de la connexion');
+      // if (response.statusCode != 201 || response.statusCode != 200) {
+      //   if (response.statusCode == 403) {
+      //     throw UnauthorizedException('Vous n\'êtes pas autorisé à effectuer cette action');
+      //   } else {
+      //     throw Exception(jsonDecode(response.body)['message']);
+      //   }
+      // }
+
+      return Order.fromJson(jsonDecode(response.body));
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Order> post(String pickupAddress, String dropoffAddress, String vehicle, String urgency, int clientId) async {
     try {
       final cookie = await secureStorage.readCookie();
       developer.log('COOKIE: $cookie', name: 'COOKIE');
@@ -24,6 +57,8 @@ class OrderService {
         body: jsonEncode({
           'pickupAddress': pickupAddress,
           'dropoffAddress': dropoffAddress,
+          'vehicle': FormatString.capitalize(vehicle),
+          'urgency': FormatString.capitalize(urgency),
           'clientId': clientId,
         }),
       );
