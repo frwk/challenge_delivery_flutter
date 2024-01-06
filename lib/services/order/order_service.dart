@@ -200,7 +200,7 @@ class OrderService {
     }
   }
 
-  Future<Delivery?> getDelivery(int id) async {
+  Future<Delivery> getDelivery(int id) async {
     try {
       final cookie = await secureStorage.readCookie();
       final response =

@@ -77,12 +77,17 @@ class _MapDeliveryScreenState extends State<MapDeliveryScreen> with WidgetsBindi
         return DeliverySummaryScreen(delivery: state.delivery!);
       } else if (state.status.isError) {
         return Scaffold(
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (state.errorType.isNotFound) ...[
-                  ErrorMessage(
+          body: RefreshIndicator(
+            onRefresh: () async {
+              if (user?.role == RoleEnum.client.name) {
+                Delivery delivery = ModalRoute.of(context)!.settings.arguments as Delivery;
+                deliveryTrackingBloc.add(StartDeliveryTracking(user: user!, delivery: delivery));
+              } else {
+                deliveryTrackingBloc.add(StartDeliveryTracking(user: user!));
+              }
+            },
+            child: state.errorType.isNotFound
+                ? ErrorMessage(
                     icon: Icons.search_off,
                     message: 'Aucune livraison en cours',
                     actions: [
@@ -93,9 +98,8 @@ class _MapDeliveryScreenState extends State<MapDeliveryScreen> with WidgetsBindi
                         onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => CourierLayout(initialPage: 'requests'))),
                       )
                     ],
-                  ),
-                ] else ...[
-                  ErrorMessage(
+                  )
+                : ErrorMessage(
                     icon: Icons.error,
                     message: 'Erreur lors du chargement de la livraison',
                     actions: [
@@ -109,9 +113,6 @@ class _MapDeliveryScreenState extends State<MapDeliveryScreen> with WidgetsBindi
                       )
                     ],
                   ),
-                ],
-              ],
-            ),
           ),
         );
       } else {

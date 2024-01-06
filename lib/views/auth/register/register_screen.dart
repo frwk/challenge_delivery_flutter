@@ -1,3 +1,4 @@
+import 'package:challenge_delivery_flutter/atoms/button_atom.dart';
 import 'package:challenge_delivery_flutter/atoms/landing_title_atom.dart';
 import 'package:challenge_delivery_flutter/bloc/user/user_bloc.dart';
 import 'package:challenge_delivery_flutter/components/input_component.dart';
@@ -101,7 +102,7 @@ class _RegisterClientScreenState extends State<RegisterClientScreen> {
                           placeholder: 'Votre mot de passe',
                           displayPlaceholder: true,
                           obscureText: true,
-                          validators: [FormBuilderValidators.required(), FormBuilderValidators.minLength(8)]),
+                          validators: [FormBuilderValidators.required(), FormBuilderValidators.minLength(8, errorText: '8 caractères minimum')]),
                       InputComponent(
                           label: 'Confirmation de mot de passe',
                           name: 'confirm_password',
@@ -179,8 +180,10 @@ class _RegisterClientScreenState extends State<RegisterClientScreen> {
                           TextButtonAtom(label: 'Connectez-vous', labelColor: Colors.orangeAccent, redirectTo: '/login'),
                         ],
                       ),
-                      ElevatedButton(
-                        onPressed: () {
+                      ButtonAtom(
+                        data: 'S\'inscrire',
+                        buttonSize: ButtonSize.large,
+                        onTap: () {
                           debugPrint(_formKey.currentState?.instantValue.toString());
                           if (_formKey.currentState!.validate()) {
                             if (_formKey.currentState?.fields['role']?.value == RoleEnum.client.name) {
@@ -201,16 +204,6 @@ class _RegisterClientScreenState extends State<RegisterClientScreen> {
                             }
                           }
                         },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.orangeAccent[200],
-                          fixedSize: const Size(400, 50),
-                        ),
-                        child: const Text('S\'inscrire',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            )),
                       ),
                     ],
                   ),

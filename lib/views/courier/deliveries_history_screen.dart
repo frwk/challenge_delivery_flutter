@@ -65,42 +65,46 @@ class _DeliveriesHistoryScreenState extends State<DeliveriesHistoryScreen> {
         appBar: const MyAppBar(
           title: 'Historique des livraisons',
         ),
-        body: FutureBuilder<List<Delivery>>(
-          future: _getDeliveriesBasedOnRole(user!),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return ErrorMessage(
-                icon: Icons.grid_off_rounded,
-                message: 'Erreur lors du chargement des livraisons',
-                actions: [
-                  ButtonAtom(
-                    data: 'Voir les demandes',
-                    color: Theme.of(context).colorScheme.primary,
-                    icon: Icons.local_shipping,
-                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => CourierLayout(initialPage: 'requests'))),
-                  )
-                ],
-              );
-            } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-              return _buildDeliveryList(snapshot.data!, user!);
-            } else {
-              return ErrorMessage(
-                icon: Icons.search_off,
-                message: 'Aucune livraison effectuée',
-                actions: [
-                  ButtonAtom(data: 'Rafraîchir', color: Theme.of(context).colorScheme.primary, icon: Icons.refresh, onTap: () => setState(() {})),
-                  ButtonAtom(
-                    data: 'Demandes',
-                    color: Theme.of(context).colorScheme.primary,
-                    icon: Icons.local_shipping,
-                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => CourierLayout(initialPage: 'requests'))),
-                  )
-                ],
-              );
-            }
-          },
+        body: RefreshIndicator(
+          onRefresh: () async => setState(() {}),
+          child: FutureBuilder<List<Delivery>>(
+            future: _getDeliveriesBasedOnRole(user!),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return ErrorMessage(
+                  icon: Icons.grid_off_rounded,
+                  message: 'Erreur lors du chargement des livraisons',
+                  actions: [
+                    ButtonAtom(
+                      data: 'Voir les demandes',
+                      color: Theme.of(context).colorScheme.primary,
+                      icon: Icons.local_shipping,
+                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => CourierLayout(initialPage: 'requests'))),
+                    )
+                  ],
+                );
+              } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                return _buildDeliveryList(snapshot.data!, user!);
+              } else {
+                return ErrorMessage(
+                  icon: Icons.search_off,
+                  message: 'Aucune livraison effectuée',
+                  actions: [
+                    ButtonAtom(
+                      data: user.role == RoleEnum.courier.name ? 'Demandes' : 'Nouvelle livraison',
+                      color: Theme.of(context).colorScheme.primary,
+                      icon: Icons.local_shipping,
+                      onTap: () => user.role == RoleEnum.courier.name
+                          ? Navigator.push(context, MaterialPageRoute(builder: (context) => CourierLayout(initialPage: 'requests')))
+                          : Navigator.pushNamed(context, '/create-order'),
+                    )
+                  ],
+                );
+              }
+            },
+          ),
         ));
   }
 
