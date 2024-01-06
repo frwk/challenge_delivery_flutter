@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:challenge_delivery_flutter/atoms/button_atom.dart';
 import 'package:challenge_delivery_flutter/bloc/auth/auth_bloc.dart';
+import 'package:challenge_delivery_flutter/enums/courier_status_enum.dart';
 import 'package:challenge_delivery_flutter/enums/role_enum.dart';
 import 'package:challenge_delivery_flutter/models/delivery.dart';
 import 'package:challenge_delivery_flutter/services/order/order_service.dart';
+import 'package:challenge_delivery_flutter/services/user_service.dart';
 import 'package:challenge_delivery_flutter/widgets/deliveries_list.dart';
 import 'package:challenge_delivery_flutter/widgets/error.dart';
 import 'package:challenge_delivery_flutter/widgets/layouts/app_bar.dart';
@@ -23,6 +27,22 @@ class CourierRequestsScreen extends StatelessWidget {
       body: BlocBuilder<AuthBloc, AuthState>(
         builder: (context, state) {
           if (state.user?.role == RoleEnum.courier.name && state.user?.courier != null) {
+            if (state.user?.courier?.status == CourierStatusEnum.unavailable.name) {
+              return ErrorMessage(
+                icon: Icons.do_not_disturb,
+                message: 'Veuillez vous marquer comme disponible pour voir et recevoir des demandes de livraison',
+                actions: [
+                  ButtonAtom(
+                    data: 'Je suis disponible',
+                    color: Colors.green,
+                    icon: Icons.where_to_vote,
+                    onTap: () async {
+                      BlocProvider.of<AuthBloc>(context).add(UpdateCourierStatusEvent(status: CourierStatusEnum.available));
+                    },
+                  )
+                ],
+              );
+            }
             return FutureBuilder<Delivery?>(
               future: orderService.getCurrentCourierDelivery(state.user!.courier!),
               builder: (context, snapshot) {

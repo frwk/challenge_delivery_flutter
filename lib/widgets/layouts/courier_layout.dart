@@ -23,7 +23,7 @@ class _MainScreenState extends State<CourierLayout> {
     'requests': const CourierRequestsScreen(),
     'map': const MapDeliveryScreen(),
     'complaints': const ComplaintListingScreen(),
-    'profile': const CourierProfileScreen(),
+    'profile': const ProfileScreen(),
   };
 
   @override

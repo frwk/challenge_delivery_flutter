@@ -69,6 +69,7 @@ dependencies:
   flutter_stripe: ^10.0.0
   password_strength_checker: ^1.2.2
   timeline_tile: ^2.0.0
+  lite_rolling_switch: ^1.0.1
 
 dev_dependencies:
   flutter_test:

@@ -20,8 +20,6 @@ import 'package:challenge_delivery_flutter/widgets/deliveries_list.dart';
 import 'package:challenge_delivery_flutter/widgets/error.dart';
 import 'package:challenge_delivery_flutter/widgets/layouts/app_bar.dart';
 import 'package:challenge_delivery_flutter/widgets/layouts/courier_layout.dart';
-import 'package:challenge_delivery_flutter/widgets/layouts/app_bar.dart';
-import 'package:challenge_delivery_flutter/widgets/layouts/courier_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -38,14 +36,14 @@ class Order {
   Order({required this.id, required this.date, required this.status, required this.amount});
 }
 
-class DeliveriesHistoryScreen extends StatefulWidget {
-  const DeliveriesHistoryScreen({super.key});
+class CurrentDeliveriesScreen extends StatefulWidget {
+  const CurrentDeliveriesScreen({super.key});
 
   @override
-  _DeliveriesHistoryScreenState createState() => _DeliveriesHistoryScreenState();
+  _CurrentDeliveriesScreenState createState() => _CurrentDeliveriesScreenState();
 }
 
-class _DeliveriesHistoryScreenState extends State<DeliveriesHistoryScreen> {
+class _CurrentDeliveriesScreenState extends State<CurrentDeliveriesScreen> {
   String _formatDate(DateTime? date) {
     if (date == null) return 'N/A';
     return DateFormat('dd/MM/yyyy à H\'h\'mm').format(date);
@@ -63,17 +61,24 @@ class _DeliveriesHistoryScreenState extends State<DeliveriesHistoryScreen> {
 
     return Scaffold(
         appBar: const MyAppBar(
-          title: 'Historique des livraisons',
+          title: 'Livraisons en cours',
+          hasBackArrow: false,
         ),
         body: FutureBuilder<List<Delivery>>(
-          future: _getDeliveriesBasedOnRole(user!),
+          future: () async {
+            try {
+              return await OrderService().getUserCurrentDeliveries(user!);
+            } catch (e) {
+              return Future<List<Delivery>>.error(e.toString());
+            }
+          }(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
               return ErrorMessage(
                 icon: Icons.grid_off_rounded,
-                message: 'Erreur lors du chargement des livraisons',
+                message: 'Aucune statistique à afficher pour le moment',
                 actions: [
                   ButtonAtom(
                     data: 'Voir les demandes',
@@ -220,6 +225,14 @@ class _DeliveriesHistoryScreenState extends State<DeliveriesHistoryScreen> {
     }
   }
 
+  Future<void> _goToDeliveryTrackingAction(BuildContext context, Delivery delivery, User user) async {
+    try {
+      Navigator.pushNamed(context, '/delivery-tracking', arguments: delivery);
+    } catch (e) {
+      print(e);
+    }
+  }
+
   void _onDeliveryTap(Delivery delivery, User user) {
     Navigator.push(
       context,
@@ -246,15 +259,30 @@ class _DeliveriesHistoryScreenState extends State<DeliveriesHistoryScreen> {
               ButtonAtom(
                 data: 'Annuler',
                 icon: Icons.cancel,
+                buttonSize: ButtonSize.small,
                 color: Colors.red,
                 onTap: () => _cancelOrderAction(context, delivery, user),
               ),
             ButtonAtom(
               data: "Support",
+              buttonSize: ButtonSize.small,
               icon: Icons.support,
               color: Colors.amber,
               onTap: () => _contactSupportAction(context, delivery, user),
             ),
+            if ([
+              DeliveryStatusEnum.pending.name,
+              DeliveryStatusEnum.accepted.name,
+              DeliveryStatusEnum.picked_up.name,
+            ].contains(delivery.status)) ...[
+              ButtonAtom(
+                data: 'Suivre',
+                buttonSize: ButtonSize.small,
+                icon: Icons.local_shipping,
+                color: Colors.green,
+                onTap: () => _goToDeliveryTrackingAction(context, delivery, user),
+              ),
+            ],
           ],
         ),
       ),

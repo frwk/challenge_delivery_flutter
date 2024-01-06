@@ -1,11 +1,13 @@
 import 'package:challenge_delivery_flutter/bloc/auth/auth_bloc.dart';
+import 'package:challenge_delivery_flutter/enums/courier_status_enum.dart';
 import 'package:challenge_delivery_flutter/views/auth/login/login_screen.dart';
 import 'package:challenge_delivery_flutter/widgets/layouts/app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lite_rolling_switch/lite_rolling_switch.dart';
 
-class CourierProfileScreen extends StatelessWidget {
-  const CourierProfileScreen({super.key});
+class ProfileScreen extends StatelessWidget {
+  const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +50,29 @@ class CourierProfileScreen extends StatelessWidget {
                           ),
                         ),
                       ],
-                    )
+                    ),
+                    if (authBloc.state.user!.role == 'courier') ...[
+                      const Spacer(),
+                      LiteRollingSwitch(
+                        value: authBloc.state.user!.courier!.status == CourierStatusEnum.available.name,
+                        textOn: 'Disponible',
+                        textOff: 'Occupé',
+                        colorOn: Colors.greenAccent[700]!,
+                        colorOff: Colors.redAccent[700]!,
+                        iconOn: Icons.done,
+                        iconOff: Icons.remove_circle_outline,
+                        textSize: 14.2,
+                        textOnColor: Colors.white,
+                        textOffColor: Colors.white,
+                        onTap: () => null,
+                        onDoubleTap: () => null,
+                        onSwipe: () => null,
+                        onChanged: (bool state) {
+                          BlocProvider.of<AuthBloc>(context)
+                              .add(UpdateCourierStatusEvent(status: state ? CourierStatusEnum.available : CourierStatusEnum.unavailable));
+                        },
+                      ),
+                    ]
                   ],
                 ),
               ),

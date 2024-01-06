@@ -24,10 +24,9 @@ class InitSocket {
 
   Stream<String> get stream => _streamController.stream;
 
-  Future<void> init() async {
+  Future<WebSocketChannel> init() async {
     final cookie = await secureStorage.readCookie();
     final token = cookie.toString().split(';')[0].split('=')[1];
-
     _webSocketChannel = WebSocketChannel.connect(
       Uri.parse(
         '${dotenv.env['API_URL']!.replaceAll('http', 'ws')}/ws?token=$token',
@@ -49,5 +48,6 @@ class InitSocket {
     );
 
     await _webSocketChannel.ready;
+    return _webSocketChannel;
   }
 }

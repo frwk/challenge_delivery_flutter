@@ -2,11 +2,13 @@ import 'package:challenge_delivery_flutter/bloc/auth/auth_bloc.dart';
 import 'package:challenge_delivery_flutter/bloc/delivery/delivery_tracking_bloc.dart';
 import 'package:challenge_delivery_flutter/bloc/delivery/delivery_tracking_state.dart';
 import 'package:challenge_delivery_flutter/enums/delivery_status_enum.dart';
+import 'package:challenge_delivery_flutter/enums/role_enum.dart';
 import 'package:challenge_delivery_flutter/exceptions/not_found_exception.dart';
 import 'package:challenge_delivery_flutter/models/complaint.dart';
 import 'package:challenge_delivery_flutter/models/user.dart';
 import 'package:challenge_delivery_flutter/services/complaint/complaint_service.dart';
 import 'package:challenge_delivery_flutter/views/complaint/complaint_detail_screen_args.dart';
+import 'package:challenge_delivery_flutter/widgets/layouts/client_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:challenge_delivery_flutter/atoms/button_atom.dart';
@@ -72,8 +74,9 @@ class _DeliverySummaryScreenState extends State<DeliverySummaryScreen> {
                     const Divider(height: 30, thickness: 2),
                     ButtonAtom(
                       data: "Retourner à l'accueil",
-                      onTap: () =>
-                          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const CourierLayout()), (route) => false),
+                      onTap: () => authUser?.role == RoleEnum.courier.name
+                          ? Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const CourierLayout()), (route) => false)
+                          : Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const ClientLayout()), (route) => false),
                       buttonSize: ButtonSize.small,
                     ),
                     if (state.delivery?.status == DeliveryStatusEnum.delivered.name) ...[

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
+import 'package:challenge_delivery_flutter/enums/courier_status_enum.dart';
 import 'package:challenge_delivery_flutter/enums/role_enum.dart';
 import 'package:challenge_delivery_flutter/helpers/secure_storage.dart';
 import 'package:challenge_delivery_flutter/models/courier.dart';
@@ -19,6 +20,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<LogOutEvent>(_onLogOut);
     on<UpdateProfileEvent>(_onUpdateProfile);
     on<UpdatePasswordEvent>(_onUpdatePassword);
+    on<UpdateCourierStatusEvent>(_onUpdateCourierStatus);
   }
 
   Future<void> _onLogin(LoginEvent event, Emitter<AuthState> emit) async {
@@ -32,7 +34,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         final location = await LocationService.determineLocation();
         courierWithLocation = user.courier!.copyWith(latitude: location.latitude, longitude: location.longitude);
       }
-      final notificationToken = (user.notificationToken ?? '').isEmpty ? await NotificationService().getToken() : user.notificationToken;
+      final notificationToken = await NotificationService().getToken();
       userWithToken = user.copyWith(courier: () => courierWithLocation, notificationToken: notificationToken);
       await Future.delayed(const Duration(milliseconds: 2000));
       await UserService().updateUser(userWithToken);
@@ -124,6 +126,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
       final updatedUser = await UserService().updatePassword(state.user!.id, event.password!);
       emit(SuccessAuthState(updatedUser));
+    } catch (e) {
+      emit(FailureAuthState(e.toString()));
+    }
+  }
+
+  Future<void> _onUpdateCourierStatus(UpdateCourierStatusEvent event, Emitter<AuthState> emit) async {
+    try {
+      await Future.delayed(const Duration(milliseconds: 850));
+      if (state.user == null) {
+        throw Exception('User not found');
+      }
+      final updatedCourier = await UserService().updateCourier(state.user!.courier!.copyWith(status: event.status?.name));
+      final updatedUser = state.user!.copyWith(courier: () => updatedCourier);
+      emit(state.copyWith(user: updatedUser));
     } catch (e) {
       emit(FailureAuthState(e.toString()));
     }

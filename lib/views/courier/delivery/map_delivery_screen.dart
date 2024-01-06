@@ -1,8 +1,13 @@
+import 'dart:convert';
 import 'package:challenge_delivery_flutter/atoms/button_atom.dart';
 import 'package:challenge_delivery_flutter/bloc/auth/auth_bloc.dart';
 import 'package:challenge_delivery_flutter/bloc/delivery/delivery_tracking_bloc.dart';
 import 'package:challenge_delivery_flutter/bloc/delivery/delivery_tracking_event.dart';
 import 'package:challenge_delivery_flutter/bloc/delivery/delivery_tracking_state.dart';
+import 'package:challenge_delivery_flutter/enums/role_enum.dart';
+import 'package:challenge_delivery_flutter/models/delivery.dart';
+import 'package:challenge_delivery_flutter/models/user.dart';
+import 'package:challenge_delivery_flutter/services/order/order_service.dart';
 import 'package:challenge_delivery_flutter/views/courier/delivery/delivery_summary_screen.dart';
 import 'package:challenge_delivery_flutter/widgets/delivery/delivery_infos.dart';
 import 'package:challenge_delivery_flutter/widgets/delivery/delivery_map.dart';
@@ -14,21 +19,32 @@ import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class MapDeliveryScreen extends StatefulWidget {
-  const MapDeliveryScreen({super.key});
-
+  final int? deliveryId;
+  const MapDeliveryScreen({super.key, this.deliveryId});
   @override
   _MapDeliveryScreenState createState() => _MapDeliveryScreenState();
 }
 
 class _MapDeliveryScreenState extends State<MapDeliveryScreen> with WidgetsBindingObserver {
   late DeliveryTrackingBloc deliveryTrackingBloc;
+  late User? user;
+  late Delivery? delivery;
+  bool _init = false;
 
   @override
-  void initState() {
-    deliveryTrackingBloc = BlocProvider.of<DeliveryTrackingBloc>(context);
-    AuthBloc authBloc = BlocProvider.of<AuthBloc>(context);
-    deliveryTrackingBloc.add(StartDeliveryTracking(authBloc.state.user!.courier!));
-    super.initState();
+  void didChangeDependencies() async {
+    super.didChangeDependencies();
+    if (!_init) {
+      deliveryTrackingBloc = BlocProvider.of<DeliveryTrackingBloc>(context);
+      user = BlocProvider.of<AuthBloc>(context).state.user;
+      if (user?.role == RoleEnum.client.name) {
+        Delivery delivery = ModalRoute.of(context)!.settings.arguments as Delivery;
+        deliveryTrackingBloc.add(StartDeliveryTracking(user: user!, delivery: delivery));
+      } else {
+        deliveryTrackingBloc.add(StartDeliveryTracking(user: user!));
+      }
+      _init = true;
+    }
   }
 
   @override
@@ -87,7 +103,9 @@ class _MapDeliveryScreenState extends State<MapDeliveryScreen> with WidgetsBindi
                         data: 'Rafraîchir',
                         color: Theme.of(context).colorScheme.primary,
                         icon: Icons.refresh,
-                        onTap: () => deliveryTrackingBloc.add(StartDeliveryTracking(BlocProvider.of<AuthBloc>(context).state.user!.courier!)),
+                        onTap: () => user?.role == RoleEnum.client.name
+                            ? deliveryTrackingBloc.add(StartDeliveryTracking(user: user!, delivery: delivery!))
+                            : deliveryTrackingBloc.add(StartDeliveryTracking(user: user!)),
                       )
                     ],
                   ),
