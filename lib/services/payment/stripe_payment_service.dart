@@ -1,10 +1,11 @@
 import 'dart:convert';
 
-import 'package:challenge_delivery_flutter/bloc/payment/payment_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_stripe/flutter_stripe.dart';
+
+import '../../main.dart';
 
 class StripePaymentService {
   Map<String, dynamic>? paymentIntent;
@@ -13,16 +14,17 @@ class StripePaymentService {
     try {
       paymentIntent = await createPaymentIntent(amount, currency);
       var gpay = const PaymentSheetGooglePay(
-          merchantCountryCode: "EUR",
+          merchantCountryCode: "FR",
           currencyCode: "EUR",
           testEnv: true
       );
 
-      await Stripe.instance.initPaymentSheet(paymentSheetParameters: SetupPaymentSheetParameters(
-        paymentIntentClientSecret: paymentIntent!['client_secret'],
-        style: ThemeMode.light,
-        merchantDisplayName: 'Coursier Inc.',
-        googlePay: gpay,
+      await Stripe.instance.initPaymentSheet(
+        paymentSheetParameters: SetupPaymentSheetParameters(
+          paymentIntentClientSecret: paymentIntent!['client_secret'],
+          style: ThemeMode.light,
+          merchantDisplayName: 'Coursier Inc.',
+          googlePay: gpay,
       ));
 
       displayPaymentSheet();
@@ -35,9 +37,9 @@ class StripePaymentService {
   displayPaymentSheet() async {
     try {
       await Stripe.instance.presentPaymentSheet();
-      print('Done');
+      await Future.delayed(const Duration(milliseconds: 850));
+      await navigatorKey.currentState!.pushNamed('/payment-success');
 
-      // Fluttertoast.showToast(msg: 'Payment succesfully completed');
     } on Exception catch (e) {
       if (e is StripeException) {
         // Fluttertoast.showToast(

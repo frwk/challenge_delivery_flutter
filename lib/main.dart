@@ -17,6 +17,7 @@ import 'package:challenge_delivery_flutter/views/order/create_order_screen.dart'
 import 'package:challenge_delivery_flutter/views/order/order_summary.dart';
 import 'package:challenge_delivery_flutter/services/location_service.dart';
 import 'package:challenge_delivery_flutter/views/order/create_order_screen.dart';
+import 'package:challenge_delivery_flutter/views/payment/payment_success_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -88,6 +89,7 @@ class _MyAppState extends State<MyApp> {
             '/forgot-password': (context) => const ForgotPasswordScreen(),
             '/create-order': (context) => const CreateOrderScreen(),
             '/order-summary': (context) => const OrderSummaryScreen(),
+            '/payment-success': (context) => const PaymentSuccessScreen(),
             '/complaints': (context) => const ComplaintListingScreen(),
             '/complaint-detail': (context) => const ComplaintDetailScreen(),
           }),

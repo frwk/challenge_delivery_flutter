@@ -10,3 +10,5 @@ class PaymentIntentEvent extends PaymentEvent {
 
   PaymentIntentEvent(this.amount, this.currency);
 }
+
+class PaymentSuccessEvent extends PaymentEvent {}
