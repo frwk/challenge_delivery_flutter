@@ -54,7 +54,7 @@ class Delivery {
       pickupDate: DateTime.tryParse(json["pickupDate"] ?? ''),
       dropoffDate: DateTime.tryParse(json["dropoffDate"] ?? ''),
       confirmationCode: json["confirmationCode"],
-      notation: json["notation"] ?? 0,
+      notation: json["notation"],
       client: json["client"] != null ? User.fromJson(json["client"]) : null,
       courier: json["courier"] != null ? Courier.fromJson(json["courier"]) : null,
       courierId: json["courierId"],

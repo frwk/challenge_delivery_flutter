@@ -8,10 +8,10 @@ Future<BitmapDescriptor> getMarkerIcon(
 ) async {
   switch (type) {
     case MarkerType.start:
-      return await BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(192, 192)), 'assets/img/markers/start2.png');
+      return await BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(150, 150)), 'assets/img/markers/start150.png');
     case MarkerType.destination:
-      return await BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(192, 192)), 'assets/img/markers/destination.png');
+      return await BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(150, 150)), 'assets/img/markers/destination150.png');
     case MarkerType.courier:
-      return await BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(256, 169)), 'assets/img/markers/courier.png');
+      return await BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(150, 99)), 'assets/img/markers/courier150.png');
   }
 }

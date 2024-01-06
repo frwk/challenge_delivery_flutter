@@ -19,7 +19,7 @@ class DeliveryMap extends StatelessWidget {
 
     return BlocBuilder<DeliveryTrackingBloc, DeliveryTrackingState>(builder: (context, state) {
       bool isCourier = user?.role == RoleEnum.courier.name;
-      return isCourier && state.location != null || user?.role == RoleEnum.client.name
+      return isCourier && state.location != null && state.polyline != null || user?.role == RoleEnum.client.name
           ? GoogleMap(
               initialCameraPosition: getInitialCameraPosition(state.polyline!),
               zoomControlsEnabled: true,

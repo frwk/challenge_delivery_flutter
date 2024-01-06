@@ -58,7 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
               key: _loginFormKey,
               child: Column(
                 children: [
-                  Image.asset('assets/img/login/login.png'),
+                  if (MediaQuery.of(context).size.width < 600) Image.asset('assets/img/login/login.png'),
                   Padding(
                     padding: const EdgeInsets.only(top: 42.0, left: 22.0, right: 22.0),
                     child: Column(
@@ -92,26 +92,28 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: TextButtonAtom(label: 'Mot de passe oublié?', labelColor: Colors.grey, redirectTo: '/forgot-password'),
                           ),
                         ),
-                        ElevatedButton(
-                          onPressed: () => {
-                            if (_loginFormKey.currentState!.validate())
-                              {
-                                authBloc.add(LoginEvent(
-                                  _loginFormKey.currentState?.fields['email']?.value,
-                                  _loginFormKey.currentState?.fields['password']?.value,
-                                ))
-                              }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.orangeAccent[200],
-                            fixedSize: const Size(400, 50),
+                        Center(
+                          child: ElevatedButton(
+                            onPressed: () => {
+                              if (_loginFormKey.currentState!.validate())
+                                {
+                                  authBloc.add(LoginEvent(
+                                    _loginFormKey.currentState?.fields['email']?.value,
+                                    _loginFormKey.currentState?.fields['password']?.value,
+                                  ))
+                                }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.orangeAccent[200],
+                              fixedSize: const Size(400, 50),
+                            ),
+                            child: const Text('Se connecter',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                )),
                           ),
-                          child: const Text('Se connecter',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              )),
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,

@@ -8,6 +8,7 @@ import 'package:challenge_delivery_flutter/enums/role_enum.dart';
 import 'package:challenge_delivery_flutter/models/delivery.dart';
 import 'package:challenge_delivery_flutter/models/user.dart';
 import 'package:challenge_delivery_flutter/services/order/order_service.dart';
+import 'package:challenge_delivery_flutter/services/user_service.dart';
 import 'package:challenge_delivery_flutter/views/courier/delivery/delivery_summary_screen.dart';
 import 'package:challenge_delivery_flutter/widgets/delivery/delivery_infos.dart';
 import 'package:challenge_delivery_flutter/widgets/delivery/delivery_map.dart';
@@ -49,6 +50,12 @@ class _MapDeliveryScreenState extends State<MapDeliveryScreen> with WidgetsBindi
 
   @override
   void dispose() {
+    if (user?.role == RoleEnum.courier.name) {
+      Geolocator.getCurrentPosition().then((Position position) {
+        userService.updateCourier(user!.courier!.copyWith(latitude: position.latitude, longitude: position.longitude));
+      });
+    }
+    deliveryTrackingBloc.add(StopDeliveryTracking());
     super.dispose();
   }
 

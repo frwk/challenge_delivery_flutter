@@ -84,6 +84,7 @@ class DeliveryTrackingBloc extends Bloc<DeliveryTrackingEvent, DeliveryTrackingS
         ));
       }
     } catch (e) {
+      developer.log(e.toString(), name: 'StartDeliveryTrackingError');
       if (e is NotFoundException) {
         emit(state.copyWith(status: DeliveryTrackingStatus.error, errorType: DeliveryTrackingErrorType.notFound));
       } else {
@@ -99,14 +100,14 @@ class DeliveryTrackingBloc extends Bloc<DeliveryTrackingEvent, DeliveryTrackingS
   }
 
   Future<void> _onStopDeliveryTracking(DeliveryTrackingEvent event, Emitter<DeliveryTrackingState> emit) async {
-    _positionSubscription.cancel();
+    if (authUser.role == RoleEnum.courier.name) _positionSubscription.cancel();
     _mapController.dispose();
     _channel.sink.close();
   }
 
   @override
   Future<void> close() {
-    _positionSubscription.cancel();
+    if (authUser.role == RoleEnum.courier.name) _positionSubscription.cancel();
     _mapController.dispose();
     _channel.sink.close();
     return super.close();
@@ -114,13 +115,19 @@ class DeliveryTrackingBloc extends Bloc<DeliveryTrackingEvent, DeliveryTrackingS
 
   Future<void> initMap(GoogleMapController controller) async {
     _mapController = controller;
+    // _mapController.setMapStyle(jsonEncode(themeMaps));
   }
 
   Future<void> _onChangeLocation(ChangeLocationEvent event, Emitter<DeliveryTrackingState> emit) async {
     try {
       _channel.sink
           .add(jsonEncode(DeliveryTrackingSendMessage(type: 'location', courierId: authUser.courier!.id, coordinates: event.location.toJson())));
-      emit(state.copyWith(location: event.location));
+      if (authUser.role == RoleEnum.courier.name) {
+        emit(state.copyWith(
+          location: event.location,
+          polyline: await _getPolylineForDelivery(state.delivery!, event.location),
+        ));
+      }
     } catch (e) {
       developer.log(e.toString(), name: 'ChangeLocationEventError');
       return;

@@ -7,6 +7,7 @@ import 'package:challenge_delivery_flutter/exceptions/not_found_exception.dart';
 import 'package:challenge_delivery_flutter/models/complaint.dart';
 import 'package:challenge_delivery_flutter/models/user.dart';
 import 'package:challenge_delivery_flutter/services/complaint/complaint_service.dart';
+import 'package:challenge_delivery_flutter/services/order/order_service.dart';
 import 'package:challenge_delivery_flutter/views/complaint/complaint_detail_screen_args.dart';
 import 'package:challenge_delivery_flutter/widgets/layouts/client_layout.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +15,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:challenge_delivery_flutter/atoms/button_atom.dart';
 import 'package:challenge_delivery_flutter/models/delivery.dart';
 import 'package:challenge_delivery_flutter/widgets/layouts/courier_layout.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class DeliverySummaryScreen extends StatefulWidget {
   final Delivery delivery;
@@ -29,10 +30,25 @@ class _DeliverySummaryScreenState extends State<DeliverySummaryScreen> {
   bool isLoading = true;
   String? pickupAddress;
   String? dropoffAddress;
+  double _currentNotation = 3;
+  User? authUser;
 
   @override
   void initState() {
     super.initState();
+    authUser = BlocProvider.of<AuthBloc>(context).state.user;
+  }
+
+  @override
+  void dispose() {
+    if (authUser?.role == RoleEnum.client.name) {
+      updateNotation(_currentNotation).then((_) {}).catchError((error) {});
+    }
+    super.dispose();
+  }
+
+  Future<void> updateNotation(double rating) async {
+    await orderService.updateDelivery(widget.delivery.copyWith(notation: rating.toInt()));
   }
 
   @override
@@ -72,21 +88,78 @@ class _DeliverySummaryScreenState extends State<DeliverySummaryScreen> {
                       InfoRow('Durée de la livraison:', '${widget.delivery.dropoffDate!.difference(widget.delivery.pickupDate!).inMinutes} minutes'),
                     ],
                     const Divider(height: 30, thickness: 2),
-                    ButtonAtom(
-                      data: "Retourner à l'accueil",
-                      onTap: () => authUser?.role == RoleEnum.courier.name
-                          ? Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const CourierLayout()), (route) => false)
-                          : Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const ClientLayout()), (route) => false),
-                      buttonSize: ButtonSize.small,
-                    ),
-                    if (state.delivery?.status == DeliveryStatusEnum.delivered.name) ...[
-                      const SizedBox(height: 20),
-                      ButtonAtom(
-                        data: "Contacter le support",
-                        buttonSize: ButtonSize.small,
-                        onTap: () => _contactSupportAction(context, state.delivery!, authUser!),
+                    const SizedBox(height: 20),
+                    if (authUser?.role == RoleEnum.client.name && widget.delivery.status == DeliveryStatusEnum.delivered.name) ...[
+                      const Text(
+                        'Notez la livraison',
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                       ),
+                      const SizedBox(height: 20),
+                      RatingBar.builder(
+                        initialRating: _currentNotation,
+                        itemCount: 5,
+                        itemBuilder: (context, index) {
+                          switch (index) {
+                            case 0:
+                              return Icon(
+                                Icons.sentiment_very_dissatisfied,
+                                color: Colors.red,
+                              );
+                            case 1:
+                              return Icon(
+                                Icons.sentiment_dissatisfied,
+                                color: Colors.redAccent,
+                              );
+                            case 2:
+                              return Icon(
+                                Icons.sentiment_neutral,
+                                color: Colors.amber,
+                              );
+                            case 3:
+                              return Icon(
+                                Icons.sentiment_satisfied,
+                                color: Colors.lightGreen,
+                              );
+                            case 4:
+                              return Icon(
+                                Icons.sentiment_very_satisfied,
+                                color: Colors.green,
+                              );
+                            default:
+                              return const Icon(
+                                Icons.sentiment_neutral,
+                                color: Colors.amber,
+                              );
+                          }
+                        },
+                        onRatingUpdate: (notation) {
+                          setState(() {
+                            _currentNotation = notation;
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 20),
                     ],
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ButtonAtom(
+                          data: "Accueil",
+                          onTap: () => authUser?.role == RoleEnum.courier.name
+                              ? Navigator.pushAndRemoveUntil(
+                                  context, MaterialPageRoute(builder: (context) => const CourierLayout()), (route) => false)
+                              : Navigator.pushAndRemoveUntil(
+                                  context, MaterialPageRoute(builder: (context) => const ClientLayout()), (route) => false),
+                        ),
+                        if (state.delivery?.status == DeliveryStatusEnum.delivered.name) ...[
+                          const SizedBox(width: 20),
+                          ButtonAtom(
+                            data: "Support",
+                            onTap: () => _contactSupportAction(context, state.delivery!, authUser!),
+                          ),
+                        ],
+                      ],
+                    ),
                   ],
                 ),
               ),
