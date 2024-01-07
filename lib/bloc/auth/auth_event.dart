@@ -21,8 +21,9 @@ class UpdateProfileEvent extends AuthEvent {
   final String? lastName;
   final String? email;
   final String? password;
+  final String? vehicle;
 
-  UpdateProfileEvent({this.firstName, this.lastName, this.email, this.password});
+  UpdateProfileEvent({this.firstName, this.lastName, this.email, this.password, this.vehicle});
 }
 
 class UpdatePasswordEvent extends AuthEvent {

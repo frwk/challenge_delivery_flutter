@@ -11,13 +11,17 @@ class CourierProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final authBloc = BlocProvider.of<AuthBloc>(context);
 
-    return BlocListener<AuthBloc, AuthState>(
-        listener: (context, state) async {
-          if (state is LogOutAuthState) {
-            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const LoginScreen()), (route) => false);
-          }
-        },
-        child: Scaffold(
+    return BlocConsumer<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is LogOutAuthState) {
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const LoginScreen()), (route) => false);
+        }
+      },
+      builder: (context, state) {
+        if (state is LogOutAuthState) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        return Scaffold(
           appBar: const MyAppBar(title: 'Profil', hasBackArrow: false),
           body: Column(
             children: [
@@ -29,7 +33,7 @@ class CourierProfileScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '${authBloc.state.user!.firstName} ${authBloc.state.user!.lastName}',
+                          '${state.user?.firstName} ${state.user?.lastName}',
                           style: TextStyle(
                             fontSize: 20,
                             color: Colors.orange[800],
@@ -37,7 +41,7 @@ class CourierProfileScreen extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          authBloc.state.user!.email,
+                          state.user!.email,
                           style: TextStyle(
                             fontSize: 16,
                             color: Colors.orange[700],
@@ -85,6 +89,8 @@ class CourierProfileScreen extends StatelessWidget {
               ),
             ],
           ),
-        ));
+        );
+      },
+    );
   }
 }

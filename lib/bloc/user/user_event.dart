@@ -28,8 +28,9 @@ class OnRegisterCourierEvent extends UserEvent {
   final String lastname;
   final String email;
   final String password;
+  final String vehicle;
 
-  OnRegisterCourierEvent({required this.firstname, required this.lastname, required this.email, required this.password});
+  OnRegisterCourierEvent({required this.firstname, required this.lastname, required this.email, required this.password, required this.vehicle});
 }
 
 class OnRegisterClientEvent extends UserEvent {

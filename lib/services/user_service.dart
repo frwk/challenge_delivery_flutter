@@ -26,13 +26,14 @@ class UserService {
     }
   }
 
-  Future<Courier> registerCourier(String firstname, String lastname, String email, String password) async {
+  Future<Courier> registerCourier(String firstname, String lastname, String email, String password, String vehicle) async {
     try {
       Map<String, String> headers = {HttpHeaders.contentTypeHeader: 'application/json'};
       final response = await http.post(
         Uri.parse('${dotenv.env['API_URL']}/couriers'),
         headers: headers,
         body: jsonEncode({
+          'vehicle': vehicle,
           'user': {'firstName': firstname, 'lastName': lastname, 'email': email, 'password': password}
         }),
       );

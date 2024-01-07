@@ -2,6 +2,8 @@ import 'package:challenge_delivery_flutter/atoms/button_atom.dart';
 import 'package:challenge_delivery_flutter/bloc/auth/auth_bloc.dart';
 import 'package:challenge_delivery_flutter/components/input_component.dart';
 import 'package:challenge_delivery_flutter/enums/message_type_enum.dart';
+import 'package:challenge_delivery_flutter/enums/role_enum.dart';
+import 'package:challenge_delivery_flutter/enums/vehicle_enum.dart';
 import 'package:challenge_delivery_flutter/helpers/show_snack_message.dart';
 import 'package:challenge_delivery_flutter/widgets/layouts/app_bar.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +24,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   String _firstName = '';
   String _lastName = '';
   String _email = '';
-  String _phoneNumber = '';
 
   @override
   void didChangeDependencies() {
@@ -35,6 +36,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final authBloc = BlocProvider.of<AuthBloc>(context);
     return Scaffold(
       appBar: const MyAppBar(title: 'Modifier le profil'),
       body: SingleChildScrollView(
@@ -72,15 +74,37 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     FormBuilderValidators.email(),
                   ],
                 ),
+                const SizedBox(height: 30),
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.75,
+                  child: const Divider(
+                    thickness: 1,
+                    color: Colors.grey,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Center(
+                  child: FormBuilderRadioGroup(
+                    name: 'vehicle',
+                    decoration: const InputDecoration(labelText: 'Type de véhicule', border: InputBorder.none),
+                    initialValue: VehicleEnum.car.name,
+                    options: [
+                      FormBuilderFieldOption(value: VehicleEnum.car.name, child: const Text('Voiture')),
+                      FormBuilderFieldOption(value: VehicleEnum.moto.name, child: const Text('Moto')),
+                      FormBuilderFieldOption(value: VehicleEnum.truck.name, child: const Text('Camion')),
+                    ],
+                  ),
+                ),
                 ButtonAtom(
                   data: 'Enregistrer les modifications',
                   onTap: () {
                     if (_formKey.currentState!.saveAndValidate()) {
                       developer.log(_formKey.currentState!.fields['firstName']?.value, name: 'EditProfileScreen');
-                      BlocProvider.of<AuthBloc>(context).add(UpdateProfileEvent(
+                      authBloc.add(UpdateProfileEvent(
                         firstName: _formKey.currentState!.fields['firstName']?.value,
                         lastName: _formKey.currentState!.fields['lastName']?.value,
                         email: _formKey.currentState!.fields['email']?.value,
+                        vehicle: authBloc.state.user?.role == RoleEnum.courier.name ? _formKey.currentState!.fields['vehicle']?.value : null,
                       ));
                       showSnackMessage(context, 'Profil mis à jour', MessageTypeEnum.success);
                     }

@@ -3,6 +3,7 @@ import 'package:challenge_delivery_flutter/bloc/user/user_bloc.dart';
 import 'package:challenge_delivery_flutter/components/input_component.dart';
 import 'package:challenge_delivery_flutter/enums/message_type_enum.dart';
 import 'package:challenge_delivery_flutter/enums/role_enum.dart';
+import 'package:challenge_delivery_flutter/enums/vehicle_enum.dart';
 import 'package:challenge_delivery_flutter/helpers/loading_state.dart';
 import 'package:challenge_delivery_flutter/helpers/show_snack_message.dart';
 import 'package:challenge_delivery_flutter/views/auth/login/login_screen.dart';
@@ -10,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
-
 import '../../../atoms/text_button.dart';
 
 class RegisterClientScreen extends StatefulWidget {
@@ -24,10 +24,12 @@ class RegisterClientScreen extends StatefulWidget {
 
 class _RegisterClientScreenState extends State<RegisterClientScreen> {
   final _formKey = GlobalKey<FormBuilderState>();
+  late ValueNotifier<String> _roleNotifier;
 
   @override
   void initState() {
     super.initState();
+    _roleNotifier = ValueNotifier<String>(RoleEnum.client.name);
   }
 
   @override
@@ -110,7 +112,7 @@ class _RegisterClientScreenState extends State<RegisterClientScreen> {
                             FormBuilderValidators.required(),
                             (value) => _formKey.currentState?.fields['password']?.value != value ? 'Mots de passe différents' : null
                           ]),
-                      const SizedBox(height: 5),
+                      const SizedBox(height: 20),
                       const Text(
                         'Vous êtes :',
                         style: TextStyle(color: Colors.grey),
@@ -126,8 +128,46 @@ class _RegisterClientScreenState extends State<RegisterClientScreen> {
                               FormBuilderFieldOption(value: RoleEnum.client.name, child: const Text('Client')),
                               FormBuilderFieldOption(value: RoleEnum.courier.name, child: const Text('Livreur')),
                             ],
+                            onChanged: (value) {
+                              if (value != null) {
+                                _roleNotifier.value = value;
+                              }
+                            },
                           ),
                         ),
+                      ),
+                      const SizedBox(height: 20),
+                      ValueListenableBuilder(
+                        valueListenable: _roleNotifier,
+                        builder: (BuildContext context, dynamic value, Widget? child) {
+                          if (value == RoleEnum.courier.name) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Quel est le type de votre véhicule ?',
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                                Center(
+                                  child: SizedBox(
+                                    width: 300,
+                                    child: FormBuilderRadioGroup(
+                                      name: 'vehicle',
+                                      initialValue: VehicleEnum.car.name,
+                                      options: [
+                                        FormBuilderFieldOption(value: VehicleEnum.car.name, child: const Text('Voiture')),
+                                        FormBuilderFieldOption(value: VehicleEnum.moto.name, child: const Text('Moto')),
+                                        FormBuilderFieldOption(value: VehicleEnum.truck.name, child: const Text('Camion')),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          } else {
+                            return Container();
+                          }
+                        },
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -156,6 +196,7 @@ class _RegisterClientScreenState extends State<RegisterClientScreen> {
                                 lastname: _formKey.currentState?.fields['lastname']?.value,
                                 email: _formKey.currentState?.fields['email']?.value,
                                 password: _formKey.currentState?.fields['password']?.value,
+                                vehicle: _formKey.currentState?.fields['vehicle']?.value,
                               ));
                             }
                           }

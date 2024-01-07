@@ -60,7 +60,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> _onLogOut(LogOutEvent event, Emitter<AuthState> emit) async {
     await secureStorage.deleteSecureStorage();
     emit(LogOutAuthState());
-    return emit(state.copyWith(user: null));
   }
 
   Future<void> _onUpdateProfile(UpdateProfileEvent event, Emitter<AuthState> emit) async {
@@ -74,6 +73,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         firstName: event.firstName,
         lastName: event.lastName,
         email: event.email,
+        courier: () => state.user!.courier!.copyWith(vehicle: event.vehicle),
       );
       final updatedUser = await UserService().updateUser(user);
       emit(SuccessAuthState(updatedUser));

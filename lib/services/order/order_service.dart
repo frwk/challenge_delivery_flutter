@@ -26,12 +26,8 @@ class OrderService {
       final cookie = await secureStorage.readCookie();
       final response = await http.post(Uri.parse('${dotenv.env['API_URL']}/users/deliveries/total'),
           headers: {'Accept': 'application/json', 'Content-Type': 'application/json', 'Cookie': cookie!},
-          body: jsonEncode({
-            'vehicle': FormatString.capitalize(vehicle),
-            'urgency': FormatString.capitalize(urgency),
-            'pickupAddress': pickupAddress,
-            'dropoffAddress': dropoffAddress
-          }));
+          body: jsonEncode(
+              {'vehicle': vehicle, 'urgency': FormatString.capitalize(urgency), 'pickupAddress': pickupAddress, 'dropoffAddress': dropoffAddress}));
 
       if (response.body.isEmpty) throw Exception('Erreur lors de la connexion');
       if (response.statusCode != 200) {
@@ -60,7 +56,7 @@ class OrderService {
         body: jsonEncode({
           'pickupAddress': pickupAddress,
           'dropoffAddress': dropoffAddress,
-          'vehicle': FormatString.capitalize(vehicle),
+          'vehicle': vehicle,
           'urgency': FormatString.capitalize(urgency),
           'clientId': clientId,
         }),

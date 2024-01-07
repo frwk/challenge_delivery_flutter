@@ -2,12 +2,12 @@ import 'package:challenge_delivery_flutter/components/my_card.dart';
 import 'package:flutter/material.dart';
 
 class OrderCard extends StatelessWidget {
-  final IconData? icons;
+  final IconData? icon;
   final String title;
   final String content;
   final SizedBox? other;
 
-  const OrderCard({super.key, required this.title, required this.content, this.icons, this.other});
+  const OrderCard({super.key, required this.title, required this.content, this.icon, this.other});
 
   @override
   Widget build(BuildContext context) {
@@ -16,12 +16,17 @@ class OrderCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(icons),
-            Text(title,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                )),
+            Row(
+              children: [
+                Icon(icon),
+                const SizedBox(width: 8),
+                Text(title,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    )),
+              ],
+            ),
             const SizedBox(height: 8),
             Text(content,
                 style: TextStyle(

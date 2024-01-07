@@ -1,6 +1,7 @@
 import 'package:challenge_delivery_flutter/atoms/button_atom.dart';
 import 'package:challenge_delivery_flutter/bloc/auth/auth_bloc.dart';
 import 'package:challenge_delivery_flutter/bloc/order/order_bloc.dart';
+import 'package:challenge_delivery_flutter/enums/vehicle_enum.dart';
 import 'package:challenge_delivery_flutter/helpers/format_string.dart';
 import 'package:challenge_delivery_flutter/models/order.dart';
 import 'package:challenge_delivery_flutter/widgets/layouts/app_bar.dart';
@@ -68,11 +69,11 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              OrderCard(title: 'Addresse de départ', content: order!.pickupAddress),
+              OrderCard(title: 'Addresse de départ', content: order!.pickupAddress, icon: Icons.location_on),
               const SizedBox(height: 3),
               Center(child: const ArrowConnector()),
               const SizedBox(height: 3),
-              OrderCard(title: 'Addresse d\'arrivée', content: order.dropoffAddress),
+              OrderCard(title: 'Addresse d\'arrivée', content: order.dropoffAddress, icon: Icons.flag),
               const SizedBox(height: 50),
               const Center(child: Text('Détails de votre commande', style: TextStyle(fontSize: 16))),
               const SizedBox(height: 20),
@@ -82,7 +83,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                     child: DeliveryDetail(
                       icon: Icons.delivery_dining,
                       title: 'Véhicule',
-                      detail: '${FormatString.capitalize(order.vehicle)}',
+                      detail: '${FormatString.capitalize(translateVehicleEnum(order.vehicle))}',
                       color: Colors.white,
                     ),
                   ),
