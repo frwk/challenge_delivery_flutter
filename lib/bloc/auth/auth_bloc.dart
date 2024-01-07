@@ -73,12 +73,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         firstName: event.firstName,
         lastName: event.lastName,
         email: event.email,
-        courier: () => state.user!.courier!.copyWith(vehicle: event.vehicle),
+        courier: () => state.user?.role == RoleEnum.courier.name ? state.user!.courier!.copyWith(vehicle: event.vehicle) : null,
       );
       final updatedUser = await UserService().updateUser(user);
-      emit(SuccessAuthState(updatedUser));
+      emit(SuccessUpdateProfileState(updatedUser));
     } catch (e) {
-      emit(FailureAuthState(e.toString()));
+      emit(FailureUpdateProfileState(error: e.toString(), user: state.user));
     }
   }
 
