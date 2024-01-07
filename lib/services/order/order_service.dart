@@ -18,32 +18,31 @@ import '../../models/order.dart';
 class OrderService {
   late Emitter<OrderState> emit;
 
-  Future<Order> calculateDeliveryTotal(String vehicle, String urgency) async
-  {
+  Future<Order> getOrderInfos(String vehicle, String urgency, String pickupAddress, String dropoffAddress) async {
     try {
       final cookie = await secureStorage.readCookie();
-      developer.log('COOKIE: $cookie', name: 'COOKIE');
-      final response = await http.post(
-        Uri.parse('${dotenv.env['API_URL']}/users/deliveries/total'),
-        headers: {'Accept': 'application/json', 'Content-Type': 'application/json', 'Cookie': cookie!},
-        body: jsonEncode({
-          'vehicle': FormatString.capitalize(vehicle),
-          'urgency': FormatString.capitalize(urgency),
-        })
-      );
+      final response = await http.post(Uri.parse('${dotenv.env['API_URL']}/users/deliveries/total'),
+          headers: {'Accept': 'application/json', 'Content-Type': 'application/json', 'Cookie': cookie!},
+          body: jsonEncode({
+            'vehicle': FormatString.capitalize(vehicle),
+            'urgency': FormatString.capitalize(urgency),
+            'pickupAddress': pickupAddress,
+            'dropoffAddress': dropoffAddress
+          }));
 
       if (response.body.isEmpty) throw Exception('Erreur lors de la connexion');
-      if (response.statusCode == 201 || response.statusCode == 200) {
-        return Order.fromJson(jsonDecode(response.body));
-      }
-
-      if (response.statusCode == 403) {
-        throw UnauthorizedException('Vous n\'êtes pas autorisé à effectuer cette action');
-      } else {
+      if (response.statusCode != 200) {
+        if (response.statusCode == 403) {
+          throw UnauthorizedException('Vous n\'êtes pas autorisé à effectuer cette action');
+        }
+        if (response.statusCode == 404) {
+          throw NotFoundException('Adresse introuvable');
+        }
         throw Exception(jsonDecode(response.body)['message']);
       }
-
+      return Order.fromJson(jsonDecode(response.body));
     } catch (e) {
+      developer.log(e.toString(), name: 'GET ORDER INFOS');
       rethrow;
     }
   }

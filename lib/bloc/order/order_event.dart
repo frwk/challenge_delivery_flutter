@@ -20,8 +20,10 @@ class OrderAddressEvent extends OrderEvent {
 class OrderConfirmedEvent extends OrderEvent {
   final Order order;
   final int clientId;
+  final int amount;
+  final String currency;
 
-  OrderConfirmedEvent(this.order, this.clientId);
+  OrderConfirmedEvent(this.order, this.clientId, this.amount, this.currency);
 }
 
 class OrderCanceledEvent extends OrderEvent {}

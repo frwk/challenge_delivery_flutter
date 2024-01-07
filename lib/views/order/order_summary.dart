@@ -1,40 +1,30 @@
-
-import 'dart:ffi';
-
 import 'package:challenge_delivery_flutter/atoms/button_atom.dart';
 import 'package:challenge_delivery_flutter/bloc/auth/auth_bloc.dart';
 import 'package:challenge_delivery_flutter/bloc/order/order_bloc.dart';
 import 'package:challenge_delivery_flutter/bloc/payment/payment_bloc.dart';
 import 'package:challenge_delivery_flutter/helpers/format_string.dart';
 import 'package:challenge_delivery_flutter/models/order.dart';
-import 'package:challenge_delivery_flutter/services/order/order_service.dart';
 import 'package:challenge_delivery_flutter/widgets/layouts/app_bar.dart';
 import 'package:challenge_delivery_flutter/widgets/layouts/client_layout.dart';
 import 'package:challenge_delivery_flutter/widgets/order/arrow_connector.dart';
 import 'package:challenge_delivery_flutter/widgets/order/order_cart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import '../../enums/message_type_enum.dart';
 import '../../helpers/loading_state.dart';
 import '../../helpers/show_snack_message.dart';
 
 class OrderSummaryScreen extends StatefulWidget {
   final Order? order;
-  final OrderService? orderService;
 
-  const OrderSummaryScreen({super.key, this.order, this.orderService});
+  const OrderSummaryScreen({super.key, this.order});
 
   @override
   State<OrderSummaryScreen> createState() => _OrderSummaryScreenState();
 }
 
 class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     final order = widget.order;
@@ -74,54 +64,117 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
             orderBloc.add(OrderInitialEvent(orderBloc.state.order));
           },
         ),
-        body: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-          const SizedBox(height: 16),
-          OrderCard(title: 'Addresse de départ', content: order!.pickupAddress),
-          const SizedBox(height: 3),
-          const ArrowConnector(),
-          const SizedBox(height: 3),
-          OrderCard(title: 'Addresse d\'arrivée', content: order.dropoffAddress),
-          const SizedBox(height: 50),
-          OrderCard(title: 'Details de votre livraison', content: '' ,other: SizedBox(
-            child: Column(
-              children: [
-                Row(
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              OrderCard(title: 'Addresse de départ', content: order!.pickupAddress),
+              const SizedBox(height: 3),
+              Center(child: const ArrowConnector()),
+              const SizedBox(height: 3),
+              OrderCard(title: 'Addresse d\'arrivée', content: order.dropoffAddress),
+              const SizedBox(height: 20),
+              DeliveryDetail(
+                icon: Icons.delivery_dining,
+                title: 'Mode de livraison',
+                detail: '${FormatString.capitalize(order.vehicle)}',
+                color: Theme.of(context).primaryColor.withOpacity(0.7),
+              ),
+              DeliveryDetail(
+                icon: Icons.speed,
+                title: 'Type de livraison',
+                detail: '${FormatString.capitalize(order.urgency)}',
+                color: Theme.of(context).primaryColor.withOpacity(0.7),
+              ),
+              DeliveryDetail(
+                icon: Icons.access_time,
+                title: 'Arrivée estimée',
+                detail: '${estimateArrival(order.duration!)}',
+                color: Theme.of(context).primaryColor.withOpacity(0.7),
+              ),
+              DeliveryDetail(
+                icon: Icons.euro_symbol,
+                title: 'Montant total',
+                detail: '${order.total}€',
+                color: Theme.of(context).primaryColor.withOpacity(0.7),
+              ),
+              const SizedBox(height: 30),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+                child: Row(
                   children: [
-                    const Text('Mode de livraison: '),
-                    Text(FormatString.capitalize(order.vehicle))
+                    Expanded(
+                        child: ButtonAtom(
+                      data: 'Annuler',
+                      color: Colors.green,
+                      onTap: () => {orderBloc.add(OrderCanceledEvent())},
+                    )),
+                    Expanded(
+                        child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ButtonAtom(
+                          data: 'Commander',
+                          color: Colors.orangeAccent.shade200,
+                          onTap: () => {orderBloc.add(OrderConfirmedEvent(order, clientId!, order.total!, 'EUR'))}),
+                    )),
                   ],
                 ),
-                Row(
-                  children: [
-                    Text('Type de livraison: '),
-                    Text(FormatString.capitalize(order.urgency))
-                  ],
-                )
-              ],
-            ),
-          )),
-          const SizedBox(height: 30),
-          Text('Montant total de votre commande : ${order.total}€', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-            child: Row(
-              children: [
-                Expanded(
-                    child: ButtonAtom(
-                  data: 'Annuler',
-                  color: Colors.green,
-                  onTap: () => {orderBloc.add(OrderCanceledEvent())},
-                )),
-                Expanded(
-                    child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ButtonAtom(
-                      data: 'Commander', color: Colors.orangeAccent.shade200, onTap: () => {paymentBloc.add(PaymentIntentEvent(order.total!, 'EUR'))}),
-                )),
-              ],
-            ),
-          )
-        ]),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  String estimateArrival(int travelTimeInSeconds) {
+    DateTime currentTime = DateTime.now();
+    DateTime arrivalTime = currentTime.add(Duration(seconds: travelTimeInSeconds));
+    String formattedArrivalTime = DateFormat('HH\'h\'mm').format(arrivalTime);
+    return formattedArrivalTime;
+  }
+}
+
+class DeliveryDetail extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String detail;
+  final Color color;
+
+  const DeliveryDetail({
+    Key? key,
+    required this.icon,
+    required this.title,
+    required this.detail,
+    required this.color,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(10),
+      margin: const EdgeInsets.symmetric(vertical: 5),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, size: 30),
+          const SizedBox(width: 10),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              Text(detail),
+            ],
+          ),
+        ],
       ),
     );
   }

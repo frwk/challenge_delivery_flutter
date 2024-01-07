@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:challenge_delivery_flutter/models/order.dart';
 import 'package:challenge_delivery_flutter/services/order/order_service.dart';
+import 'package:challenge_delivery_flutter/services/payment/stripe_payment_service.dart';
 import 'package:flutter/material.dart';
+import 'dart:developer' as developer;
 part 'order_event.dart';
 part 'order_state.dart';
 
@@ -28,17 +30,11 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     try {
       emit(OrderLoadingState());
 
-      var orderWithTotal = await orderService.calculateDeliveryTotal(
-          event.vehicle,
-          event.urgency,
-      );
-
-      final order = Order(
-        pickupAddress: event.pickupAddress,
-        dropoffAddress: event.dropoffAddress,
-        vehicle: event.vehicle,
-        urgency: event.urgency,
-        total: orderWithTotal.total,
+      final order = await orderService.getOrderInfos(
+        event.vehicle,
+        event.urgency,
+        event.pickupAddress,
+        event.dropoffAddress,
       );
 
       await Future.delayed(const Duration(milliseconds: 850));
@@ -51,7 +47,11 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
   Future<void> _onOrderConfirmedEvent(OrderConfirmedEvent event, Emitter<OrderState> emit) async {
     try {
       emit(OrderLoadingState());
-      await orderService.post(event.order.pickupAddress, event.order.dropoffAddress, event.order.vehicle, event.order.urgency,  event.clientId);
+      bool paymentSuccess = await paymentService.stripeMakePayment(event.amount, event.currency);
+      if (!paymentSuccess) {
+        emit(const OrderFailureState('Erreur lors du paiement'));
+      }
+      await orderService.post(event.order.pickupAddress, event.order.dropoffAddress, event.order.vehicle, event.order.urgency, event.clientId);
       emit(OrderConfirmedState());
     } catch (e) {
       emit(OrderFailureState(e.toString()));

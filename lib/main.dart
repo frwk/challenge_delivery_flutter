@@ -1,7 +1,6 @@
 import 'package:challenge_delivery_flutter/bloc/auth/auth_bloc.dart';
 import 'package:challenge_delivery_flutter/bloc/delivery%20copy/delivery_tracking_bloc.dart';
 import 'package:challenge_delivery_flutter/bloc/order/order_bloc.dart';
-import 'package:challenge_delivery_flutter/bloc/payment/payment_bloc.dart';
 import 'package:challenge_delivery_flutter/bloc/user/user_bloc.dart';
 import 'package:challenge_delivery_flutter/common/app_colors.dart';
 import 'package:challenge_delivery_flutter/init_socket.dart';
@@ -65,7 +64,6 @@ class _MyAppState extends State<MyApp> {
         BlocProvider(create: (context) => UserBloc()),
         BlocProvider(create: (context) => OrderBloc()),
         BlocProvider(create: (context) => DeliveryTrackingBloc()),
-        BlocProvider(create: (context) => PaymentBloc()),
       ],
       child: MaterialApp(
           theme: lightMode(),

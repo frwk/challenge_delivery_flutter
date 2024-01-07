@@ -20,6 +20,7 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 import 'dart:async';
 import '../../bloc/order/order_bloc.dart';
 import '../../enums/role_enum.dart';
+import 'dart:developer' as developer;
 
 class CreateOrderScreen extends StatefulWidget {
   const CreateOrderScreen({super.key});
@@ -135,6 +136,9 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
           );
         } else if (state is OrderInitial) {
           Navigator.of(context, rootNavigator: true).pop();
+        } else if (state is OrderFailureState) {
+          Navigator.pop(context);
+          showSnackMessage(context, state.error, MessageTypeEnum.error);
         }
       },
       child: Scaffold(
@@ -143,7 +147,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
         body: SafeArea(
           child: FormBuilder(
             key: _orderFormKey,
-            child: Column(
+            child: ListView(
               children: [
                 buildAddressInput(
                   controller: _pickupAddressController,
@@ -208,7 +212,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                       orientation: OptionsOrientation.horizontal,
                       initialValue: VehicleEnum.moto.name,
                       options: [
-                          FormBuilderFieldOption(value: VehicleEnum.moto.name, child: const Text('Moto')),
+                        FormBuilderFieldOption(value: VehicleEnum.moto.name, child: const Text('Moto')),
                         FormBuilderFieldOption(value: VehicleEnum.voiture.name, child: const Text('Voiture')),
                         FormBuilderFieldOption(value: VehicleEnum.camion.name, child: const Text('Camion')),
                       ],
@@ -226,29 +230,30 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                       orientation: OptionsOrientation.horizontal,
                       initialValue: UrgencyEnum.normal.name,
                       options: [
-                        FormBuilderFieldOption(value: UrgencyEnum.normal.name,
+                        FormBuilderFieldOption(
+                            value: UrgencyEnum.normal.name,
                             child: const Column(
                               children: [
                                 Text('Normal'),
                                 Text('Jusqu\'à 24h', style: TextStyle(fontSize: 12, color: Colors.grey)),
                               ],
-                        )),
-                        FormBuilderFieldOption(value: UrgencyEnum.urgent.name,
+                            )),
+                        FormBuilderFieldOption(
+                            value: UrgencyEnum.urgent.name,
                             child: const Column(
                               children: [
                                 Text('Urgent'),
                                 Text('Jusqu\'à 3h', style: TextStyle(fontSize: 12, color: Colors.grey)),
                               ],
-                            )
-                        ),
-                        FormBuilderFieldOption(value: UrgencyEnum.direct.name,
+                            )),
+                        FormBuilderFieldOption(
+                            value: UrgencyEnum.direct.name,
                             child: const Column(
                               children: [
                                 Text('Direct'),
                                 Text('Jusqu\'à 1h', style: TextStyle(fontSize: 12, color: Colors.grey)),
                               ],
-                            )
-                        ),
+                            )),
                       ],
                     ),
                   ),
@@ -259,6 +264,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                   child: ButtonAtom(
                       data: 'Suivant',
                       onTap: () => {
+                            developer.log('ORDER FORM: ${_orderFormKey.currentState!.value}', name: 'ORDER FORM'),
                             if (_orderFormKey.currentState!.saveAndValidate())
                               {
                                 orderBloc.add(OrderAddressEvent(
@@ -280,7 +286,8 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
 
   Widget buildPredictionsList(List<AutocompletePrediction> predictions, String addressType) {
     return predictions.isNotEmpty
-        ? Expanded(
+        ? SizedBox(
+            height: 200,
             child: ListView.builder(
               itemCount: predictions.length,
               itemBuilder: (context, index) => LocationListTile(
@@ -289,7 +296,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
               ),
             ),
           )
-        : const SizedBox(height: 0);
+        : Container();
   }
 
   Widget buildAddressInput({

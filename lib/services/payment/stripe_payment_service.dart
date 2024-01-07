@@ -10,47 +10,37 @@ import '../../main.dart';
 class StripePaymentService {
   Map<String, dynamic>? paymentIntent;
 
-  Future<void> stripeMakePayment(int amount, String currency) async {
+  Future<bool> stripeMakePayment(int amount, String currency) async {
     try {
       paymentIntent = await createPaymentIntent(amount, currency);
-      var gpay = const PaymentSheetGooglePay(
-          merchantCountryCode: "FR",
-          currencyCode: "EUR",
-          testEnv: true
-      );
+      var gpay = const PaymentSheetGooglePay(merchantCountryCode: "FR", currencyCode: "EUR", testEnv: true);
 
       await Stripe.instance.initPaymentSheet(
-        paymentSheetParameters: SetupPaymentSheetParameters(
-          paymentIntentClientSecret: paymentIntent!['client_secret'],
-          style: ThemeMode.light,
-          merchantDisplayName: 'Coursier Inc.',
-          googlePay: gpay,
+          paymentSheetParameters: SetupPaymentSheetParameters(
+        paymentIntentClientSecret: paymentIntent!['client_secret'],
+        style: ThemeMode.light,
+        merchantDisplayName: 'Coursier Inc.',
+        googlePay: gpay,
       ));
 
-      displayPaymentSheet();
+      return displayPaymentSheet();
     } catch (e) {
       print(e.toString());
-      // Fluttertoast.showToast(msg: e.toString());
+      return false;
     }
   }
 
-  displayPaymentSheet() async {
+  Future<bool> displayPaymentSheet() async {
     try {
       await Stripe.instance.presentPaymentSheet();
       await Future.delayed(const Duration(milliseconds: 850));
-      await navigatorKey.currentState!.pushNamed('/payment-success');
-
+      return true;
     } on Exception catch (e) {
-      if (e is StripeException) {
-        // Fluttertoast.showToast(
-        //     msg: 'Error from Stripe: ${e.error.localizedMessage}');
-      } else {
-        // Fluttertoast.showToast(msg: 'Unforeseen error: ${e}');
-      }
+      print(e.toString());
+      return false;
     }
   }
 
-//create Payment
   createPaymentIntent(int amount, String currency) async {
     try {
       Map<String, dynamic> body = {
@@ -58,13 +48,9 @@ class StripePaymentService {
         'currency': currency,
       };
 
-      //Make post request to Stripe
       var response = await http.post(
         Uri.parse('https://api.stripe.com/v1/payment_intents'),
-        headers: {
-          'Authorization': 'Bearer ${dotenv.env['STRIPE_API_KEY']}',
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
+        headers: {'Authorization': 'Bearer ${dotenv.env['STRIPE_API_KEY']}', 'Content-Type': 'application/x-www-form-urlencoded'},
         body: body,
       );
       return await json.decode(response.body);
