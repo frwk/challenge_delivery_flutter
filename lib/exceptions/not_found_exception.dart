@@ -4,5 +4,5 @@ class NotFoundException implements Exception {
   NotFoundException(this.message);
 
   @override
-  String toString() => 'NotFoundException: $message';
+  String toString() => '$message';
 }

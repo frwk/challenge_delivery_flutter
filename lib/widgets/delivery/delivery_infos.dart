@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 
+import '../../helpers/url_launcher.dart';
+
 class DeliveryInfos extends StatelessWidget {
   final Delivery delivery;
 

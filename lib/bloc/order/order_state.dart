@@ -20,3 +20,8 @@ class OrderFailureState extends OrderState {
   final error;
   const OrderFailureState(this.error);
 }
+
+class OrderGetDeliveryTotalState extends OrderState {
+  final orderTotal;
+  const OrderGetDeliveryTotalState(this.orderTotal);
+}

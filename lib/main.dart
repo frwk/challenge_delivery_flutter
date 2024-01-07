@@ -16,11 +16,13 @@ import 'package:challenge_delivery_flutter/views/order/create_order_screen.dart'
 import 'package:challenge_delivery_flutter/views/order/order_summary.dart';
 import 'package:challenge_delivery_flutter/services/location_service.dart';
 import 'package:challenge_delivery_flutter/views/order/create_order_screen.dart';
+import 'package:challenge_delivery_flutter/views/payment/payment_success_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:challenge_delivery_flutter/services/notification_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -32,6 +34,7 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   await dotenv.load(fileName: ".env");
   WidgetsFlutterBinding.ensureInitialized();
+  Stripe.publishableKey = "pk_test_51OUxtlAnhXlPAgUCByMDs22yNMcqgIVOzxc6cFhCIraj277uVjwebcFBEARWtgeBE5qmm2wbq6Q8YovVR5t9lUGi00GifYfd48";
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   notificationService.init();
   String? token = await notificationService.getToken();
@@ -84,6 +87,7 @@ class _MyAppState extends State<MyApp> {
             '/forgot-password': (context) => const ForgotPasswordScreen(),
             '/create-order': (context) => const CreateOrderScreen(),
             '/order-summary': (context) => const OrderSummaryScreen(),
+            '/payment-success': (context) => const PaymentSuccessScreen(),
             '/complaints': (context) => const ComplaintListingScreen(),
             '/complaint-detail': (context) => const ComplaintDetailScreen(),
           }),
