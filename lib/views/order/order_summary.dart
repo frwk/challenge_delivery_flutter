@@ -1,7 +1,6 @@
 import 'package:challenge_delivery_flutter/atoms/button_atom.dart';
 import 'package:challenge_delivery_flutter/bloc/auth/auth_bloc.dart';
 import 'package:challenge_delivery_flutter/bloc/order/order_bloc.dart';
-import 'package:challenge_delivery_flutter/bloc/payment/payment_bloc.dart';
 import 'package:challenge_delivery_flutter/helpers/format_string.dart';
 import 'package:challenge_delivery_flutter/models/order.dart';
 import 'package:challenge_delivery_flutter/widgets/layouts/app_bar.dart';
@@ -30,7 +29,6 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     final order = widget.order;
 
     final orderBloc = BlocProvider.of<OrderBloc>(context);
-    final paymentBloc = BlocProvider.of<PaymentBloc>(context);
     final clientId = BlocProvider.of<AuthBloc>(context).state.user?.id;
 
     return BlocListener<OrderBloc, OrderState>(
