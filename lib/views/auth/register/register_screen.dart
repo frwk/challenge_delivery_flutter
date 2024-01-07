@@ -205,7 +205,12 @@ class _RegisterClientScreenState extends State<RegisterClientScreen> {
                           backgroundColor: Colors.orangeAccent[200],
                           fixedSize: const Size(400, 50),
                         ),
-                        child: const Text('S\'inscrire'),
+                        child: const Text('S\'inscrire',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            )),
                       ),
                     ],
                   ),
