@@ -73,30 +73,49 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
               Center(child: const ArrowConnector()),
               const SizedBox(height: 3),
               OrderCard(title: 'Addresse d\'arrivée', content: order.dropoffAddress),
+              const SizedBox(height: 50),
+              const Center(child: Text('Détails de votre commande', style: TextStyle(fontSize: 16))),
               const SizedBox(height: 20),
-              DeliveryDetail(
-                icon: Icons.delivery_dining,
-                title: 'Mode de livraison',
-                detail: '${FormatString.capitalize(order.vehicle)}',
-                color: Theme.of(context).primaryColor.withOpacity(0.7),
+              Row(
+                children: [
+                  Expanded(
+                    child: DeliveryDetail(
+                      icon: Icons.delivery_dining,
+                      title: 'Véhicule',
+                      detail: '${FormatString.capitalize(order.vehicle)}',
+                      color: Colors.white,
+                    ),
+                  ),
+                  Expanded(
+                    child: DeliveryDetail(
+                      icon: Icons.speed,
+                      title: 'Mode',
+                      detail: '${FormatString.capitalize(order.urgency)}',
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
               ),
-              DeliveryDetail(
-                icon: Icons.speed,
-                title: 'Type de livraison',
-                detail: '${FormatString.capitalize(order.urgency)}',
-                color: Theme.of(context).primaryColor.withOpacity(0.7),
-              ),
-              DeliveryDetail(
-                icon: Icons.access_time,
-                title: 'Arrivée estimée',
-                detail: '${estimateArrival(order.duration!)}',
-                color: Theme.of(context).primaryColor.withOpacity(0.7),
-              ),
-              DeliveryDetail(
-                icon: Icons.euro_symbol,
-                title: 'Montant total',
-                detail: '${order.total}€',
-                color: Theme.of(context).primaryColor.withOpacity(0.7),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: DeliveryDetail(
+                      icon: Icons.access_time,
+                      title: 'Arrivée estimée',
+                      detail: '${estimateArrival(order.duration!)}',
+                      color: Colors.white,
+                    ),
+                  ),
+                  Expanded(
+                    child: DeliveryDetail(
+                      icon: Icons.euro_symbol,
+                      title: 'Montant total',
+                      detail: '${order.total}€',
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 30),
               Padding(
@@ -153,23 +172,23 @@ class DeliveryDetail extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(10),
-      margin: const EdgeInsets.symmetric(vertical: 5),
+      margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Row(
         children: [
-          Icon(icon, size: 30),
+          Icon(icon, size: 30, color: Colors.black),
           const SizedBox(width: 10),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 title,
-                style: const TextStyle(fontWeight: FontWeight.bold),
+                style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
               ),
-              Text(detail),
+              Text(detail, style: const TextStyle(color: Colors.black)),
             ],
           ),
         ],

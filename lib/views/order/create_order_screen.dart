@@ -202,7 +202,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                   thickness: 1,
                 ),
                 const SizedBox(height: 30),
-                const Text('Quel mode de livraison souhaitez-vous ?'),
+                const Center(child: Text('Quel mode de livraison souhaitez-vous ?')),
                 const SizedBox(height: 10),
                 Center(
                   child: SizedBox(
@@ -220,7 +220,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                   ),
                 ),
                 const SizedBox(height: 30),
-                const Text('Quel est l\'urgence de votre livraison ?'),
+                const Center(child: Text('Quel est l\'urgence de votre livraison ?')),
                 const SizedBox(height: 10),
                 Center(
                   child: SizedBox(
