@@ -18,13 +18,21 @@ class MessageData {
   factory MessageData.fromJson(Map<String, dynamic> json) {
     return MessageData(
       userType:
-          json['userType'] == 'client' ? UserType.client : UserType.support,
+          UserType.values.firstWhere((e) => e.toString().split('.').last == json['userType'], orElse: () => throw Exception('Invalid user type')),
       date: DateTime.parse(json['date']),
       content: json['content'],
       complaintId: json['complaintId'],
       userId: json['userId'],
     );
   }
+
+  Map<String, dynamic> toJson() => {
+        'userType': userType.value,
+        'date': date.toIso8601String(),
+        'content': content,
+        'complaintId': complaintId,
+        'userId': userId,
+      };
 }
 
 class MessageResponse {

@@ -127,7 +127,7 @@ class ChatWidgetState extends State<ChatWidget> {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    message.userType.value.toUpperCase(),
+                                    authUser!.firstName.toUpperCase(),
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: Colors.white,
@@ -154,7 +154,7 @@ class ChatWidgetState extends State<ChatWidget> {
                     },
                   );
                 } else {
-                  return const CircularProgressIndicator();
+                  return Center(child: const CircularProgressIndicator());
                 }
               },
             ),
@@ -183,7 +183,7 @@ class ChatWidgetState extends State<ChatWidget> {
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.send, color: Colors.black),
+                    icon: Icon(Icons.send, color: Colors.blue),
                     onPressed: () => _sendMessage(authUser!.id),
                   ),
                 ],

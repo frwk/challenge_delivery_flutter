@@ -26,7 +26,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   Future<void> _onRegisterCourier(OnRegisterCourierEvent event, Emitter<UserState> emit) async {
     try {
       emit(LoadingUserState());
-      await userService.registerCourier(event.firstname, event.lastname, event.email, event.password);
+      await userService.registerCourier(event.firstname, event.lastname, event.email, event.password, event.vehicle);
       emit(SuccessUserState());
     } catch (e) {
       emit(FailureUserState(e.toString()));

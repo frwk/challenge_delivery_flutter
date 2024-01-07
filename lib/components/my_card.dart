@@ -1,34 +1,39 @@
 import 'package:flutter/material.dart';
 
 class MyCard extends StatelessWidget {
-
   final void Function()? onTap;
   final Widget child;
-  final double width;
+  final double? width;
+  final EdgeInsets? margin;
+  final EdgeInsets? padding;
 
-  const MyCard({super.key, this.onTap, required this.child, required this.width});
+  const MyCard({
+    super.key,
+    this.onTap,
+    required this.child,
+    this.width,
+    this.margin,
+    this.padding,
+  });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 10),
-        width: width,
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-        decoration: const BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-            color: Colors.white,
-            boxShadow:  [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 10,
-                offset: Offset(0, 5),
-              )
-            ]
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: width ?? MediaQuery.of(context).size.width,
         ),
-        child: child,
-      )
+        child: Card(
+          margin: margin ?? const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          elevation: 5,
+          child: Padding(
+            padding: padding ?? const EdgeInsets.all(20),
+            child: child,
+          ),
+        ),
+      ),
     );
   }
 }

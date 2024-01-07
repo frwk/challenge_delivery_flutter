@@ -21,3 +21,12 @@ class FailureAuthState extends AuthState {
   final error;
   const FailureAuthState(this.error);
 }
+
+class FailureUpdateProfileState extends AuthState {
+  final error;
+  FailureUpdateProfileState({this.error, User? user}) : super(user: user);
+}
+
+class SuccessUpdateProfileState extends AuthState {
+  const SuccessUpdateProfileState(User? user) : super(user: user);
+}

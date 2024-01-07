@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:challenge_delivery_flutter/bloc/delivery%20copy/delivery_tracking_event.dart';
-import 'package:challenge_delivery_flutter/bloc/delivery%20copy/delivery_tracking_state.dart';
+import 'package:challenge_delivery_flutter/bloc/delivery/delivery_tracking_event.dart';
+import 'package:challenge_delivery_flutter/bloc/delivery/delivery_tracking_state.dart';
 import 'package:challenge_delivery_flutter/enums/delivery_status_enum.dart';
 import 'package:challenge_delivery_flutter/exceptions/not_found_exception.dart';
 import 'package:challenge_delivery_flutter/models/delivery.dart';
@@ -23,8 +23,6 @@ class DeliveryTrackingBloc extends Bloc<DeliveryTrackingEvent, DeliveryTrackingS
   late GoogleMapController _mapController;
   late StreamSubscription<Position> _positionSubscription;
   late IO.Socket _socket;
-  late String pickupAddress;
-  late String dropoffAddress;
   late User client;
 
   DeliveryTrackingBloc() : super(DeliveryTrackingState()) {
@@ -40,8 +38,6 @@ class DeliveryTrackingBloc extends Bloc<DeliveryTrackingEvent, DeliveryTrackingS
       Position currentPosition = await Geolocator.getCurrentPosition();
       Delivery delivery = await orderService.getCurrentCourierDelivery(event.courier);
 
-      pickupAddress = await locationService.getAddress(delivery.pickupLatitude!, delivery.pickupLongitude!);
-      dropoffAddress = await locationService.getAddress(delivery.dropoffLatitude!, delivery.dropoffLongitude!);
       client = delivery.client!;
 
       initialLocation();
@@ -85,7 +81,6 @@ class DeliveryTrackingBloc extends Bloc<DeliveryTrackingEvent, DeliveryTrackingS
 
   Future<void> initMap(GoogleMapController controller) async {
     _mapController = controller;
-    _mapController.setMapStyle(jsonEncode(mapsTheme));
   }
 
   Future<void> _onChangeLocation(ChangeLocationEvent event, Emitter<DeliveryTrackingState> emit) async {
@@ -95,11 +90,16 @@ class DeliveryTrackingBloc extends Bloc<DeliveryTrackingEvent, DeliveryTrackingS
   Future<void> _onUpdateDeliveryStatus(UpdateDeliveryStatusEvent event, Emitter<DeliveryTrackingState> emit) async {
     emit(state.copyWith(status: DeliveryTrackingStatus.loading));
     try {
-      final updatedDelivery = await orderService.updateDelivery(state.delivery!.copyWith(
+      Delivery newDelivery = state.delivery!.copyWith(
         status: event.status.name,
-        pickupDate: DateTime.now(),
         courierId: () => event.status.name == DeliveryStatusEnum.pending.name ? null : state.delivery!.courierId,
-      ));
+      );
+      if (event.status == DeliveryStatusEnum.picked_up) {
+        newDelivery = newDelivery.copyWith(pickupDate: DateTime.now());
+      } else if (event.status == DeliveryStatusEnum.delivered) {
+        newDelivery = newDelivery.copyWith(dropoffDate: DateTime.now());
+      }
+      final updatedDelivery = await orderService.updateDelivery(newDelivery);
       if (updatedDelivery.status == DeliveryStatusEnum.delivered.name) {
         emit(state.copyWith(delivery: updatedDelivery, status: DeliveryTrackingStatus.success));
       } else if (updatedDelivery.status == DeliveryStatusEnum.pending.name) {

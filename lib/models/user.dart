@@ -1,4 +1,3 @@
-
 import 'package:challenge_delivery_flutter/models/courier.dart';
 
 class User {
@@ -45,7 +44,7 @@ class User {
     String? email,
     String? role,
     String? notificationToken,
-    Courier? courier,
+    Function? courier,
   }) {
     return User(
       id: id ?? this.id,
@@ -54,7 +53,7 @@ class User {
       email: email ?? this.email,
       role: role ?? this.role,
       notificationToken: notificationToken ?? this.notificationToken,
-      courier: courier ?? this.courier,
+      courier: courier != null ? courier() : this.courier,
     );
   }
 }

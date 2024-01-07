@@ -1,8 +1,11 @@
+import 'package:challenge_delivery_flutter/atoms/button_atom.dart';
 import 'package:challenge_delivery_flutter/atoms/landing_title_atom.dart';
 import 'package:challenge_delivery_flutter/bloc/auth/auth_bloc.dart';
 import 'package:challenge_delivery_flutter/enums/role_enum.dart';
 import 'package:challenge_delivery_flutter/interfaces/courier_stats.dart';
 import 'package:challenge_delivery_flutter/services/order/order_service.dart';
+import 'package:challenge_delivery_flutter/widgets/error.dart';
+import 'package:challenge_delivery_flutter/widgets/layouts/courier_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -35,7 +38,18 @@ class CourierDashboardScreen extends StatelessWidget {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
                     } else if (snapshot.hasError) {
-                      return Text('Erreur: ${snapshot.error}');
+                      return ErrorMessage(
+                        icon: Icons.grid_off_rounded,
+                        message: 'Aucune statistique à afficher pour le moment',
+                        actions: [
+                          ButtonAtom(
+                            data: 'Voir les demandes',
+                            color: Theme.of(context).colorScheme.primary,
+                            icon: Icons.local_shipping,
+                            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => CourierLayout(initialPage: 'requests'))),
+                          )
+                        ],
+                      );
                     } else if (snapshot.hasData) {
                       return Padding(
                         padding: const EdgeInsets.all(8.0),

@@ -46,7 +46,10 @@ class LocationService {
 
   Future<String> getAddress(double latitude, double longitude) async {
     try {
-      final response = await http.get(Uri.parse('https://api-adresse.data.gouv.fr/reverse/?lon=$longitude&lat=$latitude'));
+      final response = await http.get(
+        Uri.parse('https://api-adresse.data.gouv.fr/reverse/?lon=$longitude&lat=$latitude'),
+        headers: {'Accept': 'application/json'},
+      );
       if (response.statusCode != 200) {
         throw Exception(jsonDecode(response.body)['message']);
       }

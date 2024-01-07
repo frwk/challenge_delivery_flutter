@@ -213,8 +213,8 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                       initialValue: VehicleEnum.moto.name,
                       options: [
                         FormBuilderFieldOption(value: VehicleEnum.moto.name, child: const Text('Moto')),
-                        FormBuilderFieldOption(value: VehicleEnum.voiture.name, child: const Text('Voiture')),
-                        FormBuilderFieldOption(value: VehicleEnum.camion.name, child: const Text('Camion')),
+                        FormBuilderFieldOption(value: VehicleEnum.car.name, child: const Text('Voiture')),
+                        FormBuilderFieldOption(value: VehicleEnum.truck.name, child: const Text('Camion')),
                       ],
                     ),
                   ),

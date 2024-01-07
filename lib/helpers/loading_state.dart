@@ -10,7 +10,8 @@ void modalLoading(BuildContext context) {
       content: const SizedBox(
         height: 100,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text('Connexion en cours...'),
           ],

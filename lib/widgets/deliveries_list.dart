@@ -1,7 +1,15 @@
+import 'package:challenge_delivery_flutter/atoms/button_atom.dart';
+import 'package:challenge_delivery_flutter/bloc/auth/auth_bloc.dart';
+import 'package:challenge_delivery_flutter/components/my_card.dart';
+import 'package:challenge_delivery_flutter/enums/delivery_status_enum.dart';
 import 'package:challenge_delivery_flutter/models/delivery.dart';
+import 'package:challenge_delivery_flutter/services/order/order_service.dart';
 import 'package:challenge_delivery_flutter/views/courier/delivery/delivery_details_screen.dart';
+import 'package:challenge_delivery_flutter/widgets/layouts/courier_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:challenge_delivery_flutter/helpers/secure_storage.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:timeline_tile/timeline_tile.dart';
 
 class DeliveriesList extends StatefulWidget {
   final List<Delivery> deliveries;
@@ -63,6 +71,7 @@ class _DeliveriesListState extends State<DeliveriesList> {
 
   @override
   Widget build(BuildContext context) {
+    final authBloc = BlocProvider.of<AuthBloc>(context);
     if (widget.deliveries.isEmpty) {
       return const Center(
         child: Text('Aucune livraison à effectuer autour de vous'),
@@ -99,23 +108,72 @@ class _DeliveriesListState extends State<DeliveriesList> {
             itemCount: sortedDeliveries.length,
             itemBuilder: (context, index) {
               final delivery = sortedDeliveries[index];
-              return Card(
+              return MyCard(
                 child: ListTile(
-                  tileColor: Theme.of(context).colorScheme.primary,
-                  title: Row(
-                    children: [Text('Livraison à ${delivery.distanceToPickup} mètres')],
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                  title: Padding(
+                    padding: const EdgeInsets.only(bottom: 10.0),
+                    child: Text('Livraison à ${delivery.distanceToPickup} mètres'),
                   ),
-                  subtitle: Text('${delivery.client?.firstName} ${delivery.client?.lastName}'),
-                  trailing: const Icon(Icons.arrow_forward),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => DeliveryDetailsScreen(delivery: delivery, onDeliveryRefused: onDeliveryRefused),
+                  subtitle: Column(
+                    children: [
+                      TimelineTile(
+                        isFirst: true,
+                        endChild: Padding(
+                          padding: const EdgeInsets.only(left: 10),
+                          child: Text(delivery.pickupAddress!, style: TextStyle(fontSize: 13, color: Colors.blueGrey[600])),
+                        ),
+                        indicatorStyle: const IndicatorStyle(width: 15, color: Colors.green),
                       ),
-                    );
-                  },
+                      TimelineTile(
+                        isLast: true,
+                        endChild: Padding(
+                          padding: const EdgeInsets.only(left: 10),
+                          child: Text(delivery.dropoffAddress!, style: TextStyle(fontSize: 13, color: Colors.blueGrey[600])),
+                        ),
+                        indicatorStyle: const IndicatorStyle(width: 15, color: Colors.red),
+                      ),
+                    ],
+                  ),
+                  trailing: const Icon(Icons.arrow_forward),
+                  visualDensity: VisualDensity(vertical: 4),
                 ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => DeliveryDetailsScreen(delivery: delivery, onDeliveryRefused: onDeliveryRefused, actionsButtons: [
+                        ButtonAtom(
+                          data: "Refuser",
+                          color: Colors.red,
+                          icon: Icons.close,
+                          onTap: () async {
+                            storage.refuseDelivery(delivery.id.toString());
+                            await onDeliveryRefused(delivery.id.toString());
+                            Navigator.pop(context);
+                          },
+                        ),
+                        ButtonAtom(
+                          data: "Accepter",
+                          icon: Icons.check,
+                          color: Colors.green,
+                          onTap: () async {
+                            await orderService.updateDelivery(
+                                delivery.copyWith(status: DeliveryStatusEnum.accepted.name, courierId: () => authBloc.state.user!.courier!.id));
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const CourierLayout(
+                                  initialPage: 'map',
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ]),
+                    ),
+                  );
+                },
               );
             },
           ),

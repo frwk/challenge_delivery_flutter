@@ -5,7 +5,10 @@ import 'package:challenge_delivery_flutter/helpers/format_string.dart';
 import 'package:challenge_delivery_flutter/helpers/secure_storage.dart';
 import 'dart:io';
 import 'package:challenge_delivery_flutter/exceptions/not_found_exception.dart';
+import 'package:challenge_delivery_flutter/helpers/secure_storage.dart';
+import 'package:challenge_delivery_flutter/interfaces/client_stats.dart';
 import 'package:challenge_delivery_flutter/interfaces/courier_stats.dart';
+import 'package:challenge_delivery_flutter/interfaces/user_stats.dart';
 import 'package:challenge_delivery_flutter/models/courier.dart';
 import 'package:challenge_delivery_flutter/models/delivery.dart';
 import 'package:challenge_delivery_flutter/models/user.dart';
@@ -23,12 +26,7 @@ class OrderService {
       final cookie = await secureStorage.readCookie();
       final response = await http.post(Uri.parse('${dotenv.env['API_URL']}/users/deliveries/total'),
           headers: {'Accept': 'application/json', 'Content-Type': 'application/json', 'Cookie': cookie!},
-          body: jsonEncode({
-            'vehicle': FormatString.capitalize(vehicle),
-            'urgency': FormatString.capitalize(urgency),
-            'pickupAddress': pickupAddress,
-            'dropoffAddress': dropoffAddress
-          }));
+          body: jsonEncode({'vehicle': vehicle, 'urgency': urgency, 'pickupAddress': pickupAddress, 'dropoffAddress': dropoffAddress}));
 
       if (response.body.isEmpty) throw Exception('Erreur lors de la connexion');
       if (response.statusCode != 200) {
@@ -57,8 +55,8 @@ class OrderService {
         body: jsonEncode({
           'pickupAddress': pickupAddress,
           'dropoffAddress': dropoffAddress,
-          'vehicle': FormatString.capitalize(vehicle),
-          'urgency': FormatString.capitalize(urgency),
+          'vehicle': vehicle,
+          'urgency': urgency,
           'clientId': clientId,
         }),
       );
@@ -131,7 +129,23 @@ class OrderService {
       }
       return CourierStats.fromJson(jsonDecode(response.body));
     } catch (e) {
-      developer.log(e.toString());
+      developer.log(e.toString(), name: 'GET COURIER STATS');
+      rethrow;
+    }
+  }
+
+  Future<ClientStats> getUserStats(User user) async {
+    try {
+      final cookie = await secureStorage.readCookie();
+      final response =
+          await http.get(Uri.parse('${dotenv.env['API_URL']}/users/${user.id}/stats'), headers: {'Accept': 'application/json', 'Cookie': cookie!});
+      developer.log('response: ${response.body}', name: 'GET USER STATS');
+      if (response.statusCode != 200) {
+        throw Exception(jsonDecode(response.body)['message']);
+      }
+      return ClientStats.fromJson(jsonDecode(response.body));
+    } catch (e) {
+      developer.log(e.toString(), name: 'GET USER STATS');
       rethrow;
     }
   }

@@ -1,8 +1,8 @@
 import 'package:challenge_delivery_flutter/common/app_colors.dart';
 import 'package:challenge_delivery_flutter/state/app_state.dart';
-import 'package:challenge_delivery_flutter/views/client/dashboard/home_screen.dart';
 import 'package:challenge_delivery_flutter/views/complaint/complaint_listing_screen.dart';
 import 'package:challenge_delivery_flutter/views/courier/profile_screen.dart';
+import 'package:challenge_delivery_flutter/views/home_screen.dart';
 import 'package:flutter/material.dart';
 
 class ClientLayout extends StatefulWidget {
@@ -17,7 +17,7 @@ class _MainScreenState extends State<ClientLayout> {
   late String _currentPageKey;
 
   final Map<String, Widget> _pages = {
-    'home': const ClientHomeScreen(),
+    'home': const HomeScreen(),
     'complaints': const ComplaintListingScreen(),
     'profile': const CourierProfileScreen(),
   };

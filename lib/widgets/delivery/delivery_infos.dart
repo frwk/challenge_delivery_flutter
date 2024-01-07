@@ -1,8 +1,9 @@
 import 'package:challenge_delivery_flutter/atoms/button_atom.dart';
-import 'package:challenge_delivery_flutter/bloc/delivery%20copy/delivery_tracking_bloc.dart';
-import 'package:challenge_delivery_flutter/bloc/delivery%20copy/delivery_tracking_event.dart';
-import 'package:challenge_delivery_flutter/bloc/delivery%20copy/delivery_tracking_state.dart';
+import 'package:challenge_delivery_flutter/bloc/delivery/delivery_tracking_bloc.dart';
+import 'package:challenge_delivery_flutter/bloc/delivery/delivery_tracking_event.dart';
+import 'package:challenge_delivery_flutter/bloc/delivery/delivery_tracking_state.dart';
 import 'package:challenge_delivery_flutter/enums/delivery_status_enum.dart';
+import 'package:challenge_delivery_flutter/helpers/url_launcher.dart';
 import 'package:challenge_delivery_flutter/models/delivery.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,7 +20,6 @@ class DeliveryInfos extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(15.0),
-      height: 183,
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
           color: Colors.white,
@@ -58,14 +58,19 @@ class DeliveryInfos extends StatelessWidget {
     return Row(
       children: [
         const Icon(Icons.location_on_outlined, size: 28, color: Colors.black87),
-        const SizedBox(width: 15.0),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Adresse', style: TextStyle(fontWeight: FontWeight.w500)),
-            Text(delivery.status == DeliveryStatusEnum.picked_up.name ? deliveryTrackingBloc.dropoffAddress : deliveryTrackingBloc.pickupAddress,
-                style: const TextStyle(fontWeight: FontWeight.w500)),
-          ],
+        const SizedBox(width: 10.0),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Adresse', style: TextStyle(fontWeight: FontWeight.w500)),
+              Text(
+                delivery.status == DeliveryStatusEnum.picked_up.name ? delivery.dropoffAddress! : delivery.pickupAddress!,
+                style: const TextStyle(fontWeight: FontWeight.w500),
+                softWrap: true,
+              ),
+            ],
+          ),
         )
       ],
     );

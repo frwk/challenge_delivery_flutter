@@ -1,8 +1,10 @@
 import 'package:challenge_delivery_flutter/state/app_state.dart';
+import 'package:challenge_delivery_flutter/views/complaint/complaint_listing_screen.dart';
 import 'package:challenge_delivery_flutter/views/courier/dashboard_screen.dart';
 import 'package:challenge_delivery_flutter/views/courier/delivery/map_delivery_screen.dart';
 import 'package:challenge_delivery_flutter/views/courier/profile_screen.dart';
 import 'package:challenge_delivery_flutter/views/courier/requests_screen.dart';
+import 'package:challenge_delivery_flutter/views/home_screen.dart';
 import 'package:flutter/material.dart';
 
 class CourierLayout extends StatefulWidget {
@@ -17,10 +19,11 @@ class _MainScreenState extends State<CourierLayout> {
   late String _currentPageKey;
 
   final Map<String, Widget> _pages = {
-    'home': const CourierDashboardScreen(),
+    'home': const HomeScreen(),
     'requests': const CourierRequestsScreen(),
-    'profile': const CourierProfileScreen(),
     'map': const MapDeliveryScreen(),
+    'complaints': const ComplaintListingScreen(),
+    'profile': const CourierProfileScreen(),
   };
 
   @override
@@ -54,6 +57,7 @@ class _MainScreenState extends State<CourierLayout> {
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Accueil'),
           BottomNavigationBarItem(icon: Icon(Icons.local_shipping), label: 'Demandes'),
           BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Suivi'),
+          BottomNavigationBarItem(icon: Icon(Icons.assignment), label: 'Plaintes'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profil'),
         ],
       ),

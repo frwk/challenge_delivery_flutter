@@ -7,7 +7,6 @@ class TextFieldAtom extends StatelessWidget {
   final String placeholder;
   final Color? placeholderColor;
   final bool? displayPlaceholder;
-  final bool isPassword;
   final void Function(String?)? onChanged;
   final TextEditingController? controller;
   final List<FormFieldValidator<String>>? validators;
@@ -16,13 +15,14 @@ class TextFieldAtom extends StatelessWidget {
   final Widget? suffixIcon;
   final Widget? prefixIcon;
   final String? initialValue;
+  final String? errorText;
+  final bool? obscureText;
 
   const TextFieldAtom({
     super.key,
     required this.name,
     required this.placeholder,
     this.displayPlaceholder = false,
-    this.isPassword = false,
     this.placeholderColor,
     this.onChanged,
     required this.controller,
@@ -32,6 +32,8 @@ class TextFieldAtom extends StatelessWidget {
     this.suffixIcon,
     this.prefixIcon,
     this.initialValue,
+    this.errorText,
+    this.obscureText = false,
   });
 
   @override
@@ -54,12 +56,13 @@ class TextFieldAtom extends StatelessWidget {
         controller: controller,
         onChanged: onChanged,
         autovalidateMode: AutovalidateMode.onUserInteraction,
-        obscureText: isPassword,
+        obscureText: obscureText ?? false,
         name: name,
         validator: FormBuilderValidators.compose(validators ?? []),
         style: isEnabled! ? null : const TextStyle(color: Colors.grey, fontSize: 12),
         decoration: decoration ??
             InputDecoration(
+              errorText: errorText,
               prefixIcon: prefixIcon,
               suffixIcon: suffixIcon,
               contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
