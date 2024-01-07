@@ -98,39 +98,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  Future<void> _onUpdateProfile(UpdateProfileEvent event, Emitter<AuthState> emit) async {
-    try {
-      await Future.delayed(const Duration(milliseconds: 850));
-
-      if (state.user == null) {
-        throw Exception('User not found');
-      }
-      final user = state.user!.copyWith(
-        firstName: event.firstName,
-        lastName: event.lastName,
-        email: event.email,
-      );
-      final updatedUser = await UserService().updateUser(user);
-      emit(SuccessAuthState(updatedUser));
-    } catch (e) {
-      emit(FailureAuthState(e.toString()));
-    }
-  }
-
-  Future<void> _onUpdatePassword(UpdatePasswordEvent event, Emitter<AuthState> emit) async {
-    try {
-      emit(LoadingAuthState());
-      await Future.delayed(const Duration(milliseconds: 850));
-      if (state.user == null) {
-        throw Exception('User not found');
-      }
-      final updatedUser = await UserService().updatePassword(state.user!.id, event.password!);
-      emit(SuccessAuthState(updatedUser));
-    } catch (e) {
-      emit(FailureAuthState(e.toString()));
-    }
-  }
-
   Future<void> _onUpdateCourierStatus(UpdateCourierStatusEvent event, Emitter<AuthState> emit) async {
     try {
       await Future.delayed(const Duration(milliseconds: 850));
