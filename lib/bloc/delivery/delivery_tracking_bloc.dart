@@ -151,11 +151,11 @@ class DeliveryTrackingBloc extends Bloc<DeliveryTrackingEvent, DeliveryTrackingS
         emit(state.copyWith(delivery: updatedDelivery, status: DeliveryTrackingStatus.success));
       } else {
         LatLng currentPosition;
-        if (authUser.role == RoleEnum.client.name) {
+        if (authUser.role == RoleEnum.courier.name) {
           var getPosition = await Geolocator.getCurrentPosition();
           currentPosition = LatLng(getPosition!.latitude!, getPosition!.longitude!);
         } else {
-          currentPosition = LatLng(updatedDelivery.courier!.latitude!, updatedDelivery.courier!.longitude!);
+          currentPosition = LatLng(state.delivery!.courier!.latitude!, state.delivery!.courier!.longitude!);
         }
         emit(state.copyWith(
           delivery: updatedDelivery,

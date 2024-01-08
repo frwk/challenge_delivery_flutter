@@ -97,7 +97,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       child: FormBuilderRadioGroup(
                         name: 'vehicle',
                         decoration: const InputDecoration(labelText: 'Type de véhicule', border: InputBorder.none),
-                        initialValue: VehicleEnum.car.name,
+                        initialValue: authBloc.state.user?.courier?.vehicle,
                         options: [
                           FormBuilderFieldOption(value: VehicleEnum.car.name, child: const Text('Voiture')),
                           FormBuilderFieldOption(value: VehicleEnum.moto.name, child: const Text('Moto')),

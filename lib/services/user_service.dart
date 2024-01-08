@@ -85,7 +85,8 @@ class UserService {
 
   Future<Courier> updateCourier(Courier courier) async {
     try {
-      Map<String, String> headers = {HttpHeaders.contentTypeHeader: 'application/json'};
+      final cookie = await secureStorage.readCookie();
+      Map<String, String> headers = {HttpHeaders.contentTypeHeader: 'application/json', HttpHeaders.cookieHeader: cookie!};
       Map<String, dynamic> courierJson = courier.toJson();
       courierJson.remove('id');
       final response = await http.patch(
@@ -105,9 +106,12 @@ class UserService {
 
   Future<bool> verifyPassword(int id, String password) async {
     try {
+      final cookie = await secureStorage.readCookie();
+      Map<String, String> headers = {HttpHeaders.contentTypeHeader: 'application/json', HttpHeaders.cookieHeader: cookie!};
+
       final response = await http.post(
         Uri.parse('${dotenv.env['API_URL']}/users/$id/verify-password'),
-        headers: {'Accept': 'application/json'},
+        headers: headers,
         body: {'password': password},
       );
       if (response.statusCode == 200) {
