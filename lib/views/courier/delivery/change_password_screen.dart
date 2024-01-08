@@ -56,83 +56,93 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const MyAppBar(title: 'Changer le mot de passe'),
-      body: SingleChildScrollView(
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          child: FormBuilder(
-            key: _formKey,
-            child: Column(
-              children: <Widget>[
-                InputComponent(
-                  name: 'actualPassword',
-                  placeholder: 'Mot de passe actuel',
-                  displayPlaceholder: true,
-                  obscureText: !_isActualPasswordVisible,
-                  errorText: _currentPasswordError,
-                  suffixIcon: IconButton(
-                    icon: Icon(_isActualPasswordVisible ? Icons.visibility : Icons.visibility_off),
-                    onPressed: () => setState(() => _isActualPasswordVisible = !_isActualPasswordVisible),
-                  ),
-                  validators: [
-                    FormBuilderValidators.required(errorText: 'Veuillez entrer votre mot de passe actuel'),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                Divider(
-                  color: Colors.grey[400],
-                ),
-                InputComponent(
-                    name: 'password',
-                    placeholder: 'Nouveau mot de passe',
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        print(state.toString());
+        if (state is FailureUpdateProfileState) {
+          showSnackMessage(context, state.error, MessageTypeEnum.error);
+        } else if (state is SuccessUpdateProfileState) {
+          showSnackMessage(context, 'Mot de passe mis à jour avec succès', MessageTypeEnum.success);
+          Navigator.pop(context);
+        }
+      },
+      child: Scaffold(
+        appBar: const MyAppBar(title: 'Changer le mot de passe'),
+        body: SingleChildScrollView(
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            child: FormBuilder(
+              key: _formKey,
+              child: Column(
+                children: <Widget>[
+                  InputComponent(
+                    name: 'actualPassword',
+                    placeholder: 'Mot de passe actuel',
                     displayPlaceholder: true,
-                    onChanged: (value) {
-                      passNotifier.value = CustomPasswordStrength.calculate(text: value ?? '');
-                    },
-                    obscureText: !_isPasswordVisible,
+                    obscureText: !_isActualPasswordVisible,
+                    errorText: _currentPasswordError,
                     suffixIcon: IconButton(
-                      icon: Icon(_isPasswordVisible ? Icons.visibility : Icons.visibility_off),
-                      onPressed: () => setState(() => _isPasswordVisible = !_isPasswordVisible),
-                    ),
-                    validators: [FormBuilderValidators.required(), FormBuilderValidators.minLength(8)]),
-                const SizedBox(height: 30),
-                PasswordStrengthChecker<CustomPasswordStrength>(
-                  strength: passNotifier,
-                  configuration: const PasswordStrengthCheckerConfiguration(borderWidth: 0, width: 300, height: 10),
-                ),
-                const SizedBox(height: 20),
-                InputComponent(
-                    name: 'confirmPassword',
-                    placeholder: 'Confirmez le nouveau mot de passe',
-                    displayPlaceholder: true,
-                    obscureText: !_isConfirmPasswordVisible,
-                    suffixIcon: IconButton(
-                      icon: Icon(_isConfirmPasswordVisible ? Icons.visibility : Icons.visibility_off),
-                      onPressed: () => setState(() => _isConfirmPasswordVisible = !_isConfirmPasswordVisible),
+                      icon: Icon(_isActualPasswordVisible ? Icons.visibility : Icons.visibility_off),
+                      onPressed: () => setState(() => _isActualPasswordVisible = !_isActualPasswordVisible),
                     ),
                     validators: [
-                      FormBuilderValidators.required(),
-                      (value) => _formKey.currentState?.fields['password']?.value != value ? 'Mots de passe différents' : null
-                    ]),
-                const SizedBox(height: 20),
-                ButtonAtom(
-                  data: 'Enregistrer les modifications',
-                  onTap: () async {
-                    setState(() {
-                      _currentPasswordError = null;
-                    });
-                    await Future.delayed(const Duration(milliseconds: 500));
-                    if (_formKey.currentState!.saveAndValidate()) {
-                      if (!await _validateCurrentPassword()) return;
-                      BlocProvider.of<AuthBloc>(context).add(UpdatePasswordEvent(
-                        password: _formKey.currentState!.fields['password']?.value,
-                      ));
-                      showSnackMessage(context, 'Profil mis à jour', MessageTypeEnum.success);
-                    }
-                  },
-                ),
-              ],
+                      FormBuilderValidators.required(errorText: 'Veuillez entrer votre mot de passe actuel'),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Divider(
+                    color: Colors.grey[400],
+                  ),
+                  InputComponent(
+                      name: 'password',
+                      placeholder: 'Nouveau mot de passe',
+                      displayPlaceholder: true,
+                      onChanged: (value) {
+                        passNotifier.value = CustomPasswordStrength.calculate(text: value ?? '');
+                      },
+                      obscureText: !_isPasswordVisible,
+                      suffixIcon: IconButton(
+                        icon: Icon(_isPasswordVisible ? Icons.visibility : Icons.visibility_off),
+                        onPressed: () => setState(() => _isPasswordVisible = !_isPasswordVisible),
+                      ),
+                      validators: [FormBuilderValidators.required(), FormBuilderValidators.minLength(8)]),
+                  const SizedBox(height: 30),
+                  PasswordStrengthChecker<CustomPasswordStrength>(
+                    strength: passNotifier,
+                    configuration: const PasswordStrengthCheckerConfiguration(borderWidth: 0, width: 300, height: 10),
+                  ),
+                  const SizedBox(height: 20),
+                  InputComponent(
+                      name: 'confirmPassword',
+                      placeholder: 'Confirmez le nouveau mot de passe',
+                      displayPlaceholder: true,
+                      obscureText: !_isConfirmPasswordVisible,
+                      suffixIcon: IconButton(
+                        icon: Icon(_isConfirmPasswordVisible ? Icons.visibility : Icons.visibility_off),
+                        onPressed: () => setState(() => _isConfirmPasswordVisible = !_isConfirmPasswordVisible),
+                      ),
+                      validators: [
+                        FormBuilderValidators.required(),
+                        (value) => _formKey.currentState?.fields['password']?.value != value ? 'Mots de passe différents' : null
+                      ]),
+                  const SizedBox(height: 20),
+                  ButtonAtom(
+                    data: 'Enregistrer les modifications',
+                    onTap: () async {
+                      setState(() {
+                        _currentPasswordError = null;
+                      });
+                      await Future.delayed(const Duration(milliseconds: 500));
+                      if (_formKey.currentState!.saveAndValidate()) {
+                        if (!await _validateCurrentPassword()) return;
+                        BlocProvider.of<AuthBloc>(context).add(UpdatePasswordEvent(
+                          password: _formKey.currentState!.fields['password']?.value,
+                        ));
+                      }
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ),

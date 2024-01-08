@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:challenge_delivery_flutter/enums/courier_status_enum.dart';
 import 'package:challenge_delivery_flutter/enums/role_enum.dart';
@@ -86,13 +87,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   Future<void> _onUpdatePassword(UpdatePasswordEvent event, Emitter<AuthState> emit) async {
     try {
-      emit(LoadingAuthState());
       await Future.delayed(const Duration(milliseconds: 850));
       if (state.user == null) {
         throw Exception('User not found');
       }
       final updatedUser = await UserService().updatePassword(state.user!.id, event.password!);
-      emit(SuccessAuthState(updatedUser));
+      emit(SuccessUpdateProfileState(updatedUser));
     } catch (e) {
       emit(FailureAuthState(e.toString()));
     }

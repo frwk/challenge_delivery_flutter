@@ -77,7 +77,10 @@ class _DeliverySummaryScreenState extends State<DeliverySummaryScreen> {
                   children: <Widget>[
                     Text(
                       state.delivery?.status == DeliveryStatusEnum.delivered.name ? 'Livraison terminée !' : 'Livraison annulée',
-                      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.deepOrange),
+                      style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: state.delivery?.status == DeliveryStatusEnum.delivered.name ? Colors.green : Colors.deepOrange),
                     ),
                     const Divider(height: 30, thickness: 2),
                     InfoRow('Adresse de prise en charge:', state.delivery?.pickupAddress ?? 'Chargement...'),
@@ -98,6 +101,7 @@ class _DeliverySummaryScreenState extends State<DeliverySummaryScreen> {
                       RatingBar.builder(
                         initialRating: _currentNotation,
                         itemCount: 5,
+                        minRating: 1,
                         itemBuilder: (context, index) {
                           switch (index) {
                             case 0:
