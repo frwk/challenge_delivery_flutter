@@ -144,7 +144,31 @@ class DeliveryInfos extends StatelessWidget {
               if ((delivery.status == DeliveryStatusEnum.pending.name)) ...[
                 const SizedBox(height: 10.0),
                 const CircularProgressIndicator(),
-              ]
+              ] else if (delivery.status == DeliveryStatusEnum.picked_up.name) ...[
+                const SizedBox(height: 10.0),
+                const Text(
+                  'Code de confirmation pour le livreur:',
+                ),
+                const SizedBox(height: 10.0),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.orange[50],
+                    borderRadius: BorderRadius.circular(4),
+                    border: Border.all(color: Colors.orange),
+                  ),
+                  child: Text(
+                    delivery.confirmationCode!,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.orange[800],
+                      fontFamily: 'Monospace',
+                      letterSpacing: 2.0,
+                    ),
+                  ),
+                )
+              ],
             ],
           ),
         ),

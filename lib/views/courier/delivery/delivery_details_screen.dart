@@ -90,6 +90,8 @@ class _DeliveryDetailsScreenState extends State<DeliveryDetailsScreen> {
             if (authUser?.role == RoleEnum.courier.name) ...[
               _buildCard(Icons.map, 'Distance à parcourir', '${widget.delivery.distance} mètres'),
               _buildCard(Icons.directions_walk, 'Distance du point de départ', '${widget.delivery.distanceToPickup} mètres'),
+            ] else if (authUser?.role == RoleEnum.client.name) ...[
+              _buildCard(Icons.pin, 'Code de confirmation', '${widget.delivery.confirmationCode}'),
             ],
             const SizedBox(height: 20),
             if (widget.actionsButtons != null) _buildActionsRow(widget.actionsButtons!),
