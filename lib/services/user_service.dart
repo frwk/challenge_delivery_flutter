@@ -83,19 +83,20 @@ class UserService {
     }
   }
 
-  Future<User> updateCourier(Courier courier) async {
+  Future<Courier> updateCourier(Courier courier) async {
     try {
       Map<String, String> headers = {HttpHeaders.contentTypeHeader: 'application/json'};
-      print('courier: ${jsonEncode(courier.toJson())}');
+      Map<String, dynamic> courierJson = courier.toJson();
+      courierJson.remove('id');
       final response = await http.patch(
         Uri.parse('${dotenv.env['API_URL']}/couriers/${courier.id}'),
         headers: headers,
-        body: jsonEncode(courier.toJson()),
+        body: jsonEncode(courierJson),
       );
       if (response.statusCode != 200) {
         throw Exception(jsonDecode(response.body)['message']);
       }
-      return User.fromJson(jsonDecode(response.body));
+      return Courier.fromJson(jsonDecode(response.body));
     } catch (e) {
       print(e);
       rethrow;

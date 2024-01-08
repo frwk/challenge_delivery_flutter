@@ -31,3 +31,9 @@ class UpdatePasswordEvent extends AuthEvent {
 
   UpdatePasswordEvent({this.password});
 }
+
+class UpdateCourierStatusEvent extends AuthEvent {
+  final CourierStatusEnum? status;
+
+  UpdateCourierStatusEvent({this.status});
+}

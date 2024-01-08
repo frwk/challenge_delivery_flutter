@@ -2,6 +2,11 @@ import 'package:challenge_delivery_flutter/atoms/button_atom.dart';
 import 'package:challenge_delivery_flutter/bloc/auth/auth_bloc.dart';
 import 'package:challenge_delivery_flutter/components/my_card.dart';
 import 'package:challenge_delivery_flutter/enums/delivery_status_enum.dart';
+import 'package:challenge_delivery_flutter/enums/message_type_enum.dart';
+import 'package:challenge_delivery_flutter/helpers/show_snack_message.dart';
+import 'package:challenge_delivery_flutter/models/delivery.dart';
+import 'package:challenge_delivery_flutter/services/order/order_service.dart';
+import 'package:challenge_delivery_flutter/enums/delivery_status_enum.dart';
 import 'package:challenge_delivery_flutter/models/delivery.dart';
 import 'package:challenge_delivery_flutter/services/order/order_service.dart';
 import 'package:challenge_delivery_flutter/views/courier/delivery/delivery_details_screen.dart';
@@ -158,16 +163,27 @@ class _DeliveriesListState extends State<DeliveriesList> {
                           icon: Icons.check,
                           color: Colors.green,
                           onTap: () async {
-                            await orderService.updateDelivery(
-                                delivery.copyWith(status: DeliveryStatusEnum.accepted.name, courierId: () => authBloc.state.user!.courier!.id));
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const CourierLayout(
-                                  initialPage: 'map',
-                                ),
-                              ),
-                            );
+                            try {
+                              Delivery acceptedDelivery = await orderService.getDelivery(delivery.id!);
+                              if (acceptedDelivery.status != DeliveryStatusEnum.pending.name) {
+                                showSnackMessage(context, 'La livraison n\'est plus disponible', MessageTypeEnum.error);
+                                Navigator.pop(context);
+                              } else {
+                                await orderService.updateDelivery(
+                                    delivery.copyWith(status: DeliveryStatusEnum.accepted.name, courierId: () => authBloc.state.user!.courier!.id));
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const CourierLayout(
+                                      initialPage: 'map',
+                                    ),
+                                  ),
+                                );
+                              }
+                            } catch (e) {
+                              showSnackMessage(context, 'Une erreur s\'est produite', MessageTypeEnum.error);
+                              Navigator.pop(context);
+                            }
                           },
                         ),
                       ]),

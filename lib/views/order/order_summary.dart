@@ -3,6 +3,7 @@ import 'package:challenge_delivery_flutter/bloc/auth/auth_bloc.dart';
 import 'package:challenge_delivery_flutter/bloc/order/order_bloc.dart';
 import 'package:challenge_delivery_flutter/enums/vehicle_enum.dart';
 import 'package:challenge_delivery_flutter/helpers/format_string.dart';
+import 'package:challenge_delivery_flutter/components/my_card.dart';
 import 'package:challenge_delivery_flutter/models/order.dart';
 import 'package:challenge_delivery_flutter/widgets/layouts/app_bar.dart';
 import 'package:challenge_delivery_flutter/widgets/layouts/client_layout.dart';

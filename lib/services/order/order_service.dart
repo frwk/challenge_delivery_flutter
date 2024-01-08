@@ -73,6 +73,21 @@ class OrderService {
     }
   }
 
+  Future<List<Delivery>> getUserCurrentDeliveries(User user) async {
+    try {
+      final cookie = await secureStorage.readCookie();
+      final response = await http
+          .get(Uri.parse('${dotenv.env['API_URL']}/users/${user.id}/deliveries/current'), headers: {'Accept': 'application/json', 'Cookie': cookie!});
+      if (response.statusCode != 200) {
+        throw Exception(jsonDecode(response.body)['message']);
+      }
+      final List<dynamic> data = jsonDecode(response.body);
+      return data.map((e) => Delivery.fromJson(e)).toList();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<List<Delivery>> getUserDeliveries(User user) async {
     try {
       final cookie = await secureStorage.readCookie();
@@ -185,7 +200,7 @@ class OrderService {
     }
   }
 
-  Future<Delivery?> getDelivery(int id) async {
+  Future<Delivery> getDelivery(int id) async {
     try {
       final cookie = await secureStorage.readCookie();
       final response =

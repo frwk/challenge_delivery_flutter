@@ -1,5 +1,6 @@
 import 'package:challenge_delivery_flutter/common/app_colors.dart';
 import 'package:challenge_delivery_flutter/state/app_state.dart';
+import 'package:challenge_delivery_flutter/views/client/current_deliveries.dart';
 import 'package:challenge_delivery_flutter/views/complaint/complaint_listing_screen.dart';
 import 'package:challenge_delivery_flutter/views/courier/profile_screen.dart';
 import 'package:challenge_delivery_flutter/views/home_screen.dart';
@@ -18,8 +19,9 @@ class _MainScreenState extends State<ClientLayout> {
 
   final Map<String, Widget> _pages = {
     'home': const HomeScreen(),
+    'currentDeliveries': const CurrentDeliveriesScreen(),
     'complaints': const ComplaintListingScreen(),
-    'profile': const CourierProfileScreen(),
+    'profile': const ProfileScreen(),
   };
 
   @override
@@ -51,6 +53,7 @@ class _MainScreenState extends State<ClientLayout> {
         currentIndex: _pages.keys.toList().indexOf(_currentPageKey),
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Accueil'),
+          BottomNavigationBarItem(icon: Icon(Icons.local_shipping), label: 'Livraisons en cours'),
           BottomNavigationBarItem(icon: Icon(Icons.assignment), label: 'Plaintes'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profil'),
         ],

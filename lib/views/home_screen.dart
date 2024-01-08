@@ -113,18 +113,16 @@ class _HomeScreenState extends State<HomeScreen> {
         message: 'Aucune statistique à afficher pour le moment',
         actions: [
           ButtonAtom(
-            data: 'Voir les demandes',
-            color: Theme.of(context).colorScheme.primary,
-            icon: Icons.local_shipping,
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => authUser?.role == RoleEnum.courier.name
-                    ? const CourierLayout(initialPage: 'requests')
-                    : const ClientLayout(initialPage: 'requests'),
-              ),
-            ),
-          ),
+              data: authUser?.role == RoleEnum.courier.name ? 'Voir les demandes' : 'Nouvelle livraison',
+              color: Theme.of(context).colorScheme.primary,
+              icon: Icons.local_shipping,
+              onTap: () {
+                if (authUser?.role == RoleEnum.courier.name) {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const CourierLayout(initialPage: 'requests')));
+                } else {
+                  Navigator.pushNamed(context, '/create-order');
+                }
+              }),
         ],
       );
     } else {
