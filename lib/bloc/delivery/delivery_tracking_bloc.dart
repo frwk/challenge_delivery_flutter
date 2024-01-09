@@ -99,7 +99,7 @@ class DeliveryTrackingBloc extends Bloc<DeliveryTrackingEvent, DeliveryTrackingS
     _mapController.animateCamera(cameraUpdate);
   }
 
-  Future<void> _onStopDeliveryTracking(DeliveryTrackingEvent event, Emitter<DeliveryTrackingState> emit) async {
+  Future<void> _onStopDeliveryTracking(StopDeliveryTracking event, Emitter<DeliveryTrackingState> emit) async {
     if (authUser.role == RoleEnum.courier.name) _positionSubscription.cancel();
     _mapController.dispose();
     _channel.sink.close();
