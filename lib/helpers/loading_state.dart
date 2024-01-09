@@ -13,7 +13,7 @@ void modalLoading(BuildContext context) {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text('Connexion en cours...'),
+            Text('Chargement en cours...'),
           ],
         ),
       ),

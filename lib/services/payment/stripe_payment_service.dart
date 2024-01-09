@@ -53,6 +53,9 @@ class StripePaymentService {
         headers: {'Authorization': 'Bearer ${dotenv.env['STRIPE_API_KEY']}', 'Content-Type': 'application/x-www-form-urlencoded'},
         body: body,
       );
+      if (response.statusCode != 200) {
+        throw Exception('Something went wrong');
+      }
       return await json.decode(response.body);
     } catch (err) {
       throw Exception(err.toString());
