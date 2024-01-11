@@ -104,8 +104,8 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                   Expanded(
                     child: DeliveryDetail(
                       icon: Icons.access_time,
-                      title: 'Arrivée estimée',
-                      detail: '${estimateArrival(order.duration!)}',
+                      title: 'Durée estimée',
+                      detail: '${estimateArrival(order.duration!)} min',
                       color: Colors.white,
                     ),
                   ),
@@ -148,11 +148,8 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     );
   }
 
-  String estimateArrival(int travelTimeInSeconds) {
-    DateTime currentTime = DateTime.now();
-    DateTime arrivalTime = currentTime.add(Duration(seconds: travelTimeInSeconds));
-    String formattedArrivalTime = DateFormat('HH\'h\'mm').format(arrivalTime);
-    return formattedArrivalTime;
+  int estimateArrival(int travelTimeInSeconds) {
+    return (travelTimeInSeconds / 60).ceil();
   }
 }
 
